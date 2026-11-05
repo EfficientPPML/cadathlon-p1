@@ -64,7 +64,8 @@ def main():
         output = root / "contestant-release.tar.gz"
         candidates = []
         for problem in ("non_agent_pset/p1_benchmark", "agent_pset/p2_bert",
-                        "non_agent_pset/p3_cnn", "agent_pset/p4_qwen"):
+                        "non_agent_pset/p3_cnn", "agent_pset/p4_qwen",
+                        "agent_pset/p5_wise"):
             folder = root / problem
             patterns = [line.strip()
                         for line in (folder / "EXCLUDE").read_text().splitlines()

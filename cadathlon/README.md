@@ -1,6 +1,6 @@
 # CROSS CADathlon problem set
 
-Four problems in two sets, each following the supplied CADathlon template:
+Five problems in two sets, each following the supplied CADathlon template:
 introduction, problem statement, compile/run instructions, scoring, references,
 `doc/`, `src/`, `test/`, `oneliner`, and `EXCLUDE`.
 
@@ -73,6 +73,17 @@ and passing fixture checks do not establish competition readiness.
 |---|---|---|
 | [P2 · BERT / MRPC](agent_pset/p2_bert/doc/problem.md) — use or improve CROSS to enable encrypted BERT on TPUs, then optimize performance and score using the [FHE BERT benchmark](https://github.com/fhe-benchmarking/BERT) | 100 | [HTML](agent_pset/p2_bert/doc/problem.html) · [PDF](agent_pset/p2_bert/doc/problem.pdf) |
 | [P4 · Qwen3-0.6B](agent_pset/p4_qwen/doc/problem.md) — enable full Qwen3-0.6B inference under CKKS, with staged credit for operators and decoder blocks | 100 | [HTML](agent_pset/p4_qwen/doc/problem.html) · [PDF](agent_pset/p4_qwen/doc/problem.pdf) |
+| [P5 · WISE scheduling](agent_pset/p5_wise/doc/problem.md) — schedule fixed MLP/CNN workloads with the pinned WISE planner, execute them with CROSS CKKS and optimize measured TPU performance | 100 | [HTML](agent_pset/p5_wise/doc/problem.html) · [PDF](agent_pset/p5_wise/doc/problem.pdf) |
+
+[P5 · WISE scheduling](agent_pset/p5_wise/doc/problem.md) adds six fixed MLP/CNN
+workloads, native Winograd layouts and the complete pretrained WISE MNIST CNN.
+Generate schedules with the pinned upstream WISE planner, execute them with
+CROSS CKKS, and optimize measured TPU performance against matched CROSS CPU
+and tuned native OpenFHE controls. See the
+[README](agent_pset/p5_wise/README.md) and the
+[instructions for another TPU host](agent_pset/p5_wise/TPU_TESTING.md).
+Install the external WISE planner before running the combined reference checks.
+TPU calibration and proof of speedup remain incomplete.
 
 The proposed format is an eight-hour contest. “AI agents allowed” means
 students may use coding agents to solve the task; it does not mean that several
@@ -107,7 +118,7 @@ From this directory:
 
 ```bash
 make all                 # syntax and package checks; does not solve the TODOs
-make reference-test      # 24 public numerical-reference checks; CPU
+make reference-test      # 30 public numerical-reference checks; CPU, requires WISE_ROOT
 make docs                # rebuild HTML/PDF (requirements-docs.txt)
 make release             # create contestant archive, applying EXCLUDE
 ```
