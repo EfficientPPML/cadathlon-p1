@@ -1,0 +1,24 @@
+{
+  "adapted_original_files": [
+    "cadathlon/common/package.py",
+    "cadathlon/common/render_docs.py",
+    "cadathlon/non_agent_pset/p1_benchmark/doc/problem.html",
+    "cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf"
+  ],
+  "baseline_plan_command_passed": true,
+  "docs_rendered": true,
+  "extracted_original_files": 218,
+  "local_links_checked": 15,
+  "new_TPU_benchmark_run": false,
+  "plaintext_fixtures_passed": 6,
+  "pytest_failed": 0,
+  "pytest_passed": 147,
+  "pytest_skipped": 0,
+  "ranked_model_manifest_verified": true,
+  "scope": "Standalone P1 packaging/CPU validation; historical TPU calibration retained separately",
+  "source_commit": "3a49b207acc851a8d599b9b3f3053b8af1d199aa",
+  "source_repository": "https://github.com/EfficientPPML/CROSS",
+  "suite_gate_behaviors_passed": 23,
+  "unchanged_original_files": 214,
+  "utc": "2026-11-06T23:37:13.752986+00:00"
+}

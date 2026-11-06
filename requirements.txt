@@ -1,0 +1,9 @@
+# CPU development dependencies. TPU evaluation additionally needs jax[tpu].
+# Exact versions used for this extraction are recorded in validation/environment.json.
+numpy
+jax[cpu]
+torch
+gmpy2
+pandas
+absl-py
+pytest
