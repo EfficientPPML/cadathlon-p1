@@ -1,9 +1,9 @@
-# Problem 1: Higher-throughput encrypted MNIST on eight TPU chips
+# Problem 1: Higher-throughput encrypted MNIST on four TPU chips
 
 **CADathlon · `non_agent_pset` · ESSENTIAL problem · 100 points · ~1.5-hour topic within the proposed 8-hour event**
 
 The default short competition schedule is **student**: C3/C4, 100 images on
-one/eight TPU chips, with a 300-second complete evaluation budget. Begin with
+one/four TPU chips, with a 300-second complete evaluation budget. Begin with
 `baseline_student.py`, then run `make -C src suite-evaluate-baseline`,
 `make -C src suite-evaluate`, and `make -C src suite-score` from this problem's
 directory after organizer asset preparation. The last command only scores
@@ -19,7 +19,7 @@ runs that workload under CKKS on Google TPU v6e, correctly and at 128-bit
 security. It is not the fastest entry on that table.
 
 Your task is to raise **throughput of the encrypted MNIST classifier across
-eight TPU v6e chips** while preserving its outputs, weights and cryptographic
+four TPU v6e chips** while preserving its outputs, weights and cryptographic
 security. Unlike Problem 3, which optimizes two CNNs each on one chip, this
 track is about **how many images per second a fixed serving stack delivers**,
 and the headroom is mostly in how images are placed into ciphertexts.
@@ -112,10 +112,10 @@ resulting margin.
 Complete these tasks:
 
 1. **P3.1 — establish the baseline:** verify provenance, run the cleartext and
-   HE paths, and profile the baseline at each ranked batch on 1 and 8 chips.
+   HE paths, and profile the baseline at each ranked batch on 1 and 4 chips.
 2. **P3.2 — raise per-chip throughput:** attack slot occupancy or per-operation
    cost, and explain which operations or memory transfers it reduces.
-3. **P3.3 — scale across chips:** show what your change does to 8-chip
+3. **P3.3 — scale across chips:** show what your change does to 4-chip
    throughput and to scaling efficiency relative to one chip.
 4. **P3.4 — compare and explain:** run C3/C4 for student, or all six ranked
    cases for explicit legacy evaluation; preserve
@@ -142,20 +142,20 @@ All six ranked cases use TPU v6e chips from one host:
 | Case | Global batch | Chips | Mirrors |
 |---|---:|---:|---|
 | C1 | 1 | 1 | single-image latency, one chip |
-| C2 | 1 | 8 | single-image latency, full host |
+| C2 | 1 | 4 | single-image latency, full host |
 | C3 | 100 | 1 | benchmark "small" instance, one chip |
-| C4 | 100 | 8 | benchmark "small" instance, full host |
+| C4 | 100 | 4 | benchmark "small" instance, full host |
 | C5 | 1000 | 1 | benchmark "medium" instance, one chip |
-| C6 | 1000 | 8 | benchmark "medium" instance, full host |
+| C6 | 1000 | 4 | benchmark "medium" instance, full host |
 
-C1 and C2 measure latency, where padding a batch of one across eight chips
+C1 and C2 measure latency, where padding a batch of one across four chips
 cannot help. C3–C6 measure throughput, where packing can. A single change that
 helps only one regime is a partial result; say so in the report.
 
 ### 2.3.1 Short student schedule (default competition path)
 
 For an approximately 1.5-hour topic slot, the `student` evaluation profile
-selects **C3 and C4 only**: 100 images on one chip and on eight chips. The
+selects **C3 and C4 only**: 100 images on one chip and on four chips. The
 remaining four legacy ranked cases remain available for extended regression
 and scaling experiments; the six local synthetic fixtures remain unchanged.
 This is a published workload change, not a faster result on the six-case
@@ -181,8 +181,9 @@ correctness checks and daemon cleanup. It fails if the entire schedule exceeds
 the budget. Baseline calibration and candidate results use distinct profile
 names. Inspect the generated report and logs; only actual TPU measurements
 can establish that a particular host meets five minutes. The follow-up baseline
-run completed this entire two-case schedule in **257.56 seconds**, with three
-repetitions per case and 100% agreement with the ranked model in cleartext.
+run completed this entire two-case schedule in **257.56 seconds** on the earlier
+eight-chip host (C4 then on eight chips), with three repetitions per case and
+100% agreement with the ranked model in cleartext.
 See `cadathlon/validation/p1_student_suite.json` for measurements and limits;
 recalibrate on your contest host. Dataset download and
 training the upstream harness's separate cleartext model are organizer asset
@@ -299,8 +300,8 @@ run. Setup is gated separately, at 1800 s, and is not charged per image.
 ```bash
 make -C src suite-check                          # verify the pinned checkout
 make -C src suite-install                        # write the stage shims
-make -C src suite-baseline SIZE=1 P3_DEVICES=8   # unmodified baseline, C4
-make -C src suite-test     SIZE=1 P3_DEVICES=8   # your bench_opt.py, C4
+make -C src suite-baseline SIZE=1 P3_DEVICES=4   # unmodified baseline, C4
+make -C src suite-test     SIZE=1 P3_DEVICES=4   # your bench_opt.py, C4
 make -C src suite-gates                          # gate self-test, no accelerator
 make -C src suite-score                          # deterministic rubric arithmetic
 make -C src suite-stop                           # release the accelerator
@@ -443,8 +444,8 @@ benchmark suite (section 2.5):
 cd cadathlon/non_agent_pset/p1_benchmark
 make -C src suite-check                          # pinned checkout, harness intact
 make -C src suite-install
-make -C src suite-baseline SIZE=2 P3_DEVICES=8 P1_BASELINE_PROFILE=legacy
-make -C src suite-test     SIZE=2 P3_DEVICES=8 P1_BASELINE_PROFILE=legacy
+make -C src suite-baseline SIZE=2 P3_DEVICES=4 P1_BASELINE_PROFILE=legacy
+make -C src suite-test     SIZE=2 P3_DEVICES=4 P1_BASELINE_PROFILE=legacy
 make -C src suite-gates
 make -C src suite-score P1_BASELINE_PROFILE=legacy
 make -C src suite-stop
@@ -461,7 +462,7 @@ the pure arithmetic scorer self-tests; it performs no TPU evaluation. Logs go
 to stderr and one machine-readable JSON result goes to stdout per case. Do not
 byte-compare noisy CKKS outputs to `.out`; use the stated bounds.
 
-**Legacy per-case runtime limits:** up to eight TPU v6e chips on the fixed host image, 512 GiB
+**Legacy per-case runtime limits:** up to four TPU v6e chips on the fixed host image, 512 GiB
 maximum host RSS, and no device OOM. Prepare, key generation and compilation
 may take at most **30 minutes per configuration**. Each online batch may take
 at most **300 seconds**. A failed or timed-out case scores zero. CPU runs are
@@ -513,7 +514,7 @@ and the throughput cases (C3–C6) are both scored, so an entry that only helps
 large batches forfeits up to 20 speed points.
 
 Evidence E awards 2 points each for: checkpoint and environment
-reproducibility; baseline profiles at 1 and 8 chips; an explanation tied to
+reproducibility; baseline profiles at 1 and 4 chips; an explanation tied to
 measured bottlenecks, including slot occupancy before and after; complete raw
 timing and actual-memory records; and regression tests plus a privacy and
 parameter review that states `log2(QP)`, the ceiling and the margin.

@@ -36,9 +36,12 @@ contest hardware. The benchmark rejects a CPU/GPU fallback.
 
 ## Ranked evaluation
 
-The default student schedule evaluates 100 images on one and eight TPU chips
-(C3/C4). The archived baseline completed in 257.56 seconds on its measured host;
-this is historical evidence, not a timing guarantee for another machine.
+The default student schedule evaluates 100 images on one and four TPU chips
+(C3/C4), the shape of a four-chip TPU v6e host (`v6e-4`). The shipped student
+calibration was archived on an earlier eight-chip host, where C4 ran on eight
+chips and the complete schedule took 257.56 seconds; that is historical
+evidence, and the scorer rejects it against the four-chip schedule until
+`make suite-evaluate-baseline` republishes a calibration measured on four chips.
 Correctness, actual-ring 128-bit security, input/model identity, calibration
 provenance and cleanup checks remain enabled.
 

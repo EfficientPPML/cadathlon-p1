@@ -18,7 +18,7 @@
       "id": "C2",
       "instance": 0,
       "batch": 1,
-      "devices": 8
+      "devices": 4
     },
     {
       "id": "C3",
@@ -30,7 +30,7 @@
       "id": "C4",
       "instance": 1,
       "batch": 100,
-      "devices": 8
+      "devices": 4
     },
     {
       "id": "C5",
@@ -42,7 +42,7 @@
       "id": "C6",
       "instance": 2,
       "batch": 1000,
-      "devices": 8
+      "devices": 4
     }
   ],
   "determinism": {
@@ -79,7 +79,7 @@
         "C3",
         "C4"
       ],
-      "note": "100 images on one and eight chips. Explicit shorter competition schedule; requires separate student-ring calibration."
+      "note": "100 images on one and four chips. Explicit shorter competition schedule; requires separate student-ring calibration."
     }
   }
 }

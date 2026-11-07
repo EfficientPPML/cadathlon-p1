@@ -4,7 +4,7 @@ Team ID:
 
 Checkpoint hashes, full parameter-loading checks and environment:
 
-Baseline profiles at 1 and 8 chips, including slot occupancy before and after:
+Baseline profiles at 1 and 4 chips, including slot occupancy before and after:
 
 Optimizations and why they preserve model semantics:
 

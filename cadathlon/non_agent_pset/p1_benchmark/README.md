@@ -1,7 +1,7 @@
 # Problem 1: benchmark track
 
 Read [the handout](doc/problem.html) or [the PDF](doc/problem.pdf).
-The default competition schedule is **student**: C3/C4, 100 images on one/eight
+The default competition schedule is **student**: C3/C4, 100 images on one/four
 TPU chips. Implement `src/bench_opt.py`, beginning with `baseline_student.py`
 and its supplied-key handling. The explicit legacy profile ranks six cases;
 the six local synthetic fixtures remain regression checks for both schedules.
@@ -54,10 +54,11 @@ make -C src suite-score P1_BASELINE_PROFILE=student
 
 Stage the upstream data and cleartext checkpoint first. The command rejects a
 CPU/GPU fallback and returns nonzero on timeout, failed correctness or cleanup.
-Measured on this eight-chip TPU host, the complete baseline command finished
-in **257.56 seconds (4m18s)**, with both cases passing all gates and 100% agreement
-with the same model in cleartext. See `../../validation/p1_student_suite.json`
-for scope and environment; recalibrate on contest hardware.
+Measured on the earlier eight-chip TPU host, where C4 ran on eight chips, the
+complete baseline command finished in **257.56 seconds (4m18s)**, with both cases
+passing all gates and 100% agreement with the same model in cleartext. See
+`../../validation/p1_student_suite.json` for scope and environment. The ranked
+schedule now runs C4 on four chips; recalibrate on the four-chip contest host.
 The short profile gives each case 15 correctness and 30 speed points, plus the
 same 10 evidence points for the report; legacy six-case weights are unchanged.
 
