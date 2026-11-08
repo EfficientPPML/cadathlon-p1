@@ -1,6 +1,6 @@
 # Problem 1: Higher-throughput encrypted MNIST on four TPU chips
 
-**CADathlon · `non_agent_pset` · ESSENTIAL problem · 100 points · ~1.5-hour topic within the proposed 8-hour event**
+**CADathlon · `non_agent_pset` · ESSENTIAL problem · 10 points · ~1.5-hour topic within the proposed 8-hour event**
 
 The default short competition schedule is **student**: C3/C4, 100 images on
 one/four TPU chips, with a 300-second complete evaluation budget. Begin with
@@ -207,20 +207,22 @@ Baseline publication stores only aggregate reports and measurement JSON under
 Failed recalibration preserves the prior published calibration. Candidate
 reports remain in `suite/run/` and must be regenerated after cleaning. The
 recorded 276.63-second four-chip run passed this complete `student-v2`
-contract and its baseline self-score (30 correctness points, zero speed
-points). The earlier eight-chip 257.47-second `student-v2` run and the
+contract and its baseline self-score (3.0 of 10 points: full correctness, no
+improvement points, not eligible for the ranking bonus). The earlier eight-chip 257.47-second `student-v2` run and the
 262.14-second pre-v2 report are retained unchanged under
 `cadathlon/validation/p1_student_v6e8/report.json` and
 `cadathlon/validation/p1_student_pre_v2/historical_run.json`; the former was
 measured with C4 on eight chips and the latter predates device recording, so
 neither can replace a calibration of the four-chip schedule.
 
-The short schedule retains **30 correctness + 60 speed + 10 evidence points**:
-each of its two cases receives `15*G + 30*G*clamp(log2(R)/2,0,1)`.
-Use `score.py --evaluation-profile student` (or the Make target above).
-The six-case formula in section 4 applies to the `legacy` schedule. Select
-one schedule, calibrate it on the contest hardware, and announce it before
-the event; do not compare scores or baselines across schedules/ring profiles.
+The 10-point event policy of section 4 is defined over the six ranked cases.
+If the short schedule is the one announced for an event, the same arithmetic
+applies over its two cases: 1.5 correctness points per passing case, the
+improvement ladder decided by the smaller of the two ratios, and the ranking
+bonus by their geometric mean. Use `score.py --evaluation-profile student`
+(or the Make target above). Select one schedule, calibrate it on the contest
+hardware, and announce it before the event; do not compare scores or baselines
+across schedules/ring profiles.
 
 ### 2.4 Authored baseline observations
 
@@ -351,8 +353,9 @@ recomputes both from the harness's own label and prediction files, and
 `score.py` refuses to award a case any points without that verdict. A case
 that writes an incomplete prediction set scores zero regardless of its speed.
 
-`suite-score` then applies the rubric in section 4 against
-`src/suite/baseline_manifest.json` and prints one JSON verdict. It is
+`suite-score` then applies the policy of section 4 against the selected profile's
+calibration (`src/suite/baseline_manifest.json` with `P1_BASELINE_PROFILE=legacy`,
+`baseline_manifest_student.json` by default) and prints one JSON verdict. It is
 explicitly **not** an official score: the judge reruns on exclusive hardware
 with its own baseline manifest.
 
@@ -508,43 +511,85 @@ count does not count as an optimization.
 
 ## 4. How to score
 
-The formula below is for explicit **legacy** evaluation. The default student
-schedule uses section 2.3.1's two-case weights and complete-run evidence gate.
+Problem 1 is worth **10 points** in the event, scored by policy
+`p1-10-point-v1` in three tiers. Let `G_i` equal 1 only if ranked case i
+passes all numerical, accuracy, privacy, parameter, memory and runtime gates,
+otherwise 0, and let `R_i = X_i / X_base_i` be its throughput ratio against the
+organizer's calibrated baseline on the same host and schedule, using
+organizer-rerun medians. The policy is defined over the six ranked cases
+C1–C6; section 2.3.1 says how it maps onto the short two-case schedule.
 
-Let `G_i` equal 1 only if case i passes all numerical, accuracy, privacy,
-parameter, memory and runtime gates, otherwise 0. Let `R_i = X_i / X_base_i`
-be the throughput ratio, using organizer-rerun medians. The score is:
+**Tier 1 — correctness, 3 points.** The 3 points are shared equally by the
+ranked cases: `3 * sum_i G_i / 6`, so each passing case earns 0.5 points. A
+faithful, unoptimized baseline scores exactly 3.
 
-`sum_i [5*G_i + 10*G_i*clamp(log2(R_i)/2, 0, 1)] + E`,
+**Tier 2 — improvement, up to 4 points.** Only a submission that passes
+**all** ranked cases earns improvement points, and its *smallest* ratio
+decides the tier, `R_min = min_i R_i`:
 
-where i covers **all six cases** and E is the evidence score below. A correct
-baseline earns 30 execution points; a 2× improvement earns 5 speed points per
-passing case; 4× or more earns 10. Regressions earn no speed points.
-Correctness contributes 30, speed 60, evidence 10. The latency cases (C1, C2)
-and the throughput cases (C3–C6) are both scored, so an entry that only helps
-large batches forfeits up to 20 speed points.
+| `R_min` | meaning | points |
+|---|---|---:|
+| ≥ 1.05 | at least 5% more images per second on every case | 1 |
+| ≥ 1.10 | at least 10% on every case | 2 |
+| ≥ 1.20 | at least 20% on every case | 3 |
+| ≥ 1.40 | at least 40% on every case | 4 |
 
-Evidence E awards 2 points each for: checkpoint and environment
-reproducibility; baseline profiles at 1 and 4 chips; an explanation tied to
-measured bottlenecks, including slot occupancy before and after; complete raw
-timing and actual-memory records; and regression tests plus a privacy and
-parameter review that states `log2(QP)`, the ceiling and the margin.
+A ratio exactly on a threshold qualifies. One case below 1.05 caps the tier
+at 0 however large the other speedups, and one failed case removes the tier
+entirely; the latency cases C1/C2 therefore count as much as the throughput
+cases.
+
+**Tier 3 — ranking bonus, up to 3 points.** Submissions that earned at least
+one improvement point are ranked by the geometric mean of their six ratios,
+`(prod_i R_i)^(1/6)`, rounded to four decimals. The best receives 3 bonus
+points, the second 2 and the third 1. A k-way tie on the rounded metric shares
+the higher bonus and skips the following k−1 ranks; bonuses are not
+redistributed when fewer than three teams are eligible. Submissions without an
+improvement point are not ranked: this eligibility gate is an organizer
+decision, so that a regression on any case cannot be outweighed by speedups
+elsewhere.
+
+A team's total is `correctness + improvement + bonus`, at most 10.
+`make -C src suite-score` prints the first two tiers and the ranking inputs for
+one submission; `make -C src suite-rank RANK_REPORTS="team=report.json ..."`
+(`src/suite/rank.py`) assigns the bonus across the saved reports of all teams.
+Both are deterministic arithmetic over the suite's own measurement files, and
+neither is an official score without the judge's rerun. The judge's recipe is:
+
+```bash
+# per team, every team on the same schedule and the same calibration manifest
+make -C src suite-score P1_BASELINE_PROFILE=legacy > /abs/teams/<team>/score.json
+# once, across teams; absolute paths, make's echo lines in the saved files are tolerated
+make -C src suite-rank RANK_REPORTS="<team>=/abs/teams/<team>/score.json ..."
+```
+
+Each report records the SHA-256 of the calibration manifest it was scored
+against; `suite-rank` refuses to mix reports from different schedules, policies
+or manifests, lists tied teams alphabetically and never redistributes an
+unclaimed bonus.
 
 `X_i` comes from the suite's own `results-{1,2,3}.json`, archived per case
 under `src/suite/results/`, never from a contestant-printed number. The
 accuracy and argmax gates come from `archive.py`, which recomputes them from
 the harness's label and prediction files and from this problem's model run in
 cleartext — organizer-owned code, not the submission's. `src/suite/score.py`
-performs the arithmetic and prints it as JSON, and covers the numerical,
-accuracy, completeness, setup and runtime gates. The privacy, parameter and
-memory gates in `G_i` are assessed by the judge from `REPORT.md` and a source
-audit; a case that fails any of them scores zero regardless of what the
-scorer printed.
+covers the numerical, accuracy, completeness, setup and runtime gates. The
+privacy, parameter and memory gates in `G_i` are assessed by the judge from
+`REPORT.md` and a source audit; a case that fails any of them scores zero
+regardless of what the scorer printed. The report earns no separate points
+under this policy, but a submission cannot pass that audit without it: state
+checkpoint hashes and the environment, baseline profiles at 1 and 4 chips with
+slot occupancy before and after, the measured bottlenecks your change
+addresses, complete raw timing and actual-memory records, regression tests, and
+the privacy and parameter review with `log2(QP)`, the ceiling and the margin.
 
-Ties break by geometric mean throughput ratio across all six passing cases
-(an incomplete entry ranks below a fully passing one), then lower peak device
-memory, then lower total setup time. The local runner does not assign an
-official score from contestant-supplied times.
+The judge runs baseline and candidate in separate clean processes, interleaves
+their reservations, and reruns submissions whose ranking metrics lie within 2%
+of each other once before assigning the bonus; metrics still equal after
+rounding share the bonus as described above. For the published leaderboard
+order only, remaining ties break by lower peak device memory, then lower total
+setup time, which the judge applies by hand to the alphabetical order printed
+by `suite-rank`.
 
 Submit `src/`, `cross.patch`, `REPORT.md`, raw result JSON and environment and
 weight hashes. Include both successful and failed configurations. Four report

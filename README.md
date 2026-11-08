@@ -44,6 +44,24 @@ and C4 at 130.21 images/s on four chips. This is evidence for that machine, not
 a timing guarantee for another one. Correctness, actual-ring 128-bit security,
 input/model identity, calibration provenance and cleanup checks remain enabled.
 
+## Scoring policy (10 points)
+
+Problem 1 contributes at most **10 points** to the event, computed by policy
+`p1-10-point-v1` (handout section 4) in three tiers over the six ranked cases:
+
+| Tier | Points | Rule |
+|---|---:|---|
+| Correctness | 3 | shared equally by the ranked cases: 0.5 per passing case on the six-case schedule (1.5 per case when the two-case student schedule is scored) |
+| Improvement | 0–4 | all cases pass and the *smallest* throughput ratio against the calibrated baseline is ≥ 1.05 / 1.10 / 1.20 / 1.40 for 1 / 2 / 3 / 4 points |
+| Ranking bonus | 0–3 | the three best teams with at least one improvement point, by geometric mean of their ratios: 3, 2, 1 points; equal rounded metrics share the bonus |
+
+`make suite-score` prints a team's correctness and improvement points plus its
+ranking metric; `make suite-rank RANK_REPORTS="alice=$PWD/teams/alice.json bob=$PWD/teams/bob.json"`
+(absolute paths; the target forwards to `src/`) assigns the bonus across the
+saved reports and refuses to mix schedules, policies or calibration manifests. An unmodified baseline scores 3.0. The
+report (`REPORT.md`) carries no separate points but is required for the judge's
+privacy, parameter and memory audit.
+
 The ranked evaluation uses the separately maintained upstream harness and MNIST
 data. Its pinned revision is in
 [suite_config.json](cadathlon/non_agent_pset/p1_benchmark/src/suite/suite_config.json).
@@ -75,11 +93,11 @@ and [validation/report.json](validation/report.json). The following tasks work
 end to end on this host:
 
 - `make check` (CPU): 6/6 plaintext fixtures exact, 23/23 scorer gate
-  behaviors, 150/150 pytest tests ([validation/check.log](validation/check.log)).
+  behaviors, 183/183 pytest tests ([validation/check.log](validation/check.log)).
 - `make baseline-plan` and `inspect_plan.py --student-baseline` (CPU): legacy
   plan N=16384, 8192 slots, 9.57% occupancy, log2(QP)=365.0; student plan
   N=8192, 4096 slots, 19.14% occupancy, log2(QP)=212.46; both at 128-bit.
-- `make docs`: the HTML and 11-page PDF handouts re-render from `problem.md`.
+- `make docs`: the HTML and 12-page PDF handouts re-render from `problem.md`.
 - Local encrypted smoke checks on the TPU (`runner.py`): all six fixtures with
   `--student-baseline` on 1, 2 and 4 chips, and test1/test4/test6 with the
   legacy `--baseline`; every logit, argmax and actual-ring security gate passed
@@ -91,7 +109,8 @@ end to end on this host:
   100% agreement with the same model in cleartext, calibration published
   ([cadathlon/validation/p1_student_suite.json](cadathlon/validation/p1_student_suite.json)).
 - `make suite-score CANDIDATE_LABEL=student-baseline`: baseline self-score of
-  30 correctness points and 0 speed points.
+  3.0 of 10 points under policy `p1-10-point-v1` (full correctness, no
+  improvement points, not eligible for the ranking bonus).
 - `make suite-evaluate` with the unimplemented `bench_opt.py`: stops in stage 3
   with `NotImplementedError` after 20.7 s, cleanup passes and `make suite-score`
   awards 0 points. That is the designed state until a contestant implements it.
@@ -101,8 +120,9 @@ end to end on this host:
   (legacy, C1–C6): all six cases pass in 1685.94 s, every case verified with
   100% cleartext agreement; the republished
   [baseline_manifest.json](cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest.json)
-  now holds four-chip numbers and the legacy self-score is 30 correctness points,
-  0 speed points ([cadathlon/validation/p1_legacy_suite.json](cadathlon/validation/p1_legacy_suite.json)).
+  now holds four-chip numbers and the legacy self-score is 3.0 of 10 points
+  (0.5 per passing case, no improvement points;
+  [cadathlon/validation/p1_legacy_suite.json](cadathlon/validation/p1_legacy_suite.json)).
 
 Ranked student schedule on four chips (median of three harness runs; the same
 100 images and frozen model as the earlier eight-chip calibration):
@@ -152,13 +172,14 @@ on one chip and about 72 s on two or four chips for the student ring, and about
 85 s on one chip to 90 s on four chips for the legacy ring) and is excluded
 from the medians.
 
-Open follow-up from the review of this migration: the legacy scoring path in
+Resolved follow-up from the review of this migration: the legacy scoring path in
 [score.py](cadathlon/non_agent_pset/p1_benchmark/src/suite/score.py) never binds
 a calibration entry's device count to the case it scores, so a legacy manifest
 measured with a different chip count would be divided silently; the student path
 checks `device_kinds`. The republished four-chip `baseline_manifest.json`
-removes the immediate hazard. The scoring code is kept byte-identical to the
-upstream extraction, so this is recorded here rather than changed.
+removed the immediate hazard, and the 10-point policy change closed the gap:
+`score.py` now fails a case whose calibration entry records a different device
+count, and `suite-rank` refuses reports scored against different manifests.
 
 ## Submission and documentation
 
@@ -179,7 +200,7 @@ make docs
 Extracted from `EfficientPPML/CROSS` commit
 `3a49b207acc851a8d599b9b3f3053b8af1d199aa`. The initial copied-file hashes are in
 [upstream-source-manifest.json](validation/upstream-source-manifest.json).
-Only P1 packaging, navigation and standalone entry documentation are adapted;
-the HE arithmetic, baseline, runner gates and scoring code retain their source
-bytes. The repository retains the upstream [MIT license](LICENSE) and the
+Only P1 packaging, navigation and standalone entry documentation are adapted,
+and the scorer carries the 10-point event policy (`score.py`, `rank.py`); the
+HE arithmetic, baseline and runner gates retain their source bytes. The repository retains the upstream [MIT license](LICENSE) and the
 embedded fonts' license notices.

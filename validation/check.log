@@ -35,11 +35,11 @@ ok   single still requires own reference passed=0 ['frozen verdict is incomplete
 {"case": "test6.in", "mode": "plaintext-reference", "max_abs_error": 0.0, "nrmse": 0.0, "top1_agreement": 1.0}
 make[1]: Leaving directory '/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src'
 JAX_PLATFORMS=cpu /home/jianming_gatech/miniconda3/envs/cadp1/bin/python -m pytest -q cadathlon/tests
-........................................................................ [ 48%]
-........................................................................ [ 96%]
-......                                                                   [100%]
-150 passed in 7.65s
+........................................................................ [ 39%]
+........................................................................ [ 78%]
+.......................................                                  [100%]
+183 passed in 7.66s
 
-real	0m15.310s
-user	1m15.199s
-sys	0m3.139s
+real	0m15.312s
+user	1m15.281s
+sys	0m3.083s

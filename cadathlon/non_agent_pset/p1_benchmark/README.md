@@ -61,11 +61,14 @@ chip; C4: 130.21 images/s on four chips). See
 `../../validation/p1_student_suite.json` for scope and environment; the earlier
 eight-chip run (257.47 s, C4 on eight chips) is kept under
 `../../validation/p1_student_v6e8/`. Recalibrate on contest hardware.
-The short profile gives each case 15 correctness and 30 speed points, plus the
-same 10 evidence points for the report; legacy six-case weights are unchanged.
+Scoring follows the 10-point policy in the handout's section 4: 3 correctness
+points shared by the ranked cases, 0–4 improvement points from the smallest
+throughput ratio over all cases (at least 5/10/20/40% faster everywhere), and a
+3/2/1 ranking bonus for the three best eligible teams (`make -C src suite-rank`).
+Under the short profile each passing case is worth 1.5 correctness points.
 
 This uses separate `C3_student-baseline`/`C4_student-baseline` archives and needs
-a measured `src/suite/baseline_manifest_student.json` for performance points.
+a measured `src/suite/baseline_manifest_student.json` for improvement points.
 The scorer refuses to compare different profiles. Candidate services using
 this profile must accept its supplied keys. A smaller ring alone does not
 prove the five-minute evaluation target; use the short profile for the 1.5-hour slot after the
@@ -78,8 +81,8 @@ labels, images, predictions and keys are not copied into it. A failed later
 calibration preserves the published successful proof. Candidate reports stay
 under `src/suite/run/evaluation-student-candidate/`; `make clean` removes them,
 so rerun before scoring. The recorded 276.63-second four-chip run includes this
-complete proof and passed baseline self-scoring (30 correctness points, zero
-speed points). The earlier eight-chip 257.47-second proof and the 262.14-second
+complete proof and passed baseline self-scoring (3.0 of 10 points: full
+correctness, no improvement points). The earlier eight-chip 257.47-second proof and the 262.14-second
 pre-v2 evidence are preserved separately under `../../validation/p1_student_v6e8/`
 and `../../validation/p1_student_pre_v2/historical_run.json`; neither matches
 the four-chip schedule, so neither can replace the new proof.

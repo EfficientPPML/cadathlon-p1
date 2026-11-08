@@ -146,7 +146,7 @@ def test_malformed_baseline_reports_error_without_crashing(tmp_path, monkeypatch
     score.main()
     report = json.loads(capsys.readouterr().out)
     assert 'JSON object' in report['baseline_error']
-    assert report['speed_points'] == 0
+    assert report['improvement_points'] == 0
 
 
 def test_different_ring_profiles_never_share_speed_baseline(monkeypatch, capsys):
@@ -160,7 +160,7 @@ def test_different_ring_profiles_never_share_speed_baseline(monkeypatch, capsys)
     result = json.loads(capsys.readouterr().out)
     assert result['cases']['C3']['passed'] == 0
     assert result['cases']['C3']['throughput_ratio'] is None
-    assert result['speed_points'] == 0
+    assert result['improvement_points'] == 0
 
 
 def test_old_student_calibration_needs_complete_evaluation_evidence(monkeypatch, tmp_path, capsys):
@@ -182,7 +182,7 @@ def test_old_student_calibration_needs_complete_evaluation_evidence(monkeypatch,
     report = json.loads(capsys.readouterr().out)
     assert 'student-v2' in report['baseline_error']
     assert report['evaluation_error']
-    assert report['execution_points'] == report['speed_points'] == 0
+    assert report['correctness_points'] == report['improvement_points'] == 0
 
 
 @pytest.mark.parametrize('subset,profile', [(True, 'student'), (False, 'legacy')])

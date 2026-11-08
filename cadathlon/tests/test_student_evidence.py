@@ -83,8 +83,8 @@ def run_score(monkeypatch, capsys, extra=()):
 def test_complete_student_schedule_and_default_calibration(measured, monkeypatch, capsys):
     code, report = run_score(monkeypatch, capsys)
     assert code == 0 and report['passed']
-    assert report['execution_points'] == 30
-    assert report['speed_points'] == 0
+    assert report['correctness_points'] == 3.0 and report['improvement_points'] == 0
+    assert report['points_before_ranking_bonus'] == 3.0 and report['ranking_eligible'] is False
     assert set(report['cases']) == {'C3', 'C4'}
 
 
@@ -107,7 +107,7 @@ def test_incomplete_or_wrong_student_whole_report_scores_nothing(measured, monke
     code, result = run_score(monkeypatch, capsys)
     assert code == 1 and not result['passed']
     assert result['evaluation_error']
-    assert result['subtotal_without_evidence'] == 0
+    assert result['points_before_ranking_bonus'] == 0
 
 
 def test_changed_archives_cannot_reuse_successful_whole_report(measured, monkeypatch, capsys):
@@ -118,7 +118,7 @@ def test_changed_archives_cannot_reuse_successful_whole_report(measured, monkeyp
     path.write_text(json.dumps(record))
     code, result = run_score(monkeypatch, capsys)
     assert code == 1 and 'changed' in result['evaluation_error']
-    assert result['subtotal_without_evidence'] == 0
+    assert result['points_before_ranking_bonus'] == 0
 
 
 def test_legacy_archive_profile_rejected_even_with_matching_hashes(measured, monkeypatch, capsys):
@@ -131,7 +131,7 @@ def test_legacy_archive_profile_rejected_even_with_matching_hashes(measured, mon
     reports['candidate']['archive_sha256']['C3'] = score.archive_hashes(folder, 3)
     score.evaluation_path('student-candidate').write_text(json.dumps(reports['candidate']))
     code, result = run_score(monkeypatch, capsys)
-    assert code == 1 and result['subtotal_without_evidence'] == 0
+    assert code == 1 and result['points_before_ranking_bonus'] == 0
 
 
 def test_input_identity_cannot_mix_with_calibration(measured, monkeypatch, capsys):
@@ -175,7 +175,7 @@ def test_historical_manifest_is_not_relabelled_as_current(measured, monkeypatch,
     before = target.read_bytes()
     code, result = run_score(monkeypatch, capsys)
     assert code == 1 and 'newly measured' in result['baseline_error']
-    assert result['speed_points'] == 0 and target.read_bytes() == before
+    assert result['improvement_points'] == 0 and target.read_bytes() == before
 
 
 @pytest.mark.parametrize('field', ['versions', 'source_files_unchanged', 'device_kinds'])
@@ -205,7 +205,7 @@ def test_changed_label_cannot_borrow_another_attempt(measured, monkeypatch, caps
     code, result = run_score(monkeypatch, capsys, ('--evaluation-report', str(score.evaluation_path('student-baseline'))))
     assert code == 1
     assert 'label' in result['evaluation_error']
-    assert result['subtotal_without_evidence'] == 0
+    assert result['points_before_ranking_bonus'] == 0
 
 
 def test_student_manifest_cannot_bypass_transactional_evaluator(measured, monkeypatch):
@@ -225,7 +225,7 @@ def test_gate_configuration_cannot_change_after_measurement(measured, monkeypatc
     contents['gates']['max_batch_s'] = 10000
     config.write_text(json.dumps(contents))
     code, result = run_score(monkeypatch, capsys)
-    assert code == 1 and result['subtotal_without_evidence'] == 0
+    assert code == 1 and result['points_before_ranking_bonus'] == 0
     assert 'schedule/gates' in result['evaluation_error']
 
 

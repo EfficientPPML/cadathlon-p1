@@ -193,6 +193,65 @@ def summarize(records, batch: int, archived=None):
 def _finite_number(value):
     return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
+# P1 event policy "p1-10-point-v1" (handout section 4): 3 correctness points
+# shared equally by the ranked cases, 0-4 improvement points decided by the
+# smallest throughput ratio over ALL ranked cases, and a 3/2/1 ranking bonus
+# for the three best eligible submissions, assigned across teams by rank.py.
+POLICY = 'p1-10-point-v1'
+MAX_POINTS = 10
+CORRECTNESS_POINTS = 3.0
+IMPROVEMENT_TIERS = ((1.40, 4), (1.20, 3), (1.10, 2), (1.05, 1))
+RANKING_BONUS = (3, 2, 1)
+RATIO_TOLERANCE = 1e-9
+METRIC_DECIMALS = 4
+
+
+def improvement_tier(min_ratio):
+    """Improvement points from the smallest throughput ratio across all ranked cases."""
+    if not _finite_number(min_ratio) or min_ratio <= 0:
+        return 0
+    for threshold, points in IMPROVEMENT_TIERS:
+        # A ratio exactly on a threshold qualifies; measured rates divided in
+        # floating point may land a hair below the literal.
+        if min_ratio - threshold >= -RATIO_TOLERANCE:
+            return points
+    return 0
+
+
+def ranking_metric(ratios):
+    """Geometric mean of the per-case throughput ratios of a complete submission."""
+    if not ratios or any(not _finite_number(r) or r <= 0 for r in ratios):
+        return None
+    return math.exp(sum(math.log(r) for r in ratios) / len(ratios))
+
+
+def policy_points(verdict, ranked):
+    """Correctness and improvement points plus the ranking inputs for rank.py."""
+    passed = [cid for cid in ranked if verdict.get(cid, {}).get("passed")]
+    ratios = [verdict.get(cid, {}).get("throughput_ratio") for cid in ranked]
+    complete = bool(ranked) and len(passed) == len(ranked) and all(
+        _finite_number(r) and r > 0 for r in ratios)
+    min_ratio = min(ratios) if complete else None
+    tier = improvement_tier(min_ratio)
+    metric = ranking_metric(ratios) if complete else None
+    correctness = CORRECTNESS_POINTS * len(passed) / len(ranked) if ranked else 0.0
+    return {
+        "policy": POLICY,
+        "max_points": MAX_POINTS,
+        "cases_ranked": len(ranked),
+        "cases_passed": len(passed),
+        "correctness_points": round(correctness, 3),
+        # Unrounded on purpose: the printed value must explain the tier it decided.
+        "improvement_min_ratio": min_ratio,
+        "improvement_thresholds": {str(points): threshold for threshold, points in sorted(IMPROVEMENT_TIERS)},
+        "improvement_points": tier,
+        "ranking_metric": None if metric is None else round(metric, METRIC_DECIMALS),
+        "ranking_eligible": tier >= 1,
+        "ranking_bonus": None,
+        "ranking_bonus_note": "assigned across teams by rank.py: 3/2/1 for the three best eligible ranking metrics",
+        "points_before_ranking_bonus": round(correctness + tier, 3),
+    }
+
 
 def gate(summary, gates) -> tuple[int, list]:
     reasons = []
@@ -523,9 +582,9 @@ def main():
         except (OSError, ValueError, KeyError, TypeError) as error:
             baseline_error = str(error)
     else:
-        baseline_error = "baseline manifest missing; speed points unavailable"
+        baseline_error = "baseline manifest missing; improvement points unavailable"
 
-    verdict, execution, speed = {}, 0.0, 0.0
+    verdict = {}
     for case in cases:
         cid = case["id"]
         summary = measured.get(cid, {})
@@ -548,6 +607,12 @@ def main():
                 and (base.get('execution') or {}).get('device_kinds') != (summary.get('execution') or {}).get('device_kinds')):
             passed = 0
             reasons.append('TPU device kind differs from calibration')
+        # Bind the calibration to the case's chip count whenever it recorded one:
+        # a manifest measured with another device count must not divide a ratio.
+        base_devices = (base.get("execution") or {}).get("devices") if isinstance(base.get("execution"), dict) else None
+        if isinstance(base_devices, list) and len(base_devices) != case["devices"]:
+            passed = 0
+            reasons.append("baseline calibration device count differs from the case")
         ratio = None
         base_rate = base.get("throughput_images_per_s")
         if (passed and base.get("verified") == "PASS" and base.get("images") == case["batch"]
@@ -557,20 +622,15 @@ def main():
             ratio = summary["throughput_images_per_s"] / base["throughput_images_per_s"]
             if not math.isfinite(ratio) or ratio <= 0:
                 ratio = None
-                baseline_error = f"nonfinite or underflowed throughput ratio for {cid}; speed points unavailable"
-        points_exec = (30.0 / len(ranked)) * passed
-        points_speed = 0.0
-        if passed and ratio and ratio > 0:
-            points_speed = (60.0 / len(ranked)) * min(max(math.log2(ratio) / 2.0, 0.0), 1.0)
-        execution += points_exec
-        speed += points_speed
+                baseline_error = f"nonfinite or underflowed throughput ratio for {cid}; improvement points unavailable"
+        # Per-case points are the correctness share only; improvement and the
+        # ranking bonus are properties of the whole submission (policy_points).
         verdict[cid] = {"passed": passed, "reasons": reasons,
                         "throughput_ratio": ratio,
-                        "points": round(points_exec + points_speed, 3), **summary}
+                        "points": round(CORRECTNESS_POINTS / len(ranked) * passed, 3), **summary}
 
-    ratios = [v["throughput_ratio"] for v in verdict.values()
-              if v.get("passed") and v.get("throughput_ratio")]
     success = all(v.get('passed') for v in verdict.values()) and not baseline_error and not evaluation_error
+    points = policy_points(verdict, ranked)
     print(json.dumps({
         'passed': bool(success),
         "suite_commit": CONFIG["suite"]["commit"],
@@ -582,12 +642,8 @@ def main():
         "ranked_case_ids": ranked,
         "baseline_error": baseline_error,
         'evaluation_error': evaluation_error,
-        "execution_points": round(execution, 3),
-        "speed_points": round(speed, 3),
-        "evidence_points": "assessed by the judge from REPORT.md (10 max)",
-        "subtotal_without_evidence": round(execution + speed, 3),
-        "geometric_mean_throughput_ratio":
-            round(math.exp(sum(math.log(r) for r in ratios) / len(ratios)), 4) if ratios else None,
+        "baseline_manifest_sha256": sha256(args.baseline) if args.baseline.is_file() else None,
+        **points,
         "note": "organizer arithmetic over harness-written measurement files; "
                 "not an official score without a judge rerun",
     }, indent=2, allow_nan=False))

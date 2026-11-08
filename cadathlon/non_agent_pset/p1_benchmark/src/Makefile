@@ -7,7 +7,7 @@ baseline-plan: all
 	$(PYTHON) inspect_plan.py
 
 .PHONY: suite-check suite-install suite-baseline suite-test suite-score \
-        suite-gates suite-stop
+        suite-gates suite-stop suite-rank
 
 # The gate self-test is pure arithmetic over synthetic summaries -- no
 # accelerator and no suite checkout -- so it is safe to run with `all`.
@@ -51,6 +51,11 @@ suite-score:
 	$(PYTHON) suite/score.py --suite-root $(MLINF_ROOT) --label $(CANDIDATE_LABEL) --baseline $(BASELINE_MANIFEST) --evaluation-profile $(EVALUATION_PROFILE)
 suite-stop:
 	cd $(MLINF_ROOT) && $(PYTHON) submissions/mnist/server_stop.py || true
+# Cross-team ranking bonus of policy p1-10-point-v1: pass each team's saved
+# suite-score JSON as TEAM=path. Offline arithmetic, no accelerator.
+RANK_REPORTS ?=
+suite-rank:
+	$(PYTHON) suite/rank.py $(foreach report,$(RANK_REPORTS),--report $(report))
 
 .PHONY: suite-evaluate suite-evaluate-baseline
 # Full selected schedule with wall-time budget, per-case archives and cleanup.

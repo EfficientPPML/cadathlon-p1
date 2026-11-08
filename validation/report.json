@@ -8,6 +8,7 @@
     "cadathlon/non_agent_pset/p1_benchmark/doc/problem.md",
     "cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf",
     "cadathlon/non_agent_pset/p1_benchmark/oneliner",
+    "cadathlon/non_agent_pset/p1_benchmark/src/Makefile",
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest.json",
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest_student.json",
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C1_baseline/case.json",
@@ -42,7 +43,11 @@
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C6_baseline/results-1.json",
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C6_baseline/results-2.json",
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C6_baseline/results-3.json",
+    "cadathlon/non_agent_pset/p1_benchmark/src/suite/score.py",
     "cadathlon/non_agent_pset/p1_benchmark/src/suite/suite_config.json",
+    "cadathlon/tests/test_evaluation_schedule.py",
+    "cadathlon/tests/test_scoring.py",
+    "cadathlon/tests/test_student_evidence.py",
     "cadathlon/validation/p1_student_suite.json"
   ],
   "baseline_plan_command_passed": true,
@@ -54,16 +59,21 @@
     "evidence": "cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest.json",
     "passed": true
   },
-  "local_links_checked": 19,
+  "local_links_checked": 20,
   "local_links_missing": 0,
   "missing_original_files": [],
   "new_TPU_benchmark_run": true,
   "plaintext_fixtures_passed": 6,
   "pytest_failed": 0,
-  "pytest_passed": 150,
+  "pytest_passed": 183,
   "pytest_skipped": 0,
   "ranked_model_manifest_verified": true,
   "scope": "Standalone P1 four-chip (v6e-4) validation: CPU checks, local-runner TPU smoke checks, and complete ranked evaluations",
+  "scoring_policy": {
+    "baseline_self_score": 3.0,
+    "max_points": 10,
+    "policy": "p1-10-point-v1"
+  },
   "source_commit": "3a49b207acc851a8d599b9b3f3053b8af1d199aa",
   "source_repository": "https://github.com/EfficientPPML/CROSS",
   "student_schedule_evaluation": {
@@ -80,6 +90,6 @@
     "machine_type": "ct6e-standard-4t-tpu"
   },
   "tpu_smoke_checks": "validation/tpu_smoke_v6e4.json",
-  "unchanged_original_files": 174,
-  "utc": "2026-11-08T00:32:50.321406+00:00"
+  "unchanged_original_files": 169,
+  "utc": "2026-11-08T01:28:09.463253+00:00"
 }

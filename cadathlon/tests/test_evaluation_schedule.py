@@ -331,7 +331,7 @@ def test_client_shims_override_inherited_tpu_backend(tmp_path):
     assert 'os.environ["JAX_PLATFORMS"] = "cpu"' not in server.read_text()
 
 
-def test_legacy_archives_cannot_receive_student_execution_weights(monkeypatch, capsys):
+def test_legacy_archives_score_nothing_under_the_student_profile(monkeypatch, capsys):
     def read_case(root, instance, runs, case_id, label):
         archive = SUITE / 'results' / (case_id + '_baseline')
         meta = json.loads((archive / 'case.json').read_text())
@@ -342,5 +342,5 @@ def test_legacy_archives_cannot_receive_student_execution_weights(monkeypatch, c
     score.main()
     result = json.loads(capsys.readouterr().out)
     assert set(result['cases']) == {'C3', 'C4'}
-    assert result['execution_points'] == 0
-    assert result['speed_points'] == 0
+    assert result['correctness_points'] == 0
+    assert result['improvement_points'] == 0
