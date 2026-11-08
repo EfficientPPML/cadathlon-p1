@@ -152,6 +152,14 @@ on one chip and about 72 s on two or four chips for the student ring, and about
 85 s on one chip to 90 s on four chips for the legacy ring) and is excluded
 from the medians.
 
+Open follow-up from the review of this migration: the legacy scoring path in
+[score.py](cadathlon/non_agent_pset/p1_benchmark/src/suite/score.py) never binds
+a calibration entry's device count to the case it scores, so a legacy manifest
+measured with a different chip count would be divided silently; the student path
+checks `device_kinds`. The republished four-chip `baseline_manifest.json`
+removes the immediate hazard. The scoring code is kept byte-identical to the
+upstream extraction, so this is recorded here rather than changed.
+
 ## Submission and documentation
 
 Complete the problem's `REPORT.md` and `cross.patch`, then run `make submit`.
