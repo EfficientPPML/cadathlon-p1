@@ -54,11 +54,13 @@ make -C src suite-score P1_BASELINE_PROFILE=student
 
 Stage the upstream data and cleartext checkpoint first. The command rejects a
 CPU/GPU fallback and returns nonzero on timeout, failed correctness or cleanup.
-Measured on the earlier eight-chip TPU host, where C4 ran on eight chips, the
-complete baseline command finished in **257.56 seconds (4m18s)**, with both cases
-passing all gates and 100% agreement with the same model in cleartext. See
-`../../validation/p1_student_suite.json` for scope and environment. The ranked
-schedule now runs C4 on four chips; recalibrate on the four-chip contest host.
+Measured on the four-chip TPU v6e host (`v6e-4`), the complete baseline command
+finished in **276.63 seconds (4m37s)**, with both cases passing all gates and
+100% agreement with the same model in cleartext (C3: 53.97 images/s on one
+chip; C4: 130.21 images/s on four chips). See
+`../../validation/p1_student_suite.json` for scope and environment; the earlier
+eight-chip run (257.47 s, C4 on eight chips) is kept under
+`../../validation/p1_student_v6e8/`. Recalibrate on contest hardware.
 The short profile gives each case 15 correctness and 30 speed points, plus the
 same 10 evidence points for the report; legacy six-case weights are unchanged.
 
@@ -75,11 +77,12 @@ That proof is included in the release and survives `make clean`; private
 labels, images, predictions and keys are not copied into it. A failed later
 calibration preserves the published successful proof. Candidate reports stay
 under `src/suite/run/evaluation-student-candidate/`; `make clean` removes them,
-so rerun before scoring. The recorded 257.56-second run includes this complete
-proof and passed baseline self-scoring (30 correctness points, zero speed
-points). The earlier 262.14-second evidence is preserved separately in
-`../../validation/p1_student_pre_v2/historical_run.json`; it predates this
-contract and cannot replace the new proof.
+so rerun before scoring. The recorded 276.63-second four-chip run includes this
+complete proof and passed baseline self-scoring (30 correctness points, zero
+speed points). The earlier eight-chip 257.47-second proof and the 262.14-second
+pre-v2 evidence are preserved separately under `../../validation/p1_student_v6e8/`
+and `../../validation/p1_student_pre_v2/historical_run.json`; neither matches
+the four-chip schedule, so neither can replace the new proof.
 
 Use `P1_BASELINE_PROFILE=legacy` explicitly with `suite-baseline`, `suite-test`
 or `suite-score` for the old schedule. To run the entire longer legacy schedule,

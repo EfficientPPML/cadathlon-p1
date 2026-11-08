@@ -2,11 +2,12 @@
   "id": "C6",
   "instance": 2,
   "batch": 1000,
-  "devices": 8,
+  "devices": 4,
   "verify": {
     "scope": "final run",
     "expected_images": 1000,
     "predictions_written": 1000,
+    "labels_written": 1000,
     "complete": true,
     "correct": 976,
     "accuracy_over_expected": 0.976,
@@ -27,8 +28,90 @@
   ],
   "suite_commit": "739378698fc1f668aff7246724b45cff76f04a98",
   "seed": 3,
-  "devices_env": "8",
-  "archived_from": "/tmp/p3suite/measurements/medium",
-  "label": "baseline",
-  "evidence_note": "test_pixels.txt omitted at this size; regenerate with harness/generate_input.py using the derived seed 1742692731"
+  "baseline_profile": "legacy",
+  "evaluation_id": "63481baa54a94d0ca66493d78c0d8e0b",
+  "identity": {
+    "model": {
+      "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+      "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+    },
+    "pixels_sha256": "5c1e54af376af317828434c09d5f0d029eaaad2cb68bc4daa8c8ba941055fb6d",
+    "labels_sha256": "9e8bf176c4958e2642db5e5111954f79bd513598a7a70b6d51ab79094bfdc424"
+  },
+  "execution": {
+    "devices": [
+      "TPU_0(process=0,(0,0,0,0))",
+      "TPU_1(process=0,(1,0,0,0))",
+      "TPU_2(process=0,(0,1,0,0))",
+      "TPU_3(process=0,(1,1,0,0))"
+    ],
+    "device_kinds": [
+      "TPU v6 lite",
+      "TPU v6 lite",
+      "TPU v6 lite",
+      "TPU v6 lite"
+    ],
+    "execution_rings": [
+      {
+        "degree": 16384,
+        "num_slots": 8192,
+        "num_q": 8,
+        "num_p": 4,
+        "dnum": null,
+        "max_level": 3,
+        "q_towers": [
+          2147352577,
+          1072857089,
+          1073184769,
+          1073053697,
+          1073872897,
+          1073971201,
+          1073479681,
+          1073643521
+        ],
+        "p_towers": [
+          2146959361,
+          2146336769,
+          2146041857,
+          2145976321
+        ],
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128,
+        "security_model": "classical"
+      },
+      {
+        "degree": 16384,
+        "num_slots": 8192,
+        "num_q": 8,
+        "num_p": 4,
+        "dnum": 2,
+        "max_level": 3,
+        "q_towers": [
+          2147352577,
+          1072857089,
+          1073184769,
+          1073053697,
+          1073872897,
+          1073971201,
+          1073479681,
+          1073643521
+        ],
+        "p_towers": [
+          2146959361,
+          2146336769,
+          2146041857,
+          2145976321
+        ],
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128,
+        "security_model": "classical"
+      }
+    ],
+    "batch": 1000
+  },
+  "devices_env": "4",
+  "archived_from": "/home/jianming_gatech/ml-inference/measurements/medium",
+  "label": "baseline"
 }

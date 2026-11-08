@@ -10,12 +10,12 @@
     "C3": {
       "runs": 3,
       "baseline_profile": "student",
-      "one_time_setup_s": 68.8269,
-      "median_encrypted_compute_s": 1.8138,
-      "median_server_execute_s": 1.531326,
+      "one_time_setup_s": 75.5463,
+      "median_encrypted_compute_s": 1.8528,
+      "median_server_execute_s": 1.531526,
       "images": 100,
-      "throughput_images_per_s": 55.132870217223505,
-      "ms_per_image": 18.138,
+      "throughput_images_per_s": 53.972366148531954,
+      "ms_per_image": 18.528,
       "encrypted_accuracy": 0.96,
       "own_cleartext_agreement": 1.0,
       "identity": {
@@ -95,12 +95,12 @@
     "C4": {
       "runs": 3,
       "baseline_profile": "student",
-      "one_time_setup_s": 72.7011,
-      "median_encrypted_compute_s": 0.5757,
-      "median_server_execute_s": 0.274494,
+      "one_time_setup_s": 80.54679999999999,
+      "median_encrypted_compute_s": 0.768,
+      "median_server_execute_s": 0.447856,
       "images": 100,
-      "throughput_images_per_s": 173.70158068438423,
-      "ms_per_image": 5.757000000000001,
+      "throughput_images_per_s": 130.20833333333334,
+      "ms_per_image": 7.68,
       "encrypted_accuracy": 0.96,
       "own_cleartext_agreement": 1.0,
       "identity": {
@@ -116,17 +116,9 @@
           "TPU_0(process=0,(0,0,0,0))",
           "TPU_1(process=0,(1,0,0,0))",
           "TPU_2(process=0,(0,1,0,0))",
-          "TPU_3(process=0,(1,1,0,0))",
-          "TPU_4(process=0,(0,2,0,0))",
-          "TPU_5(process=0,(1,2,0,0))",
-          "TPU_6(process=0,(0,3,0,0))",
-          "TPU_7(process=0,(1,3,0,0))"
+          "TPU_3(process=0,(1,1,0,0))"
         ],
         "device_kinds": [
-          "TPU v6 lite",
-          "TPU v6 lite",
-          "TPU v6 lite",
-          "TPU v6 lite",
           "TPU v6 lite",
           "TPU v6 lite",
           "TPU v6 lite",
@@ -193,7 +185,7 @@
     }
   },
   "gate_version": "student-v2",
-  "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+  "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
   "evaluation_label": "student-baseline",
   "versions": {
     "jax": "0.12.0.1",
@@ -203,5 +195,5 @@
     "torch": "2.15.0+cpu",
     "python": "3.13.18"
   },
-  "evaluation_report": "calibration/student-baseline/9250e83535a84d98a3918c629d64380c/report.json"
+  "evaluation_report": "calibration/student-baseline/425d1d96af1348d5ac64ffb0715a80ed/report.json"
 }

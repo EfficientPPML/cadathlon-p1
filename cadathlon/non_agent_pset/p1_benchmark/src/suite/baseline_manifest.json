@@ -1,86 +1,561 @@
 {
-  "note": "authored baseline measured on the author's 8-chip TPU v6e host; indicative only. ORGANIZER.md requires the judge to measure its own on contest hardware before scoring.",
+  "note": "Measured calibration; organizers must reproduce it on contest hardware.",
+  "evaluation_profile": "legacy",
   "suite_commit": "739378698fc1f668aff7246724b45cff76f04a98",
   "seed": 3,
   "runs_per_case": 3,
   "statistic": "median",
-  "metric": "throughput_images_per_s = images / median Timing['Encrypted computation'], the harness's own stage 7",
+  "metric": "throughput_images_per_s = images / median Timing['Encrypted computation']",
   "cases": {
     "C1": {
       "runs": 3,
-      "one_time_setup_s": 150.99550000000002,
-      "median_encrypted_compute_s": 0.1271,
-      "median_server_execute_s": 0.032452,
+      "baseline_profile": "legacy",
+      "one_time_setup_s": 94.401,
+      "median_encrypted_compute_s": 0.1193,
+      "median_server_execute_s": 0.028409,
       "images": 1,
-      "throughput_images_per_s": 7.867820613690008,
-      "ms_per_image": 127.1,
+      "throughput_images_per_s": 8.382229673093043,
+      "ms_per_image": 119.3,
       "encrypted_accuracy": null,
       "own_cleartext_agreement": 1.0,
+      "identity": {
+        "model": {
+          "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+          "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+        },
+        "pixels_sha256": "964221f25125975570e5ab7f39bfe9a282208860892ae9d00e3a9a5dadb47903",
+        "labels_sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58"
+      },
+      "execution": {
+        "devices": [
+          "TPU_0(process=0,(0,0,0,0))"
+        ],
+        "device_kinds": [
+          "TPU v6 lite"
+        ],
+        "execution_rings": [
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": null,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          },
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": 2,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          }
+        ],
+        "batch": 1
+      },
       "verified": "PASS",
       "correct": 1
     },
     "C2": {
       "runs": 3,
-      "one_time_setup_s": 168.88109999999998,
-      "median_encrypted_compute_s": 0.1329,
-      "median_server_execute_s": 0.037767,
+      "baseline_profile": "legacy",
+      "one_time_setup_s": 98.3956,
+      "median_encrypted_compute_s": 0.1221,
+      "median_server_execute_s": 0.030557,
       "images": 1,
-      "throughput_images_per_s": 7.524454477050415,
-      "ms_per_image": 132.89999999999998,
+      "throughput_images_per_s": 8.19000819000819,
+      "ms_per_image": 122.1,
       "encrypted_accuracy": null,
       "own_cleartext_agreement": 1.0,
+      "identity": {
+        "model": {
+          "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+          "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+        },
+        "pixels_sha256": "964221f25125975570e5ab7f39bfe9a282208860892ae9d00e3a9a5dadb47903",
+        "labels_sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58"
+      },
+      "execution": {
+        "devices": [
+          "TPU_0(process=0,(0,0,0,0))",
+          "TPU_1(process=0,(1,0,0,0))",
+          "TPU_2(process=0,(0,1,0,0))",
+          "TPU_3(process=0,(1,1,0,0))"
+        ],
+        "device_kinds": [
+          "TPU v6 lite",
+          "TPU v6 lite",
+          "TPU v6 lite",
+          "TPU v6 lite"
+        ],
+        "execution_rings": [
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": null,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          },
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": 2,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          }
+        ],
+        "batch": 1
+      },
       "verified": "PASS",
       "correct": 1
     },
     "C3": {
       "runs": 3,
-      "one_time_setup_s": 165.56570000000002,
-      "median_encrypted_compute_s": 3.4374,
-      "median_server_execute_s": 3.046253,
+      "baseline_profile": "legacy",
+      "one_time_setup_s": 94.9047,
+      "median_encrypted_compute_s": 3.07,
+      "median_server_execute_s": 2.697586,
       "images": 100,
-      "throughput_images_per_s": 29.09175539652063,
-      "ms_per_image": 34.373999999999995,
+      "throughput_images_per_s": 32.57328990228013,
+      "ms_per_image": 30.7,
       "encrypted_accuracy": 0.96,
       "own_cleartext_agreement": 1.0,
+      "identity": {
+        "model": {
+          "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+          "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+        },
+        "pixels_sha256": "7800ae49fc05819de7a66732be077d801d6328a847f59d317e615d5202bdb8b4",
+        "labels_sha256": "5cf84167d6e047119cea478827f0f70b02b2d85b2b2b43a36558714d1dd2f720"
+      },
+      "execution": {
+        "devices": [
+          "TPU_0(process=0,(0,0,0,0))"
+        ],
+        "device_kinds": [
+          "TPU v6 lite"
+        ],
+        "execution_rings": [
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": null,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          },
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": 2,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          }
+        ],
+        "batch": 100
+      },
       "verified": "PASS",
       "correct": 96
     },
     "C4": {
       "runs": 3,
-      "one_time_setup_s": 169.8964,
-      "median_encrypted_compute_s": 1.0276,
-      "median_server_execute_s": 0.600633,
+      "baseline_profile": "legacy",
+      "one_time_setup_s": 98.4365,
+      "median_encrypted_compute_s": 1.1557,
+      "median_server_execute_s": 0.753256,
       "images": 100,
-      "throughput_images_per_s": 97.31413001167769,
-      "ms_per_image": 10.276000000000002,
+      "throughput_images_per_s": 86.5276455827637,
+      "ms_per_image": 11.557,
       "encrypted_accuracy": 0.96,
       "own_cleartext_agreement": 1.0,
+      "identity": {
+        "model": {
+          "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+          "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+        },
+        "pixels_sha256": "7800ae49fc05819de7a66732be077d801d6328a847f59d317e615d5202bdb8b4",
+        "labels_sha256": "5cf84167d6e047119cea478827f0f70b02b2d85b2b2b43a36558714d1dd2f720"
+      },
+      "execution": {
+        "devices": [
+          "TPU_0(process=0,(0,0,0,0))",
+          "TPU_1(process=0,(1,0,0,0))",
+          "TPU_2(process=0,(0,1,0,0))",
+          "TPU_3(process=0,(1,1,0,0))"
+        ],
+        "device_kinds": [
+          "TPU v6 lite",
+          "TPU v6 lite",
+          "TPU v6 lite",
+          "TPU v6 lite"
+        ],
+        "execution_rings": [
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": null,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          },
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": 2,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          }
+        ],
+        "batch": 100
+      },
       "verified": "PASS",
       "correct": 96
     },
     "C5": {
       "runs": 3,
-      "one_time_setup_s": 272.17650000000003,
-      "median_encrypted_compute_s": 32.9975,
-      "median_server_execute_s": 30.452933,
+      "baseline_profile": "legacy",
+      "one_time_setup_s": 95.41390000000001,
+      "median_encrypted_compute_s": 30.019,
+      "median_server_execute_s": 26.965372,
       "images": 1000,
-      "throughput_images_per_s": 30.305326161072806,
-      "ms_per_image": 32.9975,
+      "throughput_images_per_s": 33.31223558413005,
+      "ms_per_image": 30.019,
       "encrypted_accuracy": 0.976,
       "own_cleartext_agreement": 1.0,
+      "identity": {
+        "model": {
+          "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+          "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+        },
+        "pixels_sha256": "5c1e54af376af317828434c09d5f0d029eaaad2cb68bc4daa8c8ba941055fb6d",
+        "labels_sha256": "9e8bf176c4958e2642db5e5111954f79bd513598a7a70b6d51ab79094bfdc424"
+      },
+      "execution": {
+        "devices": [
+          "TPU_0(process=0,(0,0,0,0))"
+        ],
+        "device_kinds": [
+          "TPU v6 lite"
+        ],
+        "execution_rings": [
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": null,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          },
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": 2,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          }
+        ],
+        "batch": 1000
+      },
       "verified": "PASS",
       "correct": 976
     },
     "C6": {
       "runs": 3,
-      "one_time_setup_s": 255.71599999999998,
-      "median_encrypted_compute_s": 8.9178,
-      "median_server_execute_s": 5.582851,
+      "baseline_profile": "legacy",
+      "one_time_setup_s": 98.4058,
+      "median_encrypted_compute_s": 10.7333,
+      "median_server_execute_s": 7.509392,
       "images": 1000,
-      "throughput_images_per_s": 112.13528000179417,
-      "ms_per_image": 8.9178,
+      "throughput_images_per_s": 93.16799120494163,
+      "ms_per_image": 10.7333,
       "encrypted_accuracy": 0.976,
       "own_cleartext_agreement": 1.0,
+      "identity": {
+        "model": {
+          "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+          "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+        },
+        "pixels_sha256": "5c1e54af376af317828434c09d5f0d029eaaad2cb68bc4daa8c8ba941055fb6d",
+        "labels_sha256": "9e8bf176c4958e2642db5e5111954f79bd513598a7a70b6d51ab79094bfdc424"
+      },
+      "execution": {
+        "devices": [
+          "TPU_0(process=0,(0,0,0,0))",
+          "TPU_1(process=0,(1,0,0,0))",
+          "TPU_2(process=0,(0,1,0,0))",
+          "TPU_3(process=0,(1,1,0,0))"
+        ],
+        "device_kinds": [
+          "TPU v6 lite",
+          "TPU v6 lite",
+          "TPU v6 lite",
+          "TPU v6 lite"
+        ],
+        "execution_rings": [
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": null,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          },
+          {
+            "degree": 16384,
+            "num_slots": 8192,
+            "num_q": 8,
+            "num_p": 4,
+            "dnum": 2,
+            "max_level": 3,
+            "q_towers": [
+              2147352577,
+              1072857089,
+              1073184769,
+              1073053697,
+              1073872897,
+              1073971201,
+              1073479681,
+              1073643521
+            ],
+            "p_towers": [
+              2146959361,
+              2146336769,
+              2146041857,
+              2145976321
+            ],
+            "log2_Q": 240.9970490876239,
+            "log2_QP": 364.9939442177602,
+            "security_bits": 128,
+            "security_model": "classical"
+          }
+        ],
+        "batch": 1000
+      },
       "verified": "PASS",
       "correct": 976
     }

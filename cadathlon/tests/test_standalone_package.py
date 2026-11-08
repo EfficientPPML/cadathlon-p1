@@ -24,8 +24,9 @@ def fixture(tmp_path):
         (problem / name).write_text("")
     (problem / "src/suite/suite_config.json").write_text("{}")
     shutil.copy2(PROBLEM / "EXCLUDE", problem / "EXCLUDE")
-    (root / "validation").mkdir()
-    (root / "validation/p1_student_suite.json").write_text("{}")
+    (root / "validation/p1_student_v6e8").mkdir(parents=True)
+    for name in ("p1_student_suite.json", "p1_student_v6e8/report.json", "p1_legacy_suite.json"):
+        (root / "validation" / name).write_text("{}")
     return root, problem
 
 
@@ -60,7 +61,8 @@ def test_p1_release_retains_public_calibration_only(tmp_path):
     with tarfile.open(root / "contestant-release.tar.gz") as archive:
         names = set(archive.getnames())
     assert public.relative_to(root).as_posix() in names
-    assert "validation/p1_student_suite.json" in names
+    assert {"validation/p1_student_suite.json", "validation/p1_student_v6e8/report.json",
+            "validation/p1_legacy_suite.json"} <= names
     assert not any(name.endswith(".golden") or "/run/" in name or "/evidence/" in name
                    for name in names)
 

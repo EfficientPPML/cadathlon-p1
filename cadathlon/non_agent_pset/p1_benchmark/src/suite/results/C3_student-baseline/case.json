@@ -12,7 +12,7 @@
     "correct": 96,
     "accuracy_over_expected": 0.96,
     "top1_agreement_with_harness_model": 0.98,
-    "harness_model_correct": 95,
+    "harness_model_correct": 97,
     "own_cleartext": {
       "status": "ok",
       "compared": 100,
@@ -30,7 +30,7 @@
   "suite_commit": "739378698fc1f668aff7246724b45cff76f04a98",
   "seed": 3,
   "baseline_profile": "student",
-  "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+  "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
   "identity": {
     "model": {
       "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",

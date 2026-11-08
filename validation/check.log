@@ -1,6 +1,6 @@
-JAX_PLATFORMS=cpu make -C cadathlon/non_agent_pset/p1_benchmark/src reference-test PYTHON="/tmp/cross-pretrained-validation-env/bin/python"
+JAX_PLATFORMS=cpu make -C cadathlon/non_agent_pset/p1_benchmark/src reference-test PYTHON="/home/jianming_gatech/miniconda3/envs/cadp1/bin/python"
 make[1]: Entering directory '/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src'
-/tmp/cross-pretrained-validation-env/bin/python suite/test_gates.py
+/home/jianming_gatech/miniconda3/envs/cadp1/bin/python suite/test_gates.py
 ok   healthy case scores                passed=1 []
 ok   short prediction file              passed=0 ['submission wrote 87 predictions for 100 images']
 ok   missing frozen verdict             passed=0 ['no frozen harness verdict; re-run through `make suite-baseline`/`suite-test` so archive.py records one']
@@ -26,7 +26,7 @@ ok   missing batch Quality              passed=0 ['missing Quality for a multi-i
 ok   single still requires own reference passed=0 ['frozen verdict is incomplete', 'no cleartext agreement check: not computed']
 
 23/23 gate behaviors correct
-/tmp/cross-pretrained-validation-env/bin/python -m compileall -q . ../../../common
+/home/jianming_gatech/miniconda3/envs/cadp1/bin/python -m compileall -q . ../../../common
 {"case": "test1.in", "mode": "plaintext-reference", "max_abs_error": 0.0, "nrmse": 0.0, "top1_agreement": 1.0}
 {"case": "test2.in", "mode": "plaintext-reference", "max_abs_error": 0.0, "nrmse": 0.0, "top1_agreement": 1.0}
 {"case": "test3.in", "mode": "plaintext-reference", "max_abs_error": 0.0, "nrmse": 0.0, "top1_agreement": 1.0}
@@ -34,8 +34,12 @@ ok   single still requires own reference passed=0 ['frozen verdict is incomplete
 {"case": "test5.in", "mode": "plaintext-reference", "max_abs_error": 0.0, "nrmse": 0.0, "top1_agreement": 1.0}
 {"case": "test6.in", "mode": "plaintext-reference", "max_abs_error": 0.0, "nrmse": 0.0, "top1_agreement": 1.0}
 make[1]: Leaving directory '/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src'
-JAX_PLATFORMS=cpu /tmp/cross-pretrained-validation-env/bin/python -m pytest -q cadathlon/tests
+JAX_PLATFORMS=cpu /home/jianming_gatech/miniconda3/envs/cadp1/bin/python -m pytest -q cadathlon/tests
 ........................................................................ [ 48%]
-........................................................................ [ 97%]
-...                                                                      [100%]
-147 passed in 7.17s
+........................................................................ [ 96%]
+......                                                                   [100%]
+150 passed in 7.65s
+
+real	0m15.310s
+user	1m15.199s
+sys	0m3.139s

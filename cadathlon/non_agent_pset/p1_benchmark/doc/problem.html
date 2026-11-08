@@ -394,12 +394,15 @@ make -C src suite-score
 correctness checks and daemon cleanup. It fails if the entire schedule exceeds
 the budget. Baseline calibration and candidate results use distinct profile
 names. Inspect the generated report and logs; only actual TPU measurements
-can establish that a particular host meets five minutes. The follow-up baseline
-run completed this entire two-case schedule in <strong>257.56 seconds</strong> on the earlier
-eight-chip host (C4 then on eight chips), with three repetitions per case and
-100% agreement with the ranked model in cleartext.
-See <code>cadathlon/validation/p1_student_suite.json</code> for measurements and limits;
-recalibrate on your contest host. Dataset download and
+can establish that a particular host meets five minutes. On the four-chip
+TPU v6e host (<code>v6e-4</code>, 2026-11-07) the complete baseline run of this two-case
+schedule finished in <strong>276.63 seconds</strong>, with three repetitions per case and
+100% agreement with the ranked model in cleartext: C3 served 100 images in
+1.8528 s on one chip (53.97 images/s) and C4 in 0.7680 s on four chips
+(130.21 images/s). See <code>cadathlon/validation/p1_student_suite.json</code> for
+measurements and limits; the earlier eight-chip run (257.47 seconds, C4 on
+eight chips) is kept in <code>cadathlon/validation/p1_student_v6e8/report.json</code> as
+historical evidence. Recalibrate on your contest host. Dataset download and
 training the upstream harness's separate cleartext model are organizer asset
 preparation and must be completed before timing student evaluations.</p>
 <p>The <code>student-v2</code> scorer requires a successful complete report with matching
@@ -415,11 +418,14 @@ evidence. CPU fixture checks and <code>suite-gates</code> do not satisfy these c
 <code>make clean</code>; it contains no per-image labels, predictions, pixels or keys.
 Failed recalibration preserves the prior published calibration. Candidate
 reports remain in <code>suite/run/</code> and must be regenerated after cleaning. The
-recorded 257.56-second run passed this complete <code>student-v2</code> contract and its
-baseline self-score (30 correctness points, zero speed points). The earlier
-262.14-second report is retained unchanged under
-<code>validation/p1_student_pre_v2/historical_run.json</code>; it predates this stronger
-binding and cannot replace a <code>student-v2</code> calibration.</p>
+recorded 276.63-second four-chip run passed this complete <code>student-v2</code>
+contract and its baseline self-score (30 correctness points, zero speed
+points). The earlier eight-chip 257.47-second <code>student-v2</code> run and the
+262.14-second pre-v2 report are retained unchanged under
+<code>cadathlon/validation/p1_student_v6e8/report.json</code> and
+<code>cadathlon/validation/p1_student_pre_v2/historical_run.json</code>; the former was
+measured with C4 on eight chips and the latter predates device recording, so
+neither can replace a calibration of the four-chip schedule.</p>
 <p>The short schedule retains <strong>30 correctness + 60 speed + 10 evidence points</strong>:
 each of its two cases receives <code>15*G + 30*G*clamp(log2(R)/2,0,1)</code>.
 Use <code>score.py --evaluation-profile student</code> (or the Make target above).
@@ -427,8 +433,9 @@ The six-case formula in section 4 applies to the <code>legacy</code> schedule. S
 one schedule, calibrate it on the contest hardware, and announce it before
 the event; do not compare scores or baselines across schedules/ring profiles.</p>
 <h3 id="24-authored-baseline-observations">2.4 Authored baseline observations</h3>
-<p>These were measured while authoring the package, on one host with eight TPU
-v6e chips, using the unmodified <code>baseline.py</code>. <strong>They are indicative, not
+<p>These were measured on the four-chip TPU v6e host (<code>v6e-4</code>, 2026-11-07) with
+the local runner (<code>runner.py --baseline</code>, two warmups, five measured requests)
+and the unmodified <code>baseline.py</code>. <strong>They are indicative, not
 contest baselines</strong>: the judge measures <code>T_base</code> on the official hardware with
 the frozen weights and images before the event, and those numbers govern
 scoring.</p>
@@ -454,27 +461,29 @@ scoring.</p>
 </tr>
 <tr>
 <td>setup (build + keygen + compile), 1 chip</td>
-<td>~126 s</td>
+<td>~85 s, paid by the first request; the constructor itself takes 0.5 s</td>
 </tr>
 <tr>
 <td>end-to-end, batch 1, 1 chip</td>
-<td>~180 ms, max abs logit error 1.2e-13</td>
+<td>~142 ms, max abs logit error 2.4e-13</td>
 </tr>
 <tr>
 <td>server execute only, batch 1, 1 chip</td>
-<td>~31 ms</td>
+<td>~29 ms</td>
 </tr>
 <tr>
-<td>server execute only, batch 8, 8 chips</td>
-<td>~4.5 ms per image</td>
+<td>server execute only, batch 8, 4 chips</td>
+<td>~63 ms for two lane groups of four, i.e. ~7.9 ms per image</td>
 </tr>
 </tbody>
 </table>
 <p>Two things to read off this table before optimizing. First, at batch 1 the
-end-to-end time is roughly six times the server execute time, so the client
+end-to-end time is roughly five times the server execute time, so the client
 codec, not the accelerator, dominates the latency cases. Second, the server
-cost per image barely moves between one chip and eight when each chip holds
-one image, because the ring is doing the same mostly-empty work either way.</p>
+time per lane group barely moves between one chip (about 29 ms for one
+image) and four chips (about 32 ms for four images), because every chip does
+the same mostly-empty work either way; the per-image gain comes only from the
+lane count.</p>
 <h3 id="25-the-ranked-evaluation-runs-inside-the-benchmark-suite">2.5 The ranked evaluation runs inside the benchmark suite</h3>
 <p>The six ranked cases are not scored by the local runner in <code>src/</code>. They are
 scored by the <strong>FHE benchmarking suite's own harness</strong>, at the commit pinned in
@@ -571,9 +580,11 @@ that writes an incomplete prediction set scores zero regardless of its speed.</p
 explicitly <strong>not</strong> an official score: the judge reruns on exclusive hardware
 with its own baseline manifest.</p>
 <p>The unmodified <code>baseline.py</code> measured through this path, median of three runs,
-on one host with eight TPU v6e chips. <code>src/suite/baseline_manifest.json</code> holds
+on the four-chip TPU v6e host (<code>v6e-4</code>, 2026-11-07; the complete six-case
+evaluation took 1685.9 s). <code>src/suite/baseline_manifest.json</code> holds
 these numbers; they are what <code>suite-score</code> divides by, and they are indicative
-until the judge measures its own.</p>
+until the judge measures its own. The earlier eight-chip legacy figures remain
+in this file's git history and in <code>cadathlon/validation/p1_legacy_suite.json</code>.</p>
 <table>
 <thead>
 <tr>
@@ -592,70 +603,70 @@ until the judge measures its own.</p>
 <td>C1</td>
 <td>1</td>
 <td>1</td>
-<td>0.1271 s</td>
-<td>7.87</td>
-<td>127.1</td>
-<td>0.0325 s</td>
-<td>32.5</td>
+<td>0.1193 s</td>
+<td>8.38</td>
+<td>119.3</td>
+<td>0.0284 s</td>
+<td>28.4</td>
 </tr>
 <tr>
 <td>C2</td>
 <td>1</td>
-<td>8</td>
-<td>0.1329 s</td>
-<td>7.52</td>
-<td>132.9</td>
-<td>0.0378 s</td>
-<td>37.8</td>
+<td>4</td>
+<td>0.1221 s</td>
+<td>8.19</td>
+<td>122.1</td>
+<td>0.0306 s</td>
+<td>30.6</td>
 </tr>
 <tr>
 <td>C3</td>
 <td>100</td>
 <td>1</td>
-<td>3.4374 s</td>
-<td>29.09</td>
-<td>34.4</td>
-<td>3.0463 s</td>
-<td>30.5</td>
+<td>3.0700 s</td>
+<td>32.57</td>
+<td>30.7</td>
+<td>2.6976 s</td>
+<td>27.0</td>
 </tr>
 <tr>
 <td>C4</td>
 <td>100</td>
-<td>8</td>
-<td>1.0276 s</td>
-<td>97.31</td>
-<td>10.3</td>
-<td>0.6006 s</td>
-<td>6.0</td>
+<td>4</td>
+<td>1.1557 s</td>
+<td>86.53</td>
+<td>11.6</td>
+<td>0.7533 s</td>
+<td>7.5</td>
 </tr>
 <tr>
 <td>C5</td>
 <td>1000</td>
 <td>1</td>
-<td>32.9975 s</td>
-<td>30.31</td>
-<td>33.0</td>
-<td>30.4529 s</td>
-<td>30.5</td>
+<td>30.0190 s</td>
+<td>33.31</td>
+<td>30.0</td>
+<td>26.9654 s</td>
+<td>27.0</td>
 </tr>
 <tr>
 <td>C6</td>
 <td>1000</td>
-<td>8</td>
-<td>8.9178 s</td>
-<td>112.14</td>
-<td>8.9</td>
-<td>5.5829 s</td>
-<td>5.6</td>
+<td>4</td>
+<td>10.7333 s</td>
+<td>93.17</td>
+<td>10.7</td>
+<td>7.5094 s</td>
+<td>7.5</td>
 </tr>
 </tbody>
 </table>
 <p>Three things in that table are the assignment. On one chip the server cost is
-flat at <strong>30.5 ms per image</strong> whether the batch is 100 or 1000, because the
+flat at <strong>27.0 ms per image</strong> whether the batch is 100 or 1000, because the
 baseline walks the batch one lane at a time — it is sequential by construction.
-Eight chips buy <strong>5.45×</strong> at batch 1000 (30.45 s → 5.58 s), not 8×. And at
-batch 1 eight chips are <em>slower</em> than one (37.8 ms against 32.5 ms), because a
-single image cannot fill eight lanes and the cross-device work is pure
+Four chips buy <strong>3.59×</strong> at batch 1000 (26.97 s → 7.51 s), not 4×. And at
+batch 1 four chips are <em>slower</em> than one (30.6 ms against 28.4 ms), because a
+single image cannot fill four lanes and the cross-device work is pure
 overhead. Combine that with the 9.57% slot occupancy from section 2.4: the
 baseline leaves most of the ring and most of the machine idle.</p>
 <p>Correctness is not the thing to optimize here — it is already exact. Across

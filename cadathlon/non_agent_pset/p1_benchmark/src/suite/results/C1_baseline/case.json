@@ -7,6 +7,7 @@
     "scope": "final run",
     "expected_images": 1,
     "predictions_written": 1,
+    "labels_written": 1,
     "complete": true,
     "correct": 1,
     "accuracy_over_expected": 1.0,
@@ -25,7 +26,84 @@
   ],
   "suite_commit": "739378698fc1f668aff7246724b45cff76f04a98",
   "seed": 3,
+  "baseline_profile": "legacy",
+  "evaluation_id": "63481baa54a94d0ca66493d78c0d8e0b",
+  "identity": {
+    "model": {
+      "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+      "manifest_sha256": "9d415adaa53d97868b25a1b608c3cf17429f0a0a40b412fea48bf606c225e963"
+    },
+    "pixels_sha256": "964221f25125975570e5ab7f39bfe9a282208860892ae9d00e3a9a5dadb47903",
+    "labels_sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58"
+  },
+  "execution": {
+    "devices": [
+      "TPU_0(process=0,(0,0,0,0))"
+    ],
+    "device_kinds": [
+      "TPU v6 lite"
+    ],
+    "execution_rings": [
+      {
+        "degree": 16384,
+        "num_slots": 8192,
+        "num_q": 8,
+        "num_p": 4,
+        "dnum": null,
+        "max_level": 3,
+        "q_towers": [
+          2147352577,
+          1072857089,
+          1073184769,
+          1073053697,
+          1073872897,
+          1073971201,
+          1073479681,
+          1073643521
+        ],
+        "p_towers": [
+          2146959361,
+          2146336769,
+          2146041857,
+          2145976321
+        ],
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128,
+        "security_model": "classical"
+      },
+      {
+        "degree": 16384,
+        "num_slots": 8192,
+        "num_q": 8,
+        "num_p": 4,
+        "dnum": 2,
+        "max_level": 3,
+        "q_towers": [
+          2147352577,
+          1072857089,
+          1073184769,
+          1073053697,
+          1073872897,
+          1073971201,
+          1073479681,
+          1073643521
+        ],
+        "p_towers": [
+          2146959361,
+          2146336769,
+          2146041857,
+          2145976321
+        ],
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128,
+        "security_model": "classical"
+      }
+    ],
+    "batch": 1
+  },
   "devices_env": "1",
-  "archived_from": "/tmp/p3suite/measurements/single",
+  "archived_from": "/home/jianming_gatech/ml-inference/measurements/single",
   "label": "baseline"
 }

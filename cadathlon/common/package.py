@@ -7,7 +7,9 @@ import tarfile
 
 
 COMMON_RUNTIME_FILES = ("support.py", "Makefile.problem", "package.py")
-PUBLIC_RELEASE_EVIDENCE = ("validation/p1_student_suite.json",)
+PUBLIC_RELEASE_EVIDENCE = ("validation/p1_student_suite.json",
+                           "validation/p1_student_v6e8/report.json",
+                           "validation/p1_legacy_suite.json")
 
 
 def required_files(root, names):

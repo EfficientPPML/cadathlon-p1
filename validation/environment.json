@@ -1,17 +1,27 @@
 {
   "packages": {
-    "Markdown": "3.11.2",
+    "Markdown": "3.10.3",
     "absl-py": "2.5.1",
     "gmpy2": "2.3.2",
     "jax": "0.12.0.1",
     "jaxlib": "0.12.0.1",
+    "libtpu": "0.0.50.1",
     "numpy": "2.5.4",
-    "pandas": "3.1.0",
-    "pymupdf": "2.1",
+    "pandas": "3.1.1",
+    "pymupdf": "1.28.2",
     "pytest": "9.2.0",
     "torch": "2.15.0+cpu",
+    "torchvision": "0.29.2+cpu",
     "weasyprint": "70.0"
   },
-  "python": "3.13.18 | packaged by Anaconda, Inc. | (main, Oct 27 2026, 00:57:03) [GCC 14.3.0]",
-  "scope": "Environment metadata, not a new TPU measurement"
+  "python": "3.13.18 | packaged by conda-forge | (main, Oct 26 2026, 11:38:18) [GCC 15.3.0]",
+  "host": {
+    "hostname": "t1v-n-996848ba-w-0",
+    "machine_type": "ct6e-standard-4t-tpu",
+    "accelerator_type": "v6e-4",
+    "tpu_devices": 4,
+    "device_kind": "TPU v6 lite",
+    "os": "Linux-6.8.0-1015-gcp-x86_64-with-glibc2.35"
+  },
+  "scope": "Environment of the 2026-11-07 four-chip validation session (CPU checks and TPU measurements)"
 }

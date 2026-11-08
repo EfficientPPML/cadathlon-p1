@@ -1,0 +1,268 @@
+{
+  "scope": "Local-runner encrypted smoke checks on the four-chip TPU v6e host; development diagnostics, not ranked measurements",
+  "utc": "2026-11-07T23:38:32Z to 2026-11-07T23:51:56Z",
+  "host": {
+    "hostname": "t1v-n-996848ba-w-0",
+    "machine_type": "ct6e-standard-4t-tpu",
+    "accelerator_type": "v6e-4",
+    "device_kind": "TPU v6 lite",
+    "devices_visible": 4
+  },
+  "command": "cd cadathlon/non_agent_pset/p1_benchmark/src && python runner.py {--student-baseline | --baseline} --case ../test/testN.in  (default 2 warmups, 5 measured requests)",
+  "gates": "shape, finite values, abs(HE-clear) <= 0.02 + 0.01*abs(clear), top-1 agreement >= 0.99, actual-ring 128-bit security on every ciphertext",
+  "cases": {
+    "legacy-test1": {
+      "case": "test1.in",
+      "profile": "legacy-or-submission",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))"
+      ],
+      "batch": 1,
+      "execution_ring": {
+        "degree": 16384,
+        "num_slots": 8192,
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5415483230026439,
+      "first_request_including_keygen_compile_s": 85.32783292600652,
+      "median_end_to_end_s": 0.14240679901558906,
+      "median_server_execute_s": 0.028899700031615794,
+      "ms_per_image_end_to_end": 142.40679901558906,
+      "ms_per_image_server": 28.899700031615794,
+      "images_per_s_end_to_end": 7.022136631907101,
+      "max_abs_error": 2.376848717844382e-13,
+      "nrmse": 5.304981188713368e-13,
+      "top1_agreement": 1.0,
+      "total_s": 93.49308132799342,
+      "passed": true
+    },
+    "legacy-test4": {
+      "case": "test4.in",
+      "profile": "legacy-or-submission",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))",
+        "TPU_1(process=0,(1,0,0,0))"
+      ],
+      "batch": 4,
+      "execution_ring": {
+        "degree": 16384,
+        "num_slots": 8192,
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5369003930245526,
+      "first_request_including_keygen_compile_s": 89.27457163401414,
+      "median_end_to_end_s": 0.5098263039835729,
+      "median_server_execute_s": 0.06041585002094507,
+      "ms_per_image_end_to_end": 127.45657599589322,
+      "ms_per_image_server": 15.103962505236268,
+      "images_per_s_end_to_end": 7.845809383991463,
+      "max_abs_error": 2.5722479701784096e-13,
+      "nrmse": 4.3242506694459444e-13,
+      "top1_agreement": 1.0,
+      "total_s": 99.66482583398465,
+      "passed": true
+    },
+    "legacy-test6": {
+      "case": "test6.in",
+      "profile": "legacy-or-submission",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))",
+        "TPU_1(process=0,(1,0,0,0))",
+        "TPU_2(process=0,(0,1,0,0))",
+        "TPU_3(process=0,(1,1,0,0))"
+      ],
+      "batch": 8,
+      "execution_ring": {
+        "degree": 16384,
+        "num_slots": 8192,
+        "log2_Q": 240.9970490876239,
+        "log2_QP": 364.9939442177602,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5364198929746635,
+      "first_request_including_keygen_compile_s": 89.89817410201067,
+      "median_end_to_end_s": 0.957234826986678,
+      "median_server_execute_s": 0.06305007904302329,
+      "ms_per_image_end_to_end": 119.65435337333474,
+      "ms_per_image_server": 7.881259880377911,
+      "images_per_s_end_to_end": 8.35740590966958,
+      "max_abs_error": 1.8207657603852567e-13,
+      "nrmse": 2.8624096819317275e-13,
+      "top1_agreement": 1.0,
+      "total_s": 103.15622379502747,
+      "passed": true
+    },
+    "student-test1": {
+      "case": "test1.in",
+      "profile": "student",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))"
+      ],
+      "batch": 1,
+      "execution_ring": {
+        "degree": 8192,
+        "num_slots": 4096,
+        "log2_Q": 166.49832178445186,
+        "log2_QP": 212.45574163467,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5393559720250778,
+      "first_request_including_keygen_compile_s": 65.99027429602575,
+      "median_end_to_end_s": 0.07217976899119094,
+      "median_server_execute_s": 0.016828669991809875,
+      "ms_per_image_end_to_end": 72.17976899119094,
+      "ms_per_image_server": 16.828669991809875,
+      "images_per_s_end_to_end": 13.854297595799224,
+      "max_abs_error": 8.37750213644739e-09,
+      "nrmse": 2.5412618534773955e-08,
+      "top1_agreement": 1.0,
+      "total_s": 73.8296413809876,
+      "passed": true
+    },
+    "student-test2": {
+      "case": "test2.in",
+      "profile": "student",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))"
+      ],
+      "batch": 2,
+      "execution_ring": {
+        "degree": 8192,
+        "num_slots": 4096,
+        "log2_Q": 166.49832178445186,
+        "log2_QP": 212.45574163467,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5344416020088829,
+      "first_request_including_keygen_compile_s": 66.26386693300446,
+      "median_end_to_end_s": 0.13786651904229075,
+      "median_server_execute_s": 0.03202147997217253,
+      "ms_per_image_end_to_end": 68.93325952114537,
+      "ms_per_image_server": 16.010739986086264,
+      "images_per_s_end_to_end": 14.506785359442471,
+      "max_abs_error": 5.749257859719026e-09,
+      "nrmse": 2.1974825497605347e-07,
+      "top1_agreement": 1.0,
+      "total_s": 74.4341514330008,
+      "passed": true
+    },
+    "student-test3": {
+      "case": "test3.in",
+      "profile": "student",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))"
+      ],
+      "batch": 4,
+      "execution_ring": {
+        "degree": 8192,
+        "num_slots": 4096,
+        "log2_Q": 166.49832178445186,
+        "log2_QP": 212.45574163467,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5327384420088492,
+      "first_request_including_keygen_compile_s": 66.95743911300087,
+      "median_end_to_end_s": 0.2803987660445273,
+      "median_server_execute_s": 0.06258657900616527,
+      "ms_per_image_end_to_end": 70.09969151113182,
+      "ms_per_image_server": 15.646644751541317,
+      "images_per_s_end_to_end": 14.265398013073996,
+      "max_abs_error": 1.0660137550466686e-08,
+      "nrmse": 1.0322050926740772e-08,
+      "top1_agreement": 1.0,
+      "total_s": 76.09128054999746,
+      "passed": true
+    },
+    "student-test4": {
+      "case": "test4.in",
+      "profile": "student",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))",
+        "TPU_1(process=0,(1,0,0,0))"
+      ],
+      "batch": 4,
+      "execution_ring": {
+        "degree": 8192,
+        "num_slots": 4096,
+        "log2_Q": 166.49832178445186,
+        "log2_QP": 212.45574163467,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5337943230406381,
+      "first_request_including_keygen_compile_s": 71.49658093199832,
+      "median_end_to_end_s": 0.25306102697504684,
+      "median_server_execute_s": 0.03595047997077927,
+      "ms_per_image_end_to_end": 63.26525674376171,
+      "ms_per_image_server": 8.987619992694817,
+      "images_per_s_end_to_end": 15.80646394987728,
+      "max_abs_error": 1.3781799812484508e-08,
+      "nrmse": 3.016803613641493e-08,
+      "top1_agreement": 1.0,
+      "total_s": 80.40896599297412,
+      "passed": true
+    },
+    "student-test5": {
+      "case": "test5.in",
+      "profile": "student",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))",
+        "TPU_1(process=0,(1,0,0,0))"
+      ],
+      "batch": 8,
+      "execution_ring": {
+        "degree": 8192,
+        "num_slots": 4096,
+        "log2_Q": 166.49832178445186,
+        "log2_QP": 212.45574163467,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5363126230076887,
+      "first_request_including_keygen_compile_s": 71.71673819900025,
+      "median_end_to_end_s": 0.5009767529554665,
+      "median_server_execute_s": 0.06915059901075438,
+      "ms_per_image_end_to_end": 62.622094119433314,
+      "ms_per_image_server": 8.643824876344297,
+      "images_per_s_end_to_end": 15.968804845344085,
+      "max_abs_error": 1.255896997509609e-08,
+      "nrmse": 2.010386467295211e-08,
+      "top1_agreement": 1.0,
+      "total_s": 82.06194371101446,
+      "passed": true
+    },
+    "student-test6": {
+      "case": "test6.in",
+      "profile": "student",
+      "devices": [
+        "TPU_0(process=0,(0,0,0,0))",
+        "TPU_1(process=0,(1,0,0,0))",
+        "TPU_2(process=0,(0,1,0,0))",
+        "TPU_3(process=0,(1,1,0,0))"
+      ],
+      "batch": 8,
+      "execution_ring": {
+        "degree": 8192,
+        "num_slots": 4096,
+        "log2_Q": 166.49832178445186,
+        "log2_QP": 212.45574163467,
+        "security_bits": 128
+      },
+      "setup_constructor_s": 0.5298234929796308,
+      "first_request_including_keygen_compile_s": 71.61130989098456,
+      "median_end_to_end_s": 0.47237317403778434,
+      "median_server_execute_s": 0.03825184894958511,
+      "ms_per_image_end_to_end": 59.04664675472304,
+      "ms_per_image_server": 4.781481118698139,
+      "images_per_s_end_to_end": 16.935762739482097,
+      "max_abs_error": 1.3221538225360874e-08,
+      "nrmse": 2.359664798380108e-08,
+      "top1_agreement": 1.0,
+      "total_s": 81.89254768198589,
+      "passed": true
+    }
+  },
+  "note": "setup_constructor_s times only the service constructor; the first request pays key generation and compilation (recorded as first_request_including_keygen_compile_s) and is excluded from the medians."
+}

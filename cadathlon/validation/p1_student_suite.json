@@ -4,22 +4,22 @@
   "label": "student-baseline",
   "mode": "baseline",
   "gate_version": "student-v2",
-  "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+  "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
   "cleanup_passed": true,
   "require_tpu": true,
   "source_files_unchanged": true,
   "archive_sha256": {
     "C3": {
-      "case.json": "6459ee74dfca4a7855f6966c95687da3d1fe3c7c1293758d0a1d2f4a00288e14",
-      "results-1.json": "1979dab9fe7d385b78a6e4ec8840901f0008321b03e48c7d343e9b5f9f4faafa",
-      "results-2.json": "da3d1f549fe7fa5859874317fafdfe4239d20e4eb0e28ec6574260d53d0e7b95",
-      "results-3.json": "ba45be9f3a411732754e1734c66bb67a768b78129d9657904d332a2e24e2c357"
+      "case.json": "436e7855da18482172e0a2e3e76587ef18dba8ad11685d7ed60a5c2e223539a9",
+      "results-1.json": "a5c0477b4e5dd1eb2814ed233a8ce9f744a8896f431a06e365fa786fb7837dd2",
+      "results-2.json": "45ef7e22a65c48328a78f3128b3e0d3cf9a8ad867e0832d6f2fadc079fe139bb",
+      "results-3.json": "5e5b01e63b9dfe8f6287cf61472853718e6cb8dec67bccbd65c9dd0d784d65c9"
     },
     "C4": {
-      "case.json": "67abebe6a02afb039c3880e27df205e68467185fde5ff4fa526ca3feee65ac6b",
-      "results-1.json": "845985f7e84d668ef87b47877874012c934578a4a875575e1fb941bc996f075f",
-      "results-2.json": "3eb2ba1749f7c3c9b41b2825cd709c78f738853750eb9bd4ee5cae6e078399c5",
-      "results-3.json": "d473f047825de27943277b77453c8d4fa4d2c1229d8fe96ea58d6b99e31ca6aa"
+      "case.json": "cfa148598f95d1513ae2923a8e14486fdf99b97b19f22c2a86b5169a1eaf5fad",
+      "results-1.json": "607410844fca126af3fd8e9ce23bf5877ba02f1db763fe9762702ebdd5d49b6f",
+      "results-2.json": "7e79a8e1d20e528dfd03b06a80444542b0eb33229283bd0f2fc5b6728c74c9ba",
+      "results-3.json": "f24d69f8a514ce565a8dd45052dcb854a5d1cb4a0517d1016269fc3a267e014c"
     }
   },
   "budget_s": 300.0,
@@ -27,10 +27,10 @@
     "C3": {
       "passed": true,
       "reasons": [],
-      "elapsed_s": 123.06812761300534,
+      "elapsed_s": 134.80954425397795,
       "runs": 3,
       "baseline_profile": "student",
-      "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+      "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
       "identity": {
         "model": {
           "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
@@ -103,17 +103,17 @@
         "batch": 100
       },
       "runs_note": "same images every run; spread is machine noise only",
-      "total_s_including_one_time_setup": 89.5367,
-      "one_time_setup_s": 68.8269,
-      "median_encrypted_compute_s": 1.8138,
-      "max_encrypted_compute_s": 1.8441,
-      "median_server_execute_s": 1.531326,
+      "total_s_including_one_time_setup": 96.9183,
+      "one_time_setup_s": 75.5463,
+      "median_encrypted_compute_s": 1.8528,
+      "max_encrypted_compute_s": 1.8535,
+      "median_server_execute_s": 1.531526,
       "images": 100,
-      "throughput_images_per_s": 55.132870217223505,
-      "ms_per_image": 18.138,
+      "throughput_images_per_s": 53.972366148531954,
+      "ms_per_image": 18.528,
       "encrypted_accuracy": 0.96,
       "min_encrypted_accuracy": 0.96,
-      "harness_model_accuracy": 0.95,
+      "harness_model_accuracy": 0.97,
       "samples_scored": 100,
       "harness_verdict": {
         "scope": "final run",
@@ -124,7 +124,7 @@
         "correct": 96,
         "accuracy_over_expected": 0.96,
         "top1_agreement_with_harness_model": 0.98,
-        "harness_model_correct": 95,
+        "harness_model_correct": 97,
         "own_cleartext": {
           "status": "ok",
           "compared": 100,
@@ -134,15 +134,15 @@
         "status": "PASS"
       },
       "own_cleartext_agreement": 1.0,
-      "harness_reference_model_accuracy_for_context": 0.95
+      "harness_reference_model_accuracy_for_context": 0.97
     },
     "C4": {
       "passed": true,
       "reasons": [],
-      "elapsed_s": 127.84256742399884,
+      "elapsed_s": 135.36728736601071,
       "runs": 3,
       "baseline_profile": "student",
-      "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+      "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
       "identity": {
         "model": {
           "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
@@ -156,17 +156,9 @@
           "TPU_0(process=0,(0,0,0,0))",
           "TPU_1(process=0,(1,0,0,0))",
           "TPU_2(process=0,(0,1,0,0))",
-          "TPU_3(process=0,(1,1,0,0))",
-          "TPU_4(process=0,(0,2,0,0))",
-          "TPU_5(process=0,(1,2,0,0))",
-          "TPU_6(process=0,(0,3,0,0))",
-          "TPU_7(process=0,(1,3,0,0))"
+          "TPU_3(process=0,(1,1,0,0))"
         ],
         "device_kinds": [
-          "TPU v6 lite",
-          "TPU v6 lite",
-          "TPU v6 lite",
-          "TPU v6 lite",
           "TPU v6 lite",
           "TPU v6 lite",
           "TPU v6 lite",
@@ -229,17 +221,17 @@
         "batch": 100
       },
       "runs_note": "same images every run; spread is machine noise only",
-      "total_s_including_one_time_setup": 97.074,
-      "one_time_setup_s": 72.7011,
-      "median_encrypted_compute_s": 0.5757,
-      "max_encrypted_compute_s": 0.5774,
-      "median_server_execute_s": 0.274494,
+      "total_s_including_one_time_setup": 103.4605,
+      "one_time_setup_s": 80.54679999999999,
+      "median_encrypted_compute_s": 0.768,
+      "max_encrypted_compute_s": 0.7781,
+      "median_server_execute_s": 0.447856,
       "images": 100,
-      "throughput_images_per_s": 173.70158068438423,
-      "ms_per_image": 5.757000000000001,
+      "throughput_images_per_s": 130.20833333333334,
+      "ms_per_image": 7.68,
       "encrypted_accuracy": 0.96,
       "min_encrypted_accuracy": 0.96,
-      "harness_model_accuracy": 0.95,
+      "harness_model_accuracy": 0.97,
       "samples_scored": 100,
       "harness_verdict": {
         "scope": "final run",
@@ -250,7 +242,7 @@
         "correct": 96,
         "accuracy_over_expected": 0.96,
         "top1_agreement_with_harness_model": 0.98,
-        "harness_model_correct": 95,
+        "harness_model_correct": 97,
         "own_cleartext": {
           "status": "ok",
           "compared": 100,
@@ -260,10 +252,10 @@
         "status": "PASS"
       },
       "own_cleartext_agreement": 1.0,
-      "harness_reference_model_accuracy_for_context": 0.95
+      "harness_reference_model_accuracy_for_context": 0.97
     }
   },
-  "logs": "/home/jianming_gatech/CROSS/cadathlon/non_agent_pset/p1_benchmark/src/suite/run/evaluation-student-baseline",
+  "logs": "/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src/suite/run/evaluation-student-baseline",
   "versions": {
     "jax": "0.12.0.1",
     "jaxlib": "0.12.0.1",
@@ -381,7 +373,7 @@
     "problem/suite/stages/server_encrypted_compute.py": "d082be4b91d12c0dc2d821c048e9830ae8d6add1df0acab086ef0c808a096c96",
     "problem/suite/stages/server_preprocess_model.py": "18024e5bbb2ccef4226ce9754010f9de0d4d58634b55df09af9d44daa3b3b651",
     "problem/suite/stages/server_stop.py": "8ba3c85c4adaeabe0c5f172f4d63859739400e80d288b01411da2b364bb94e29",
-    "problem/suite/suite_config.json": "fcc46644c4c2e494d9ae3844e47ff067c9e44fc84a611ee4554690d2f0a1dd22",
+    "problem/suite/suite_config.json": "41881e1fb145421bb6f19aa0b19fbb92bbc6804e3851226f3b22782b70a74810",
     "problem/suite/test_gates.py": "2a9cf6a51fe2c511a180bf17a58d823af1a48311387383af0dcb4160497429db"
   },
   "source_sha256_after": {
@@ -486,10 +478,10 @@
     "problem/suite/stages/server_encrypted_compute.py": "d082be4b91d12c0dc2d821c048e9830ae8d6add1df0acab086ef0c808a096c96",
     "problem/suite/stages/server_preprocess_model.py": "18024e5bbb2ccef4226ce9754010f9de0d4d58634b55df09af9d44daa3b3b651",
     "problem/suite/stages/server_stop.py": "8ba3c85c4adaeabe0c5f172f4d63859739400e80d288b01411da2b364bb94e29",
-    "problem/suite/suite_config.json": "fcc46644c4c2e494d9ae3844e47ff067c9e44fc84a611ee4554690d2f0a1dd22",
+    "problem/suite/suite_config.json": "41881e1fb145421bb6f19aa0b19fbb92bbc6804e3851226f3b22782b70a74810",
     "problem/suite/test_gates.py": "2a9cf6a51fe2c511a180bf17a58d823af1a48311387383af0dcb4160497429db"
   },
-  "elapsed_s": 257.4673036539971,
+  "elapsed_s": 276.63225645403145,
   "within_budget": true,
   "self_score": {
     "passed": true,
@@ -505,7 +497,7 @@
         "points": 15.0,
         "runs": 3,
         "baseline_profile": "student",
-        "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+        "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
         "identity": {
           "model": {
             "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
@@ -578,17 +570,17 @@
           "batch": 100
         },
         "runs_note": "same images every run; spread is machine noise only",
-        "total_s_including_one_time_setup": 89.5367,
-        "one_time_setup_s": 68.8269,
-        "median_encrypted_compute_s": 1.8138,
-        "max_encrypted_compute_s": 1.8441,
-        "median_server_execute_s": 1.531326,
+        "total_s_including_one_time_setup": 96.9183,
+        "one_time_setup_s": 75.5463,
+        "median_encrypted_compute_s": 1.8528,
+        "max_encrypted_compute_s": 1.8535,
+        "median_server_execute_s": 1.531526,
         "images": 100,
-        "throughput_images_per_s": 55.132870217223505,
-        "ms_per_image": 18.138,
+        "throughput_images_per_s": 53.972366148531954,
+        "ms_per_image": 18.528,
         "encrypted_accuracy": 0.96,
         "min_encrypted_accuracy": 0.96,
-        "harness_model_accuracy": 0.95,
+        "harness_model_accuracy": 0.97,
         "samples_scored": 100,
         "harness_verdict": {
           "scope": "final run",
@@ -599,7 +591,7 @@
           "correct": 96,
           "accuracy_over_expected": 0.96,
           "top1_agreement_with_harness_model": 0.98,
-          "harness_model_correct": 95,
+          "harness_model_correct": 97,
           "own_cleartext": {
             "status": "ok",
             "compared": 100,
@@ -609,8 +601,8 @@
           "status": "PASS"
         },
         "own_cleartext_agreement": 1.0,
-        "harness_reference_model_accuracy_for_context": 0.95,
-        "read_from": "/home/jianming_gatech/CROSS/cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C3_student-baseline"
+        "harness_reference_model_accuracy_for_context": 0.97,
+        "read_from": "/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C3_student-baseline"
       },
       "C4": {
         "passed": 1,
@@ -619,7 +611,7 @@
         "points": 15.0,
         "runs": 3,
         "baseline_profile": "student",
-        "evaluation_id": "9250e83535a84d98a3918c629d64380c",
+        "evaluation_id": "425d1d96af1348d5ac64ffb0715a80ed",
         "identity": {
           "model": {
             "weights_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
@@ -633,17 +625,9 @@
             "TPU_0(process=0,(0,0,0,0))",
             "TPU_1(process=0,(1,0,0,0))",
             "TPU_2(process=0,(0,1,0,0))",
-            "TPU_3(process=0,(1,1,0,0))",
-            "TPU_4(process=0,(0,2,0,0))",
-            "TPU_5(process=0,(1,2,0,0))",
-            "TPU_6(process=0,(0,3,0,0))",
-            "TPU_7(process=0,(1,3,0,0))"
+            "TPU_3(process=0,(1,1,0,0))"
           ],
           "device_kinds": [
-            "TPU v6 lite",
-            "TPU v6 lite",
-            "TPU v6 lite",
-            "TPU v6 lite",
             "TPU v6 lite",
             "TPU v6 lite",
             "TPU v6 lite",
@@ -706,17 +690,17 @@
           "batch": 100
         },
         "runs_note": "same images every run; spread is machine noise only",
-        "total_s_including_one_time_setup": 97.074,
-        "one_time_setup_s": 72.7011,
-        "median_encrypted_compute_s": 0.5757,
-        "max_encrypted_compute_s": 0.5774,
-        "median_server_execute_s": 0.274494,
+        "total_s_including_one_time_setup": 103.4605,
+        "one_time_setup_s": 80.54679999999999,
+        "median_encrypted_compute_s": 0.768,
+        "max_encrypted_compute_s": 0.7781,
+        "median_server_execute_s": 0.447856,
         "images": 100,
-        "throughput_images_per_s": 173.70158068438423,
-        "ms_per_image": 5.757000000000001,
+        "throughput_images_per_s": 130.20833333333334,
+        "ms_per_image": 7.68,
         "encrypted_accuracy": 0.96,
         "min_encrypted_accuracy": 0.96,
-        "harness_model_accuracy": 0.95,
+        "harness_model_accuracy": 0.97,
         "samples_scored": 100,
         "harness_verdict": {
           "scope": "final run",
@@ -727,7 +711,7 @@
           "correct": 96,
           "accuracy_over_expected": 0.96,
           "top1_agreement_with_harness_model": 0.98,
-          "harness_model_correct": 95,
+          "harness_model_correct": 97,
           "own_cleartext": {
             "status": "ok",
             "compared": 100,
@@ -737,8 +721,8 @@
           "status": "PASS"
         },
         "own_cleartext_agreement": 1.0,
-        "harness_reference_model_accuracy_for_context": 0.95,
-        "read_from": "/home/jianming_gatech/CROSS/cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C4_student-baseline"
+        "harness_reference_model_accuracy_for_context": 0.97,
+        "read_from": "/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src/suite/results/C4_student-baseline"
       }
     },
     "evaluation_profile": "student",
@@ -756,30 +740,53 @@
     "note": "organizer arithmetic over harness-written measurement files; not an official score without a judge rerun"
   },
   "command": [
-    "/home/jianming_gatech/miniconda3/envs/jaxite/bin/python",
-    "/home/jianming_gatech/CROSS/cadathlon/non_agent_pset/p1_benchmark/src/suite/evaluate.py",
-    "--profile",
-    "student",
-    "--baseline",
-    "--budget-s",
-    "300",
-    "--suite-root",
-    "/home/jianming_gatech/ml-inference"
+    "make",
+    "suite-evaluate-baseline",
+    "PYTHON=/home/jianming_gatech/miniconda3/envs/cadp1/bin/python"
   ],
-  "external_process_elapsed_s": 257.56176227200194,
-  "collection_archive": "p1_student_post_promotion_20261103/",
-  "exact_source_inventory": "p1_student_post_promotion_20261103/source_inventory.json",
-  "calibration_report": "calibration/student-baseline/9250e83535a84d98a3918c629d64380c/report.json",
-  "calibration_manifest_sha256": "cb8766fdab8dbcf16b26d424b3d35ad9274864ce0bc5f9e64fc4487eb657a2b7",
+  "command_resolved": "python cadathlon/non_agent_pset/p1_benchmark/src/suite/evaluate.py --profile student --baseline --budget-s 300 (MLINF_ROOT=~/ml-inference, OMP_NUM_THREADS=1, OPENBLAS_NUM_THREADS=1)",
+  "external_process_elapsed_s": 276.72,
+  "utc_started": "2026-11-07T23:53:17Z",
+  "host": {
+    "hostname": "t1v-n-996848ba-w-0",
+    "machine_type": "ct6e-standard-4t-tpu",
+    "accelerator_type": "v6e-4",
+    "tpu_devices": 4,
+    "device_kind": "TPU v6 lite",
+    "vcpus": 180,
+    "memory_gib": 708
+  },
+  "schedule": "student: C3 = 100 images on one chip, C4 = 100 images on four chips (suite_config.json)",
+  "calibration_report": "calibration/student-baseline/425d1d96af1348d5ac64ffb0715a80ed/report.json",
+  "calibration_manifest_sha256": "7434c69931df5bc3b089b6bd51948c88625f7d26fe8d9471bfa066be75466f1b",
+  "trained_model_sha256": "2d3409cccba1622b4c49a4ade76deec2a7ba9de37d80c9fd3ab883c05a85047e",
+  "upstream_cleartext_model_sha256": "deda949681846326a1a04c80a58ba6122cd8d85973473ef87ab236f5bbe65d05",
+  "asset_preparation": "MNIST downloaded and the unchanged upstream harness cleartext model trained for its default 15 epochs (97.67% test accuracy) before timing. The ranked model uses the frozen CROSS checkpoint in weights/.",
+  "historical_v6e8_evidence": "p1_student_v6e8/report.json (eight-chip host, C4 on eight chips, evaluation 9250e83535a84d98a3918c629d64380c: evaluator elapsed_s 257.47 s for the complete schedule; its external process wall time was 257.56 s)",
   "historical_pre_v2_evidence": "p1_student_pre_v2/historical_run.json",
-  "historical_previous_student_v2_evidence": "p1_student_v2_baseline_20261102/report.json",
+  "comparison_with_eight_chip_run": {
+    "same_images_and_model": true,
+    "C3_median_encrypted_compute_s": {
+      "v6e-8_host": 1.8138,
+      "v6e-4_host": 1.8528
+    },
+    "C4_median_encrypted_compute_s": {
+      "v6e-8_host_eight_chips": 0.5757,
+      "v6e-4_host_four_chips": 0.768
+    },
+    "complete_schedule_elapsed_s": {
+      "v6e-8_host": 257.47,
+      "v6e-4_host": 276.63225645403145
+    }
+  },
   "limits": [
     "The complete ranked student schedule is C3/C4 with three repeats each; this is not a five-minute claim for the six-case legacy schedule.",
     "Each case repeats the same 100 public images; six repeats do not constitute 600 distinct validation examples.",
-    "Both cases use the frozen trained checkpoint and passed own-cleartext comparison; no new training or tuning occurred during this evaluation.",
-    "Exact measured source bytes are archived with unchanged before/after hashes. Earlier 262.14-second evidence retains its separate historical snapshot.",
-    "Reported child-process RSS is not a complete peak-memory bound for detached resident services.",
+    "Both cases use the frozen trained checkpoint and passed own-cleartext comparison; no training or tuning occurred during this evaluation.",
+    "C4 now runs on four chips; its throughput is not comparable with the eight-chip C4 calibration it replaces.",
+    "Reported process RSS is not a complete peak-memory bound for detached resident services.",
     "Organizers must recalibrate and perform protected candidate reruns on contest hardware.",
-    "This post-promotion run used CPU affinity0\u2013127 with an independent encrypted CPU routing job on144\u2013147. Its timing is not a controlled speedup comparison with the earlier host allocation."
-  ]
+    "No other TPU or heavy CPU job ran during this evaluation; a torch training job had finished beforehand."
+  ],
+  "timing_basis_note": "Whole-schedule times quoted in the documentation are the evaluator's own elapsed_s for both hosts (276.63 s four-chip vs 257.47 s eight-chip); external_process_elapsed_s is the wall time of the make command."
 }

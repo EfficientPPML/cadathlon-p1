@@ -1,6 +1,6 @@
-make -C cadathlon/non_agent_pset/p1_benchmark/src baseline-plan PYTHON="/tmp/cross-pretrained-validation-env/bin/python"
+make -C cadathlon/non_agent_pset/p1_benchmark/src baseline-plan PYTHON="/home/jianming_gatech/miniconda3/envs/cadp1/bin/python"
 make[1]: Entering directory '/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src'
-/tmp/cross-pretrained-validation-env/bin/python suite/test_gates.py
+/home/jianming_gatech/miniconda3/envs/cadp1/bin/python suite/test_gates.py
 ok   healthy case scores                passed=1 []
 ok   short prediction file              passed=0 ['submission wrote 87 predictions for 100 images']
 ok   missing frozen verdict             passed=0 ['no frozen harness verdict; re-run through `make suite-baseline`/`suite-test` so archive.py records one']
@@ -26,8 +26,8 @@ ok   missing batch Quality              passed=0 ['missing Quality for a multi-i
 ok   single still requires own reference passed=0 ['frozen verdict is incomplete', 'no cleartext agreement check: not computed']
 
 23/23 gate behaviors correct
-/tmp/cross-pretrained-validation-env/bin/python -m compileall -q . ../../../common
-/tmp/cross-pretrained-validation-env/bin/python inspect_plan.py
+/home/jianming_gatech/miniconda3/envs/cadp1/bin/python -m compileall -q . ../../../common
+/home/jianming_gatech/miniconda3/envs/cadp1/bin/python inspect_plan.py
 {"profile": "legacy", "case": "test1.in", "batch": 1, "devices": 1, "depth": 3, "degree": 16384, "num_slots": 8192, "slots_used_by_input": 784, "slot_occupancy": 0.0957, "logical_num_q": 4, "security_bits": 128, "dnum": 2, "q_towers": [2147352577, 1072857089, 1073184769, 1073053697, 1073872897, 1073971201, 1073479681, 1073643521], "p_towers": [2146959361, 2146336769, 2146041857, 2145976321], "log2_QP": 364.9939442177602, "operations": ["matvec", "add_plain", "square", "matvec", "add_plain"]}
 {"profile": "legacy", "case": "test6.in", "batch": 8, "devices": 4, "depth": 3, "degree": 16384, "num_slots": 8192, "slots_used_by_input": 784, "slot_occupancy": 0.0957, "logical_num_q": 4, "security_bits": 128, "dnum": 2, "q_towers": [2147352577, 1072857089, 1073184769, 1073053697, 1073872897, 1073971201, 1073479681, 1073643521], "p_towers": [2146959361, 2146336769, 2146041857, 2145976321], "log2_QP": 364.9939442177602, "operations": ["matvec", "add_plain", "square", "matvec", "add_plain"]}
 make[1]: Leaving directory '/home/jianming_gatech/cadathlon-p1/cadathlon/non_agent_pset/p1_benchmark/src'
