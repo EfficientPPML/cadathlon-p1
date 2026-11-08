@@ -44,6 +44,17 @@ and C4 at 130.21 images/s on four chips. This is evidence for that machine, not
 a timing guarantee for another one. Correctness, actual-ring 128-bit security,
 input/model identity, calibration provenance and cleanup checks remain enabled.
 
+C5 and C6 (1000 images on one and four chips) are **hidden cases** of the
+student schedule: same ring, frozen model and seed, run by the organizer after
+submission under a separate 1800-second budget and folded into the final score
+by `make suite-overall`. Their calibration (`baseline_manifest_student_hidden.json`)
+is produced by `make suite-evaluate-baseline-hidden` on the contest host; it and
+the hidden archives are excluded from the contestant release and ignored by
+git. No hidden calibration has been measured
+yet; the student C3/C4 calibration shipped here (2026-11-07) predates the
+hidden schedule and, because `suite_config.json` changed, must be regenerated
+with `make suite-evaluate-baseline` before `make suite-score` accepts it again.
+
 ## Scoring policy (10 points)
 
 Problem 1 contributes at most **10 points** to the event, computed by policy
@@ -51,7 +62,7 @@ Problem 1 contributes at most **10 points** to the event, computed by policy
 
 | Tier | Points | Rule |
 |---|---:|---|
-| Correctness | 3 | shared equally by the ranked cases: 0.5 per passing case on the six-case schedule (1.5 per case when the two-case student schedule is scored) |
+| Correctness | 3 | shared equally by the ranked cases: 0.5 per passing case on the six-case schedule, 1.5 per case when the two public student cases are scored alone, 0.75 per case when `make suite-overall` folds in the hidden C5/C6 |
 | Improvement | 0–4 | all cases pass and the *smallest* throughput ratio against the calibrated baseline is ≥ 1.05 / 1.10 / 1.20 / 1.40 for 1 / 2 / 3 / 4 points |
 | Ranking bonus | 0–3 | the three best teams with at least one improvement point, by geometric mean of their ratios: 3, 2, 1 points; equal rounded metrics share the bonus |
 
@@ -78,6 +89,13 @@ make suite-evaluate-baseline
 # Implement bench_opt.py, then:
 make suite-evaluate
 make suite-score
+# Organizer, in ONE judge checkout that holds both calibrations (the scorer
+# finds proofs only under this checkout): calibrate the hidden C5/C6 once, then
+# install one submission at a time, rerun its public cases and run the hidden ones
+make suite-evaluate-baseline-hidden    # once
+make suite-evaluate                    # public C3/C4 rerun
+make suite-evaluate-hidden
+make suite-overall > /abs/teams/<team>/overall.json
 ```
 
 Use `make baseline-plan` to inspect the packing plan without a full evaluation.
@@ -94,10 +112,19 @@ end to end on this host:
 
 - `make check` (CPU): 6/6 plaintext fixtures exact, 23/23 scorer gate
   behaviors, 183/183 pytest tests ([validation/check.log](validation/check.log)).
+  The hidden-schedule change of 2026-11-08 postdates this log: on a CPU-only
+  host `make check` then passed 213 of 214 tests, including 31 in
+  `test_hidden_schedule.py`. The remaining one is an expected failure (a
+  tripwire) until the student calibration is regenerated for the new
+  `suite_config.json`.
 - `make baseline-plan` and `inspect_plan.py --student-baseline` (CPU): legacy
   plan N=16384, 8192 slots, 9.57% occupancy, log2(QP)=365.0; student plan
   N=8192, 4096 slots, 19.14% occupancy, log2(QP)=212.46; both at 128-bit.
 - `make docs`: the HTML and 12-page PDF handouts re-render from `problem.md`.
+  The 13-page handout with the hidden-cases section was re-rendered on
+  2026-11-08 on a CPU host with Pango 1.52; it uses the same fonts, but that
+  Pango sets a few emphasized words upright and table headers semi-bold.
+  Re-run `make docs` on this host to restore the original typography.
 - Local encrypted smoke checks on the TPU (`runner.py`): all six fixtures with
   `--student-baseline` on 1, 2 and 4 chips, and test1/test4/test6 with the
   legacy `--baseline`; every logit, argmax and actual-ring security gate passed

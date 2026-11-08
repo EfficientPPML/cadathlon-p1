@@ -22,6 +22,36 @@ failed run, changed archives, wrong profile or mismatched model/data/hardware/
 software cannot borrow a previous success. Ranked weight bytes must match
 `weights/MANIFEST.json`.
 
+**Hidden cases.** C5 and C6 (1000 images on one and four chips, same student
+ring, frozen model and seed) are organizer-run hidden cases of the student
+schedule. Contestants do not run them before judging and their calibration
+(`baseline_manifest_student_hidden.json` and its archives, excluded from the
+contestant release and from git) is not published. The organizer works in one
+judge checkout on the contest host, because the scorer finds calibration
+proofs only under that checkout's `src/suite/calibration/`:
+
+```bash
+# once, in the judge checkout
+make -C src suite-evaluate-baseline          # public C3/C4 calibration
+make -C src suite-evaluate-baseline-hidden   # hidden C5/C6 calibration (1800 s budget)
+# per submission: install its bench_opt.py, helper modules and cross.patch, then
+make -C src suite-evaluate                   # public C3/C4, rerun by the judge
+make -C src suite-evaluate-hidden            # hidden C5/C6
+make -C src suite-overall > /abs/teams/<team>/overall.json
+```
+
+`suite-overall` (`src/suite/overall.py`) scores both schedules itself, shares
+the 3 correctness points over all four cases (0.75 each), decides the
+improvement tier by the smallest of the four ratios and the ranking metric by
+their geometric mean, and refuses to combine public and hidden runs that do not
+come from the same submission sources, model and software. A missing,
+interrupted or failed hidden run fails C5/C6 but not C3/C4; because improvement
+points need every case to pass, the submission then keeps only the 1.5 public
+correctness points and is not ranked. The next submission's evaluations replace
+the reports, so save each overall report first. `make -C src suite-score-hidden`
+shows the hidden verdict alone, and `make -C src suite-rank` ranks the saved
+overall reports across teams.
+
 For local development only, from `src/`, run `make reference-test`, `make baseline-plan`,
 `make baseline-test`, then `make test` after implementing the TODO.
 `make baseline-plan` prints the actual derived plan and the slot occupancy the
@@ -85,7 +115,10 @@ complete proof and passed baseline self-scoring (3.0 of 10 points: full
 correctness, no improvement points). The earlier eight-chip 257.47-second proof and the 262.14-second
 pre-v2 evidence are preserved separately under `../../validation/p1_student_v6e8/`
 and `../../validation/p1_student_pre_v2/historical_run.json`; neither matches
-the four-chip schedule, so neither can replace the new proof.
+the four-chip schedule, so neither can replace the new proof. The shipped proof
+predates the hidden cases: it is bound to the earlier `suite_config.json`, so
+`suite-score` rejects it until `make -C src suite-evaluate-baseline` has been
+run again on the contest host.
 
 Use `P1_BASELINE_PROFILE=legacy` explicitly with `suite-baseline`, `suite-test`
 or `suite-score` for the old schedule. To run the entire longer legacy schedule,
