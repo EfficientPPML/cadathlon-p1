@@ -25,6 +25,52 @@ INSTANCE_NAMES = ("single", "small", "medium", "large")
 STUDENT_GATE_VERSION = 'student-v2'
 
 
+def schedule(profile: str, hidden: bool = False) -> dict:
+    """Cases, labels, calibration manifest and budget cap of a profile's schedule.
+
+    A profile's public schedule (`case_ids`) is what contestants run themselves.
+    A profile may also declare `hidden_case_ids`: organizer-run cases on the
+    same ring profile, frozen model and seed that contestants do not run before
+    judging. They are evaluated with `evaluate.py --hidden`, scored with
+    `score.py --hidden` against their own calibration, and folded into one
+    verdict by overall.py.
+
+    Every schedule must declare its whole-run budget cap (`budget_s`, or
+    `hidden_budget_s` for the hidden schedule); null means uncapped. A missing
+    key is an error rather than a silent "no cap", so a config edit cannot
+    unbound the student schedule by accident.
+    """
+    entry = CONFIG['evaluation_profiles'][profile]
+    if hidden:
+        case_ids = list(entry.get('hidden_case_ids') or [])
+        if not case_ids:
+            raise ValueError(f'evaluation profile {profile!r} declares no hidden cases')
+        stem = f'{profile}-hidden'
+        manifest = f'baseline_manifest_{profile}_hidden.json'
+        budget_key = 'hidden_budget_s'
+    else:
+        case_ids = list(entry['case_ids'])
+        stem = '' if profile == 'legacy' else profile
+        manifest = 'baseline_manifest.json' if profile == 'legacy' else f'baseline_manifest_{profile}.json'
+        budget_key = 'budget_s'
+    known = {c['id'] for c in CONFIG['cases']}
+    if not case_ids or len(case_ids) != len(set(case_ids)) or not set(case_ids) <= known:
+        raise ValueError(f'the {"hidden" if hidden else "public"} schedule of {profile!r} must name distinct known cases')
+    if hidden and set(case_ids) & set(entry['case_ids']):
+        raise ValueError(f'hidden cases of {profile!r} overlap its public schedule')
+    if budget_key not in entry:
+        raise ValueError(f'evaluation profile {profile!r} must declare {budget_key} (null for no cap)')
+    budget_cap = entry[budget_key]
+    if budget_cap is not None and (not _finite_number(budget_cap) or budget_cap <= 0):
+        raise ValueError(f'{budget_key} of {profile!r} must be null or a positive number of seconds')
+    return {'profile': profile, 'hidden': bool(hidden), 'name': 'hidden' if hidden else 'public',
+            'case_ids': case_ids,
+            'baseline_label': f'{stem}-baseline' if stem else 'baseline',
+            'candidate_label': f'{stem}-candidate' if stem else 'candidate',
+            'manifest': SUITE_DIR / manifest,
+            'budget_cap_s': budget_cap}
+
+
 def _seconds(text) -> float:
     """Harness timings are strings like '12.1014s', '1.8286h', '10.55m'."""
     if isinstance(text, bool):
@@ -206,6 +252,11 @@ RATIO_TOLERANCE = 1e-9
 METRIC_DECIMALS = 4
 
 
+def case_points(passed, cases_ranked):
+    """One case's correctness share: CORRECTNESS_POINTS split equally over the ranked cases."""
+    return round(CORRECTNESS_POINTS / cases_ranked, 3) if passed and cases_ranked else 0.0
+
+
 def improvement_tier(min_ratio):
     """Improvement points from the smallest throughput ratio across all ranked cases."""
     if not _finite_number(min_ratio) or min_ratio <= 0:
@@ -353,14 +404,18 @@ def calibration_report_path(label, evaluation_id):
     return SUITE_DIR / 'calibration' / label / evaluation_id / 'report.json'
 
 
-def validate_student_evaluation(report, *, label, folders, mode=None):
+def validate_student_evaluation(report, *, label, folders, mode=None, hidden=False):
     """Require one completed TPU evaluation bound to every current archive.
 
     Reports and archives must come from the protected organizer evaluator;
     this is identity/freshness validation, not a sandbox for hostile Python.
+    `hidden` selects the profile's organizer-run schedule (its own cases,
+    labels and budget cap); a public report never validates as hidden or
+    vice versa.
     """
     _object(report, 'student evaluation')
-    ranked = CONFIG['evaluation_profiles']['student']['case_ids']
+    plan = schedule('student', hidden)
+    ranked = plan['case_ids']
     expected = {'profile': 'student', 'gate_version': STUDENT_GATE_VERSION,
                 'label': label, 'suite_commit': CONFIG['suite']['commit'],
                 'seed': CONFIG['determinism']['seed'],
@@ -368,14 +423,20 @@ def validate_student_evaluation(report, *, label, folders, mode=None):
                 'require_tpu': True}
     if any(report.get(key) != value for key, value in expected.items()):
         raise ValueError('student evaluation profile, gate version, label or configuration differs')
+    if report.get('schedule', 'public') != plan['name']:
+        raise ValueError(f"student evaluation schedule differs: expected the {plan['name']} schedule")
     if mode and report.get('mode') != mode:
         raise ValueError('student calibration needs a baseline evaluation')
     if (report.get('passed') is not True or report.get('within_budget') is not True
             or report.get('cleanup_passed') is not True or report.get('error') or report.get('cleanup_error')):
         raise ValueError('student whole evaluation failed, timed out, or did not finish cleanup')
     budget, elapsed = report.get('budget_s'), report.get('elapsed_s')
-    if not _finite_number(budget) or not _finite_number(elapsed) or not 0 < elapsed <= budget <= 300:
-        raise ValueError('student whole evaluation must finish within a budget of at most 300 seconds')
+    cap = plan['budget_cap_s']
+    if (not _finite_number(budget) or not _finite_number(elapsed) or not 0 < elapsed <= budget
+            or (cap is not None and budget > cap)):
+        raise ValueError(f"student {plan['name']} evaluation must finish within a budget of at most "
+                         f"{cap:g} seconds" if cap is not None else
+                         f"student {plan['name']} evaluation must finish within its budget")
     identity = report.get('evaluation_id')
     if not isinstance(identity, str) or len(identity) != 32 or any(c not in '0123456789abcdef' for c in identity):
         raise ValueError('student evaluation identity is missing')
@@ -425,9 +486,10 @@ def validate_student_evaluation(report, *, label, folders, mode=None):
     return report
 
 
-def calibration_payload(measured, profile, evaluation=None):
+def calibration_payload(measured, profile, evaluation=None, hidden=False):
     """Build a calibration after the owner has validated the complete run."""
-    ranked = CONFIG['evaluation_profiles'][profile]['case_ids']
+    plan = schedule(profile, hidden)
+    ranked = plan['case_ids']
     invalid = {cid: ([summary['error']] if 'error' in summary else gate(summary, CONFIG['gates'])[1])
                for cid, summary in measured.items()}
     for cid, summary in measured.items():
@@ -447,7 +509,8 @@ def calibration_payload(measured, profile, evaluation=None):
         entries[cid] = {**{k: summary[k] for k in keep if k in summary},
                         'verified': verdict.get('status'), 'correct': verdict.get('correct')}
     payload = {'note': 'Measured calibration; organizers must reproduce it on contest hardware.',
-               'evaluation_profile': profile, 'suite_commit': CONFIG['suite']['commit'],
+               'evaluation_profile': profile, 'schedule': plan['name'],
+               'suite_commit': CONFIG['suite']['commit'],
                'seed': CONFIG['determinism']['seed'], 'runs_per_case': CONFIG['determinism']['num_runs'],
                'statistic': CONFIG['determinism']['statistic'],
                'metric': "throughput_images_per_s = images / median Timing['Encrypted computation']",
@@ -455,6 +518,8 @@ def calibration_payload(measured, profile, evaluation=None):
     if profile == 'student':
         if not evaluation or evaluation.get('mode') != 'baseline':
             raise ValueError('refusing student calibration without a complete baseline evaluation')
+        if evaluation.get('schedule', 'public') != plan['name']:
+            raise ValueError(f"refusing student calibration: evaluation belongs to the other schedule, expected {plan['name']}")
         payload.update(gate_version=STUDENT_GATE_VERSION, evaluation_id=evaluation['evaluation_id'],
                        evaluation_label=evaluation['label'],
                        versions=evaluation['versions'],
@@ -462,12 +527,14 @@ def calibration_payload(measured, profile, evaluation=None):
     return payload
 
 
-def main():
+def parse_args(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--suite-root", type=Path, default=None)
     ap.add_argument("--baseline", type=Path,
                     default=None, help="defaults to the selected evaluation profile's calibration")
     ap.add_argument("--evaluation-profile", choices=CONFIG["evaluation_profiles"], default="legacy")
+    ap.add_argument("--hidden", action="store_true",
+                    help="score the profile's organizer-run hidden schedule (student: C5/C6) against its own calibration")
     ap.add_argument("--cases", default="", help="comma-separated case ids within the selected evaluation profile")
     ap.add_argument("--label", default="",
                     help="archive label to read, e.g. baseline or candidate")
@@ -477,23 +544,32 @@ def main():
                     help='protected whole-run report associated with the student calibration')
     ap.add_argument("--emit-baseline", action="store_true",
                     help="write the measured numbers as a baseline manifest instead of scoring")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
+    try:
+        plan = schedule(args.evaluation_profile, args.hidden)
+    except ValueError as error:
+        ap.error(str(error))
     if args.emit_baseline and args.evaluation_profile == 'student':
         raise SystemExit('refusing student --emit-baseline: use evaluate.py --profile student --baseline; '
                          'only the complete evaluator transaction may publish student calibration')
     if args.evaluation_profile == 'student' and not args.label:
-        args.label = 'student-baseline' if args.emit_baseline else 'student-candidate'
+        args.label = plan['baseline_label'] if args.emit_baseline else plan['candidate_label']
     if args.baseline is None:
-        args.baseline = SUITE_DIR / ("baseline_manifest_student.json" if args.evaluation_profile == "student"
-                                     else "baseline_manifest.json")
-
-    import os
-    root = args.suite_root or Path(os.environ.get("MLINF_ROOT", Path.home() / "ml-inference"))
-    wanted = {c.strip() for c in args.cases.split(",") if c.strip()}
-    ranked = CONFIG["evaluation_profiles"][args.evaluation_profile]["case_ids"]
-    unknown = wanted - set(ranked)
+        args.baseline = plan['manifest']
+    args.wanted = {c.strip() for c in args.cases.split(",") if c.strip()}
+    unknown = args.wanted - set(plan['case_ids'])
     if unknown:
         ap.error(f"unknown cases: {sorted(unknown)}")
+    args.plan = plan
+    return args
+
+
+def build_report(args):
+    """Score one schedule and return (report, exit_code); `main` prints the report."""
+    import os
+    plan, wanted = args.plan, args.wanted
+    root = args.suite_root or Path(os.environ.get("MLINF_ROOT", Path.home() / "ml-inference"))
+    ranked = plan['case_ids']
     cases = [c for c in CONFIG["cases"] if c["id"] in ranked and (not wanted or c["id"] in wanted)]
     runs = CONFIG["determinism"]["num_runs"]
     gates = CONFIG["gates"]
@@ -523,7 +599,8 @@ def main():
         try:
             evaluation = validate_student_evaluation(
                 _read_object(args.evaluation_report or evaluation_path(args.label)),
-                label=args.label, folders=folders, mode='baseline' if args.emit_baseline else None)
+                label=args.label, folders=folders, mode='baseline' if args.emit_baseline else None,
+                hidden=plan['hidden'])
             for cid, summary in measured.items():
                 if (summary.get('baseline_profile') != 'student'
                         or summary.get('evaluation_id') != evaluation['evaluation_id']
@@ -536,14 +613,11 @@ def main():
         if evaluation_error:
             raise SystemExit('refusing student calibration: ' + evaluation_error)
         try:
-            payload = calibration_payload(measured, args.evaluation_profile, evaluation)
+            payload = calibration_payload(measured, args.evaluation_profile, evaluation, plan['hidden'])
         except ValueError as error:
             raise SystemExit(str(error)) from error
         args.baseline.write_text(json.dumps(payload, indent=2) + "\n")
-        print(json.dumps({"wrote": str(args.baseline),
-                          "cases": sorted(payload['cases']),
-                          "incomplete": []}, indent=2))
-        return 0
+        return {"wrote": str(args.baseline), "cases": sorted(payload['cases']), "incomplete": []}, 0
 
     baseline = {}
     baseline_error = None
@@ -562,6 +636,8 @@ def main():
                 if (calibration.get('evaluation_profile') != 'student'
                         or calibration.get('gate_version') != STUDENT_GATE_VERSION):
                     raise ValueError('student baseline needs a newly measured student-v2 whole evaluation')
+                if calibration.get('schedule', 'public') != plan['name']:
+                    raise ValueError(f"student baseline belongs to the other schedule; expected a {plan['name']} calibration")
                 baseline_label = calibration.get('evaluation_label')
                 if not isinstance(baseline_label, str) or not baseline_label:
                     raise ValueError('student baseline evaluation label is missing')
@@ -569,10 +645,11 @@ def main():
                 reference = validate_student_evaluation(
                     _read_object(reference_path),
                     label=baseline_label, mode='baseline',
-                    folders={cid: reference_path.parent / 'archives' / cid for cid in ranked})
+                    folders={cid: reference_path.parent / 'archives' / cid for cid in ranked},
+                    hidden=plan['hidden'])
                 if calibration.get('evaluation_id') != reference['evaluation_id']:
                     raise ValueError('baseline manifest belongs to a different complete evaluation')
-                if candidate != calibration_payload(reference['cases'], 'student', reference)['cases']:
+                if candidate != calibration_payload(reference['cases'], 'student', reference, plan['hidden'])['cases']:
                     raise ValueError('baseline manifest measurements differ from its complete evaluation')
                 if calibration.get('versions') != reference['versions']:
                     raise ValueError('baseline software differs from its complete evaluation')
@@ -627,11 +704,11 @@ def main():
         # ranking bonus are properties of the whole submission (policy_points).
         verdict[cid] = {"passed": passed, "reasons": reasons,
                         "throughput_ratio": ratio,
-                        "points": round(CORRECTNESS_POINTS / len(ranked) * passed, 3), **summary}
+                        "points": case_points(passed, len(ranked)), **summary}
 
     success = all(v.get('passed') for v in verdict.values()) and not baseline_error and not evaluation_error
     points = policy_points(verdict, ranked)
-    print(json.dumps({
+    report = {
         'passed': bool(success),
         "suite_commit": CONFIG["suite"]["commit"],
         "seed": CONFIG["determinism"]["seed"],
@@ -639,6 +716,8 @@ def main():
         "statistic": CONFIG["determinism"]["statistic"],
         "cases": verdict,
         "evaluation_profile": args.evaluation_profile,
+        "schedule": plan['name'],
+        "label": args.label,
         "ranked_case_ids": ranked,
         "baseline_error": baseline_error,
         'evaluation_error': evaluation_error,
@@ -646,8 +725,14 @@ def main():
         **points,
         "note": "organizer arithmetic over harness-written measurement files; "
                 "not an official score without a judge rerun",
-    }, indent=2, allow_nan=False))
-    return 0 if success else 1
+    }
+    return _object(report, 'score report'), (0 if success else 1)
+
+
+def main(argv=None):
+    report, code = build_report(parse_args(argv))
+    print(json.dumps(report, indent=2, allow_nan=False))
+    return code
 
 
 if __name__ == "__main__":

@@ -9,3 +9,10 @@ src/suite/stages/__pycache__/*
 # numbers from baseline_manifest.json; shipping per-image answers would let a
 # submission reproduce them by lookup instead of by evaluating the circuit.
 src/suite/results/*/evidence/*
+# Organizer-run hidden schedule (C5/C6): its calibration manifest, proof and
+# per-case archives (baseline and candidate) stay with the organizer, so
+# contestants see the hidden cases' shape in the handout but not the hidden
+# baseline numbers. Remove these three lines to publish them.
+src/suite/baseline_manifest_student_hidden.json
+src/suite/calibration/student-hidden-baseline/*
+src/suite/results/*_student-hidden-*

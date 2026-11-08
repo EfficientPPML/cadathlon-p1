@@ -10,3 +10,10 @@ cadathlon/contestant-release.tar.gz
 
 # Organizer per-image evidence written by archive.py (labels, predictions, pixels); excluded from releases.
 cadathlon/non_agent_pset/p1_benchmark/src/suite/results/*/evidence/
+
+# Organizer-run hidden schedule (C5/C6): calibration, proof and per-case archives
+# carry the unpublished hidden baseline. Keep them out of the repository; use
+# `git add -f` only in a private organizer repository.
+cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest_student_hidden.json
+cadathlon/non_agent_pset/p1_benchmark/src/suite/calibration/student-hidden-baseline/
+cadathlon/non_agent_pset/p1_benchmark/src/suite/results/*_student-hidden-*/
