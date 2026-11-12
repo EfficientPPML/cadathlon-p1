@@ -7,16 +7,18 @@ introduction, problem statement, compile/run instructions, scoring, references,
 ## `non_agent_pset` — no AI assistance
 
 Both problems here are solved without coding agents. A team's total is
-**essential + bonus**, so **120 points** are available.
+**essential + bonus**: P1's 10 points plus P3's 20-point bonus.
 
 | | Problem | Points | Judged by | Handout |
 |---|---|---|---|---|
-| **Essential** | [P1 · MNIST throughput](non_agent_pset/p1_benchmark/doc/problem.md) — raise encrypted MNIST throughput across eight TPU chips on the FHE benchmarking suite workload | **100** | rule-based rubric | [HTML](non_agent_pset/p1_benchmark/doc/problem.html) · [PDF](non_agent_pset/p1_benchmark/doc/problem.pdf) |
+| **Essential** | [P1 · MNIST throughput](non_agent_pset/p1_benchmark/doc/problem.md) — raise encrypted MNIST throughput on one and four TPU chips on the FHE benchmarking suite workload | **10** | policy `p1-10-point-v1` | [HTML](non_agent_pset/p1_benchmark/doc/problem.html) · [PDF](non_agent_pset/p1_benchmark/doc/problem.pdf) |
 | **Bonus** | [P3 · Compact CNNs](non_agent_pset/p3_cnn/doc/problem.md) — accelerate two fixed compact encrypted CNNs | **20** | correctness and measured speed | [HTML](non_agent_pset/p3_cnn/doc/problem.html) · [PDF](non_agent_pset/p3_cnn/doc/problem.pdf) |
 
-**P1 is the essential problem.** It is scored by the rule-based rubric in its
-section 4, case by case, against measurements the benchmarking suite's own
-harness writes.
+**P1 is the essential problem.** It is scored by policy `p1-10-point-v1` (its
+handout's section 4): 3 correctness points shared by the ranked cases, 0–4
+improvement points from the smallest throughput ratio over all cases, and a
+3/2/1 cross-team ranking bonus, all from measurements the benchmarking suite's
+own harness writes.
 
 **P3 is a bonus problem** — attempt it only after P1, for up to 20 extra
 points under the compact-v1 rubric below.
@@ -28,10 +30,13 @@ P1's evaluation and scoring Make targets default to `student`; P3's
 `competition-*` targets select `compact-v1`. Organizers must calibrate both on
 the judging hardware before the event:
 
-- **P1 student:** C3/C4, 100 images on one/eight TPU chips, secure N=8192.
-  The complete upstream-harness student-v2 baseline was measured at **257.56 seconds**,
-  including three repetitions per case and cleanup. It retains 100 points
-  with 15 correctness +30 speed points per case and 10 evidence points.
+- **P1 student:** C3/C4, 100 images on one/four TPU chips, secure N=8192.
+  The complete upstream-harness student-v2 baseline was measured at **276.63 seconds**
+  on the four-chip TPU v6e host, including three repetitions per case and cleanup.
+  It is scored out of 10 under policy `p1-10-point-v1` (3 correctness points,
+  0–4 improvement points and a 3/2/1 ranking bonus). After submission the
+  organizer also runs the hidden C5/C6 cases (1000 images) and combines both
+  schedules with `make -C non_agent_pset/p1_benchmark/src suite-overall`.
 - **P3 compact-v1:** two named compact convolutional models and a
   300-second whole-evaluation budget. This is a different model workload,
   with 10 correctness +10 performance points against a measured encrypted
@@ -58,7 +63,8 @@ evaluation and cleanup fixes and retain their exact recorded source versions.
 P1's `student-v2` calibration includes its immutable aggregate proof. Recalibrate
 on judging hardware with the matching software and model assets.
 
-The longer P1 six-case schedule requires explicit `P1_BASELINE_PROFILE=legacy`.
+The longer P1 six-case schedule requires explicit `P1_BASELINE_PROFILE=legacy`,
+and its full evaluation also `EVALUATION_BUDGET_S=7200`.
 P3's original LeNet/AlexNetTiny workloads also remain available as a separate
 legacy track. Its all-or-nothing 20-point bonus requires both encrypted
 correctness and `T <= 1.5 * T_sota` against an organizer-named, measured
@@ -123,8 +129,9 @@ make docs                # rebuild HTML/PDF (requirements-docs.txt)
 make release             # create contestant archive, applying EXCLUDE
 ```
 
-Each problem's `make -C pN_name/src test` runs its contestant entrypoint and
-intentionally fails until the TODOs are implemented. The CNN
+For P1–P4, `make -C <set>/pN_name/src test` runs the contestant entrypoint and
+intentionally fails until the TODOs are implemented; P5 ships a working starting
+implementation, so its `make test` runs actual encrypted inference on every case. The CNN
 `make baseline-plan` target checks the actual CROSS packing path without key
 generation. `make baseline-test` runs actual encrypted inference and can take
 minutes and substantial memory. No public smoke check certifies security,
@@ -142,7 +149,10 @@ they do not make contestant Python trusted, and organizer evaluator audits
 remain necessary.
 
 The problem set is authored against CROSS commit
-`e652a56f897d8ed814978359e5a2b0c78f46641d`. Source precedence is current checked-out
+`e652a56f897d8ed814978359e5a2b0c78f46641d`. This repository carries the CROSS
+runtime it runs on (`jaxite_word/` and `demos/` at the repository root, from
+CROSS `3a49b20`), so `CROSS_ROOT` defaults to this checkout; see
+[the migration note](SOURCES.md#repository-migration-2026-11-10). Source precedence is current checked-out
 code/API reference, then tutorial guidance, then historical paper measurements.
 See [provenance](SOURCES.md) and [validation](VALIDATION.md). This is a complete
 problem proposal and starter package; organizer asset preparation and hardware

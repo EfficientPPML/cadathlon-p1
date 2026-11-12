@@ -168,7 +168,8 @@ tbody tr:nth-child(even) { background: var(--bg-sidebar); }
       <div class="nav-section"><h2 class="nav-title">Problem set</h2><ul class="nav-links"><li><a href="../../../non_agent_pset/p1_benchmark/doc/problem.html">MNIST throughput</a></li>
 <li><a href="../../../agent_pset/p2_bert/doc/problem.html" class="active" aria-current="page">BERT / MRPC</a></li>
 <li><a href="../../../non_agent_pset/p3_cnn/doc/problem.html">Encrypted CNNs</a></li>
-<li><a href="../../../agent_pset/p4_qwen/doc/problem.html">Qwen3-0.6B</a></li></ul></div>
+<li><a href="../../../agent_pset/p4_qwen/doc/problem.html">Qwen3-0.6B</a></li>
+<li><a href="../../../agent_pset/p5_wise/doc/problem.html">WISE scheduling</a></li></ul></div>
       <div class="nav-section"><h2 class="nav-title">This problem</h2><ul class="nav-links"><li><a href="#1-introduction">Introduction</a></li>
 <li><a href="#2-problem-statement">Problem statement</a></li>
 <li><a href="#3-how-to-compile-and-run">How to compile and run</a></li>
@@ -200,6 +201,8 @@ latency and increase throughput while preserving accuracy and security.</p>
 <p>The two repositories have distinct roles:</p>
 <ol>
 <li><strong>Library to use and improve: <a href="https://github.com/EfficientPPML/CROSS">CROSS</a>.</strong>
+   Its runtime is bundled at the root of this repository (the extracted
+   contestant release does not include it); patch that copy.
    Build your encrypted BERT implementation with CROSS and execute its server
    computation on TPUs. Extend or optimize CROSS's operators, kernels, packing
    and execution support as needed. Submit library changes in <code>cross.patch</code>.</li>
@@ -491,7 +494,7 @@ process; the resolver rejects mixing helper copies from different runs.</p>
 git -C /tmp/bert-upstream checkout 170bfe567545d74d0fad785a052518351d37bc93
 make benchmark-check BERT_ROOT=/tmp/bert-upstream
 make benchmark-stage BERT_ROOT=/tmp/bert-upstream BERT_RUN=/tmp/bert-cross-run
-export CROSS_ROOT=/path/to/your/CROSS
+export CROSS_ROOT=/path/to/cadathlon-p1  # this repository's root, with your patch
 cd /tmp/bert-cross-run
 python3 harness/run_submission.py 0 --num_runs 1 --seed 42
 python3 harness/cleartext_impl.py \
@@ -729,7 +732,7 @@ with others.
 
 The OFL allows the licensed fonts to be used, studied, modified and
 redistributed freely as long as they are not sold by themselves. The
-fonts, including any derivative works, can be bundled, embedded, 
+fonts, including any derivative works, can be bundled, embedded,
 redistributed and/or sold with any software provided that any reserved
 names are not used by derivative works. The fonts and derivatives,
 however, cannot be released under any other type of license. The
@@ -824,7 +827,7 @@ with others.
 
 The OFL allows the licensed fonts to be used, studied, modified and
 redistributed freely as long as they are not sold by themselves. The
-fonts, including any derivative works, can be bundled, embedded, 
+fonts, including any derivative works, can be bundled, embedded,
 redistributed and/or sold with any software provided that any reserved
 names are not used by derivative works. The fonts and derivatives,
 however, cannot be released under any other type of license. The

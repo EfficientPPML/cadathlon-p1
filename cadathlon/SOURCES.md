@@ -45,3 +45,79 @@ Security target, workload sizes, tolerances, time limits, point allocations,
 speedup caps, AI-use policy and contest duration are design choices in this
 problem set, not claims made by the paper or measured facts. Organizers must
 validate and freeze these choices before release as described in ORGANIZER.md.
+
+## Repository migration (2026-11-10)
+
+This problem set moved from `EfficientPPML/CROSS` into this repository, which
+already held the standalone P1. Where each part comes from:
+
+| Part | Source |
+|---|---|
+| P1 (`non_agent_pset/p1_benchmark`), its tests that differ from CROSS or are new here (`test_evaluation_schedule.py`, `test_scoring.py`, `test_student_evidence.py`, `test_hidden_schedule.py`, `test_ranked_schedule.py`, `test_scoring_policy.py`, `test_standalone_package.py`) and its validation records (`p1_student_suite.json`, `p1_legacy_suite.json`, `p1_student_v6e8/`, `p1_student_pre_v2/`) | This repository's own P1: extracted from CROSS `3a49b20` on 2026-11-06 and developed here since (four-chip schedule, 10-point policy, hidden C5/C6 cases) |
+| P2, P3, P4, `common/`, the other tests, `README.md`, `ORGANIZER.md`, `VALIDATION.md` and the other top-level `validation/` records | CROSS branch `fix/competition-readiness`, commit `3a49b207acc851a8d599b9b3f3053b8af1d199aa` |
+| P5 (`agent_pset/p5_wise`) and its `test_wise_*` tests | CROSS branch `feat/p5-wise-tpu-20261105`, commit `3cec9fa`, replayed onto `3a49b20` as CROSS commit `152fb80b1d56d0bf7fec0f61f5c5bfd853f59c49` (branch `migrate-cadathlon`) |
+| CROSS runtime: `jaxite_word/`, `demos/`, `profile_analysis/`, `pytest.ini` (repository root) | CROSS `3a49b20`; `jaxite_word/` is identical in `3a49b20` and `3cec9fa` |
+
+Replaying P5 onto `3a49b20` conflicted in `common/package.py` (its
+runtime-file lists, submission and release contents, and problem list), in the
+problem list of `common/render_docs.py`, in `README.md` and the root
+`.gitignore`, and in three tests that `3a49b20` had extended with further
+cases (its versions were kept).
+
+Changes made here on top of those sources:
+
+- `common/package.py` and `common/render_docs.py` serve all five problems. Each
+  submission keeps its line's contents: P1 ships only the shared tooling, P5
+  the WISE runtime subset, and the other problems the complete shared runtime;
+  `submit` also adds any other shared module a submission's sources import by
+  an import statement (it scans only regular files, archives a source that
+  does not parse without following its imports, and treats an imported shared
+  module that is a symlink as an error). `render_docs.py` strips only trailing
+  spaces and tabs, outside `<pre>` blocks, from the rendered HTML. The package tests (`test_package.py`,
+  and the release fixtures of `test_standalone_package.py` and
+  `test_hidden_schedule.py`) follow suit, and new tests check that the narrowed
+  P1 and P5 runtimes contain every shared module their sources import,
+  directly or indirectly, that a new import reaches the archive, that editor
+  lock links are skipped, that unparsable sources are still archived, and that
+  the release's runtime covers every problem's imports.
+- `test_cnn_evaluation.py` stubs the package-version lookup in one test, as
+  `test_evaluation_schedule.py` already did, so it passes on hosts without `libtpu`.
+- P5's `EXCLUDE` also drops golden files, hidden or full-reference test cases
+  (as P1–P4's do) and the native OpenFHE/WISE build directories its README
+  creates, and it no longer drops the empty `cross.patch` template, which
+  `make submit` requires and P1–P4 ship. Every problem's `EXCLUDE` drops raw
+  `results*.json` copied into the problem directory for `make submit`.
+- Handout text (`doc/problem.md`, and the READMEs of P2 and P5 where they say
+  the same): P1 names the right record for its legacy figures; P2 has
+  contestants patch the CROSS runtime at this repository's root (which the
+  extracted release does not include) and point `CROSS_ROOT` there; P3 gives P1's 10 points and no longer claims
+  that its 20-point bonus cannot outweigh P1; P1, P3, P4 and P5 say that
+  `make submit` packages `results*.json` from the problem directory; P5 tells
+  users of the extracted release to set `CROSS_ROOT`. All five
+  handouts were re-rendered to HTML and PDF with the shared five-problem
+  navigation (PDFs on Pango 1.52, which sets some typography differently).
+- The set-level documents (`README.md`, `ORGANIZER.md`, the `VALIDATION.md`
+  header) and P5's README, runbook and status note describe this repository and
+  the current P1; `ORGANIZER.md` and `README.md` give the legacy P1
+  recalibration its 7200-second budget. P5's status note says that its raw
+  evidence directory was the author's local one and was never committed.
+- The root `Makefile` builds, checks, renders, releases and cleans the whole
+  set through `cadathlon/Makefile` and keeps P1's targets; its new
+  `install-wise` clones P5's planner to the absolute `WISE_ROOT` that
+  `make check` then uses.
+- The root `requirements.txt` adds the packages P2 (and its pinned harness),
+  P5 and the demo asset script import, and the root `.gitignore` covers every problem's run scratch,
+  the demo datasets, weights and logs, P5's native builds, raw result JSON
+  copied for `make submit` and organizer-only hidden cases.
+
+The fixes that also apply to CROSS's own copy of the problem set were made there
+too, on CROSS branch `migrate-cadathlon`, after the commit above.
+
+Not migrated: CROSS `main` commit `294ed7d` ("Allow coding agents for all
+CADathlon problems"), which moved P1 and P3 into `agent_pset` and is not on
+`fix/competition-readiness`, so P1 and P3 stay in `non_agent_pset`; the per-run
+evidence directories under `validation/` (311 directories, 12,487 files, about
+1.8 GB, of which the P1 extraction had already kept
+`p1_student_pre_v2/historical_run.json`), linked from `VALIDATION.md` at
+CROSS commit `3a49b20`; the built `contestant-release.tar.gz`; CROSS's root
+`README.md`; and CROSS's paper-figure scripts (`figure_drawer/`).

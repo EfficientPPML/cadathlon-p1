@@ -423,7 +423,8 @@ on the four-chip TPU v6e host (`v6e-4`, 2026-11-07; the complete six-case
 evaluation took 1685.9 s). `src/suite/baseline_manifest.json` holds
 these numbers; they are what `suite-score` divides by, and they are indicative
 until the judge measures its own. The earlier eight-chip legacy figures remain
-in this file's git history and in `cadathlon/validation/p1_legacy_suite.json`.
+in this file's git history; `cadathlon/validation/p1_legacy_suite.json` records
+the four-chip run above.
 
 | case | images | chips | stage 7 | img/s | ms/image | server execute | ms/image |
 |---|---|---|---|---|---|---|---|
@@ -659,7 +660,10 @@ Submit `src/`, `cross.patch`, `REPORT.md`, raw result JSON and environment and
 weight hashes. Include both successful and failed configurations. Four report
 pages are sufficient; logs and code are additional. Do not submit datasets,
 trained weights, secret keys, caches, generated reference outputs or unrelated
-files. `make submit` packages the listed files; it does not upload them.
+files. `make submit` packages the `src/` sources, `cross.patch`, `REPORT.md` and
+every `results*.json` in this problem directory, so copy each raw result JSON
+here under that name first (reports under `src/suite/run/` and
+`src/suite/results/` are not packaged). It does not upload anything.
 
 ## 5. References
 

@@ -265,9 +265,8 @@ hardware does not count as an optimization.
 ## 4. How to score the legacy full-model challenge
 
 This is the **bonus problem** of `non_agent_pset`. It is worth **20 points on
-top of** the 100 available in Problem 1, which is the essential problem. Attempt
-this one only once Problem 1 is done; a strong result here does not compensate
-for a weak one there.
+top of** the 10 available in Problem 1, which is the essential problem. Attempt
+this one only once Problem 1 is done.
 
 Scoring is **open-ended and all or nothing**. There is no per-case rubric and
 no partial credit: you either demonstrate the two things below, and receive the
@@ -305,8 +304,11 @@ Submit `src/`, `cross.patch`, `REPORT.md`, raw result JSON and environment/
 weight hashes. Include both successful and failed configurations in the
 report. Four report pages are sufficient; logs and code are additional.
 Do not submit datasets, trained weights, secret keys, caches, generated
-reference outputs or unrelated files. `make submit` packages the listed
-submission files; it does not upload them.
+reference outputs or unrelated files. `make submit` packages the `src/`
+sources, `cross.patch`, `REPORT.md` and every `results*.json` in this problem
+directory, so copy each raw result JSON here under that name first (for example
+`results-compact.json`; reports under `src/suite/run/` are not packaged). It
+does not upload anything.
 
 ## 5. References
 

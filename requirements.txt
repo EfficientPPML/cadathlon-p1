@@ -3,7 +3,22 @@
 numpy
 jax[cpu]
 torch
+# demos/prepare_demo_assets.py downloads MNIST and CIFAR-10 through torchvision.
+torchvision
 gmpy2
 pandas
 absl-py
 pytest
+# P2 (BERT) pins the Transformers release its upstream harness and oracles use;
+# that harness also loads GLUE/MRPC through datasets.
+transformers==4.51.3
+datasets>=2.19
+safetensors
+scipy
+sympy
+# Imported by P5's pinned WISE planner (sagittarius).
+einops
+matplotlib
+tqdm
+# P5 also needs the pinned WISE planner, which is not a PyPI package:
+#   make -C cadathlon/agent_pset/p5_wise/src install-wise

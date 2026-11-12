@@ -7,7 +7,8 @@ optimize it for better benchmark results and a higher assignment score.**
 
 1. **Use the [CROSS library](https://github.com/EfficientPPML/CROSS) and improve it as needed**
    to implement encrypted BERT and execute its server computation on TPUs.
-   Submit changes to the library in `cross.patch`.
+   Its runtime is bundled at the root of this repository (not in the extracted
+   contestant release); submit your changes to it in `cross.patch`.
 2. **Evaluate your results with [fhe-benchmarking/BERT](https://github.com/fhe-benchmarking/BERT).**
    Run your CROSS implementation through its pinned evaluation harness.
    First pass the correctness and accuracy gates; then reduce latency and
@@ -44,7 +45,8 @@ runtime helpers into a new run directory. The helper copies live in
 `submissions/_cross_common/`; `cross_staging_manifest.json` records their
 SHA-256 hashes alongside the stage sources. Stage and adapter imports reject
 missing or changed staged helpers. Restage after changing your source or
-helpers. Set `CROSS_ROOT` to your patched core checkout. Staging dependencies
+helpers. Set `CROSS_ROOT` to the root of this repository (the bundled CROSS
+runtime, with your patch applied). Staging dependencies
 does not implement the five encrypted file-stage TODOs or validate full BERT.
 Use the staged `submissions/runner.py` when selecting a staged experimental
 adapter; mixing already-imported helper copies from different runs is rejected.

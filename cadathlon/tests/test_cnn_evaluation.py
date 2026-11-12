@@ -139,6 +139,9 @@ def test_post_success_diagnostic_failure_is_not_a_pass(monkeypatch, tmp_path):
         config=SimpleNamespace(update=lambda *a: None), devices=lambda platform: [device]))
     monkeypatch.setitem(sys.modules, 'jaxite_word.mapping', SimpleNamespace(
         defer_cache_clearing=contextlib.nullcontext))
+    # The worker records installed package versions first; libtpu exists only
+    # on TPU hosts, and this test targets the later diagnostic failure.
+    monkeypatch.setattr(evaluate.importlib.metadata, 'version', lambda name: 'test')
     path = tmp_path / 'worker.json'
     assert evaluate.worker(path, baseline=True) == 1
     report = json.loads(path.read_text())

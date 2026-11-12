@@ -467,8 +467,16 @@ def test_release_excludes_every_hidden_artifact_but_ships_the_overall_script(tmp
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('{}')
     (root / 'validation/p1_student_v6e8').mkdir(parents=True)
-    for name in ('p1_student_suite.json', 'p1_student_v6e8/report.json', 'p1_legacy_suite.json'):
+    for name in ('p1_student_suite.json', 'p1_student_v6e8/report.json', 'p1_legacy_suite.json',
+                 'p3_compact_baseline.json'):
         (root / 'validation' / name).write_text('{}')
+    # The release packages every problem and the complete shared runtime.
+    for other in ('agent_pset/p2_bert', 'non_agent_pset/p3_cnn', 'agent_pset/p4_qwen', 'agent_pset/p5_wise'):
+        (root / other).mkdir(parents=True)
+        shutil.copy2(common.parent / other / 'EXCLUDE', root / other / 'EXCLUDE')
+    for path in common.iterdir():
+        if path.is_file() and not (root / 'common' / path.name).exists():
+            shutil.copy2(path, root / 'common' / path.name)
     subprocess.run([sys.executable, str(root / 'common/package.py'), 'release', str(root)], check=True)
     with tarfile.open(root / 'contestant-release.tar.gz') as archive:
         names = set(archive.getnames())

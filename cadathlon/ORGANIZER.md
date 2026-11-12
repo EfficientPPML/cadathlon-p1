@@ -6,12 +6,12 @@ the proposed time/error limits have been demonstrated on contest hardware.
 Students are asked to implement that capability. The CNN reference uses the
 existing real CROSS pipeline.
 
-The four problems are split into two sets. `non_agent_pset` is solved without
-coding agents and holds **P1 (essential, 100 points)** and **P3 (bonus, 20
-points)**, so a team there can reach 120; its total is essential + bonus.
-`agent_pset` holds **P2** and **P4**, both 100 points, with agents allowed.
-Keep the two sets on separate leaderboards, and the two `agent_pset` problems
-on separate leaderboards from each other.
+The five problems are split into two sets. `non_agent_pset` is solved without
+coding agents and holds **P1 (essential, 10 points under policy
+`p1-10-point-v1`, P1 handout section 4)** and **P3 (bonus, 20 points)**; a
+team's total there is essential + bonus. `agent_pset` holds **P2**, **P4** and
+**P5**, each 100 points, with agents allowed. Keep the two sets on separate
+leaderboards, and each `agent_pset` problem on its own leaderboard.
 
 ## Format and difficulty
 
@@ -52,7 +52,7 @@ keeps its score attributable to CROSS/accelerator optimization and makes an
 eight-hour hands-on track practical with pre-staged assets.
 
 The benchmark problem (P1) optimizes throughput of one fixed network across one
-and eight chips, and it is scored through the FHE benchmarking suite's own
+and four chips, and it is scored through the FHE benchmarking suite's own
 harness rather than a runner written here. That is deliberate: correctness is
 decided against the suite's ground-truth labels and performance comes from its
 `Timing` block, so a team cannot self-report either.
@@ -128,7 +128,9 @@ contestant who could edit it could write their own correctness verdict.
 For 1.5-hour topic slots, use P1's default `student` schedule and P3's
 `compact-v1` competition targets. Distribute the corresponding handouts and
 state the selected profiles before the event.
-P1 ranks C3/C4 and preserves its 100-point total. P3 uses two **different**
+P1 ranks C3/C4 under its 10-point policy; after submission the organizer also
+runs its hidden C5/C6 cases and combines both schedules with `suite-overall`
+(P1 handout, "Hidden cases C5 and C6"). P3 uses two **different**
 compact CNNs and a 20-point correctness/speed rubric against a measured
 reference; it does not claim to meet the original LeNet/AlexNetTiny SOTA gate.
 Never mix a legacy calibration with a compact/student score.
@@ -136,7 +138,7 @@ Never mix a legacy calibration with a compact/student score.
 Run the complete evaluation commands on exclusive contest hardware, with all
 assets staged beforehand. Require every reference to pass its encryption,
 accuracy, actual-ring and whole-evaluation timing gates. P1's full measured
-student-v2 run took 257.56 seconds on this host. P3's complete compact baseline took 145.00 seconds. Both timings
+student-v2 run took 276.63 seconds on the four-chip TPU v6e host (`v6e-4`). P3's complete compact baseline took 145.00 seconds. Both timings
 include cold setup, all repetitions and cleanup. Preserve each successful baseline report; rerun
 candidate implementations in organizer-owned harnesses, verify fixture/model
 hashes and inspect raw samples. The scorer must reject failed, incomplete,
@@ -146,8 +148,12 @@ P1's `suite-evaluate-baseline`, `suite-evaluate`, and `suite-score` targets all
 default to `student`. Its `student-v2` scorer requires a fresh complete report
 with the same evaluation ID and exact archive hashes. It binds model bytes to
 `weights/MANIFEST.json`, compares input, software and TPU identities, and checks
-source stability and cleanup. The 257.56-second run satisfies this evidence
-contract; the separately preserved historical 262.14-second run predates it.
+source stability and cleanup. The 276.63-second four-chip run satisfied this evidence
+contract; the earlier eight-chip proof and the separately preserved historical
+262.14-second run predate it. The shipped proof predates the hidden-case
+configuration, so `suite-score` rejects it until
+`make -C non_agent_pset/p1_benchmark/src suite-evaluate-baseline` is rerun on
+the contest host.
 Successful baseline proofs and aggregate case snapshots live under
 `src/suite/calibration/student-baseline/` and survive `make clean`. Keep those
 files organizer-owned. The latest candidate report is runtime scratch and
@@ -184,7 +190,7 @@ speedup remain incomplete; historical CPU results do not supply a TPU baseline.
 3. **CNNs:** acquire MNIST/CIFAR-10 and train once outside contest time:
 
    ```bash
-   cd /home/jianming_gatech/CROSS
+   cd "$(git rev-parse --show-toplevel)"   # the root of this repository
    python demos/prepare_demo_assets.py --models lenet alexnet_tiny --epochs 30
    ```
 
@@ -216,9 +222,15 @@ speedup remain incomplete; historical CPU results do not supply a TPU baseline.
    `Linear(784,50) -> x^2 -> Linear(50,10)` architecture and re-hash. Publish
    the image selection: the suite derives it from `--seed`, so record the seed
    and the repeat schedule for ranked batches above 256 images. Measure the
-   judge's own baseline with `make -C non_agent_pset/p1_benchmark/src suite-baseline` on the
-   exact hardware and commit the resulting `baseline_manifest.json`; the
-   authored one in the package is indicative only.
+   judge's own calibration on the exact hardware: `make -C
+   non_agent_pset/p1_benchmark/src suite-evaluate-baseline` publishes the student C3/C4
+   calibration (`baseline_manifest_student.json` and `calibration/student-baseline/`),
+   and `suite-evaluate-baseline-hidden` the hidden C5/C6 calibration
+   (`baseline_manifest_student_hidden.json`), which stays out of git and out of the
+   contestant release. The legacy six-case `baseline_manifest.json` comes from
+   `suite-evaluate-baseline` with `P1_BASELINE_PROFILE=legacy EVALUATION_BUDGET_S=7200`
+   (the default 300-second budget is too short for that schedule). The authored
+   calibrations in the package are indicative only.
 7. **Actual encrypted preflight:** run baseline CNN inference on every official
    batch; confirm numerical/accuracy gates, key/setup time, per-batch budgets
    and memory on the exact judge. Validate 128-bit parameters at actual Q/P
@@ -274,8 +286,8 @@ awarding operator/block credit does not establish full-model completion.
 
 ## Packaging and review
 
-`make release` produces `contestant-release.tar.gz` with the three template-style
-problem directories and shared support. `EXCLUDE` removes `.golden` files and
+`make release` produces `contestant-release.tar.gz` with the five problem
+directories (P1–P5), the shared runtime and the public validation reports. `EXCLUDE` removes `.golden` files and
 hidden/full-reference paths. It is still necessary to inspect archive members
 before distribution. Author-only files (`ORGANIZER.md`, generation and audit
 tools) are not in the contestant archive. Public numeric `.out` files stay in.
@@ -284,8 +296,9 @@ in this directory. No external publication is performed.
 
 `make submit` packages source, `cross.patch`, `REPORT.md`, `results*.json` and
 shared support; it does not package the datasets/checkpoints or test answers.
-Apply patches to a fresh pinned CROSS checkout, import from that checkout,
-and run the organizer-owned cases. Public starter TODOs are intentional.
+Apply patches to a fresh checkout of this repository at the pinned commit (the
+CROSS runtime sits at its root), or to an external CROSS checkout selected with
+`CROSS_ROOT`, import from it, and run the organizer-owned cases. Public starter TODOs are intentional.
 
 The supplied template's `.golden` convention is followed for reference code:
 the CNN golden is a valid unoptimized encrypted solution; the Qwen golden is

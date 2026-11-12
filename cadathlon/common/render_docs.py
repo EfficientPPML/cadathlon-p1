@@ -11,7 +11,11 @@ from weasyprint.text.fonts import FontConfiguration
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMON = ROOT / "common"
-PROBLEMS = {"non_agent_pset/p1_benchmark": "MNIST throughput"}
+PROBLEMS = {"non_agent_pset/p1_benchmark": "MNIST throughput",
+            "agent_pset/p2_bert": "BERT / MRPC",
+            "non_agent_pset/p3_cnn": "Encrypted CNNs",
+            "agent_pset/p4_qwen": "Qwen3-0.6B",
+            "agent_pset/p5_wise": "WISE scheduling"}
 
 
 def font_styles():
@@ -114,6 +118,15 @@ def render(problem, fonts):
 </body></html>'''
     licenses = "\n\n".join((COMMON / "fonts" / f"{family}-OFL.txt").read_text() for family in ("Inter", "Outfit"))
     html += "\n<!-- Embedded font license notices:\n" + licenses.replace("--", "—") + "\n-->\n"
+    # Strip trailing spaces and tabs outside <pre> blocks only: code shown in a
+    # handout keeps its bytes (a diff's blank context line is a single space).
+    # str.splitlines() would also turn form feeds, U+2028 and similar characters
+    # inside the content into line breaks, so a regular expression is used.
+    parts = re.split(r"(<pre\b.*?</pre>)", html.replace("\r\n", "\n"), flags=re.DOTALL)
+    html = "".join(part if index % 2 else re.sub(r"[ \t]+$", "", part, flags=re.MULTILINE)
+                   for index, part in enumerate(parts))
+    if not html.endswith("\n"):
+        html += "\n"
     source.with_suffix(".html").write_text(html)
     HTML(string=html, base_url=str(source.parent)).write_pdf(
         source.with_suffix(".pdf"), font_config=FontConfiguration())

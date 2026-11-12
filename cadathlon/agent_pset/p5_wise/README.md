@@ -11,11 +11,15 @@ diagonal control, independent PyTorch references and a matched benchmark scorer.
 All six public networks include a nonlinear encrypted square.
 
 For a fresh machine, follow [TPU_TESTING.md](TPU_TESTING.md), including the
-explicit CPU/TPU checks and native CPU comparison. The branch contains all
-CROSS runtime dependencies; the separate WISE checkout stays pinned.
+explicit CPU/TPU checks and native CPU comparison. This repository contains
+all CROSS runtime dependencies at its root; set `CROSS_ROOT` to that root when
+working from the extracted contestant release, which does not include them. The
+separate WISE checkout stays pinned.
 
 ```sh
 export WISE_ROOT=/path/to/WISE
+# From the extracted release only (the default is this repository's root):
+# export CROSS_ROOT=/path/to/cadathlon-p1
 # If no checkout exists, make -C src install-wise WISE_ROOT=/fresh/path/WISE
 # In your own environment (Python 3.13 was used for development):
 python -m pip install numpy scipy torch einops matplotlib tqdm
@@ -48,7 +52,10 @@ budget covers retained cache entries; it is not a whole-process memory limit.
 
 Build the unchanged WISE C++ backend against OpenFHE v1.4.2.6, commit
 `94289854bb024bcef7e6b5c9a59eda5e9e204770`. The following uses separate build
-and installation directories; Python must have `pybind11` installed.
+and installation directories; Python must have `pybind11` installed. Run it
+outside `agent_pset/p5_wise`, for example from the repository root as
+[TPU_TESTING.md](TPU_TESTING.md) does: the collectors copy and hash the whole P5
+directory into every run.
 
 ```sh
 git clone --recursive --branch v1.4.2.6 https://github.com/openfheorg/openfhe-development.git openfhe-wise

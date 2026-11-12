@@ -2,4 +2,15 @@ src/run/*
 src/*.json
 src/__pycache__/*
 submission.tar.gz
-cross.patch
+openfhe-wise/*
+openfhe-build/*
+openfhe-install/*
+wise-bindings/*
+*/openfhe-wise/*
+*/openfhe-build/*
+*/openfhe-install/*
+*/wise-bindings/*
+src/*.golden
+test/hidden*
+test/full_reference*
+results*.json

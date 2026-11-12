@@ -12,6 +12,8 @@ latency and increase throughput while preserving accuracy and security.
 The two repositories have distinct roles:
 
 1. **Library to use and improve: [CROSS](https://github.com/EfficientPPML/CROSS).**
+   Its runtime is bundled at the root of this repository (the extracted
+   contestant release does not include it); patch that copy.
    Build your encrypted BERT implementation with CROSS and execute its server
    computation on TPUs. Extend or optimize CROSS's operators, kernels, packing
    and execution support as needed. Submit library changes in `cross.patch`.
@@ -242,7 +244,7 @@ git clone https://github.com/fhe-benchmarking/BERT.git /tmp/bert-upstream
 git -C /tmp/bert-upstream checkout 170bfe567545d74d0fad785a052518351d37bc93
 make benchmark-check BERT_ROOT=/tmp/bert-upstream
 make benchmark-stage BERT_ROOT=/tmp/bert-upstream BERT_RUN=/tmp/bert-cross-run
-export CROSS_ROOT=/path/to/your/CROSS
+export CROSS_ROOT=/path/to/cadathlon-p1  # this repository's root, with your patch
 cd /tmp/bert-cross-run
 python3 harness/run_submission.py 0 --num_runs 1 --seed 42
 python3 harness/cleartext_impl.py \

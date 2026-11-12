@@ -1,22 +1,24 @@
 # Run P5 on another TPU host
 
-This branch is self-contained for CROSS execution. WISE remains a separate,
-pinned dependency. Use an exclusively allocated TPU host; the commands below
+This repository is self-contained for CROSS execution: the CROSS runtime sits at
+its root. WISE remains a separate, pinned dependency. Use an exclusively allocated TPU host; the commands below
 do not stop other jobs or modify device locks. No P5 TPU speedup has yet been
 verified. The historical CPU results in `VALIDATION.md` are development
-measurements, not measurements of this new PR checkout.
+measurements, not measurements of the checkout under test.
 
 ## 1. Checkout and environment
 
 ```bash
-git clone --branch feat/p5-wise-tpu-20261105 https://github.com/EfficientPPML/CROSS.git CROSS-p5
-cd CROSS-p5
+# Use the branch or commit under test; P5 moved here from CROSS
+# branch feat/p5-wise-tpu-20261105 (see cadathlon/SOURCES.md).
+git clone --branch <branch-under-test> https://github.com/EfficientPPML/cadathlon-p1.git cadathlon-p5
+cd cadathlon-p5
 export CROSS_ROOT="$PWD"
 export P5="$CROSS_ROOT/cadathlon/agent_pset/p5_wise"
 export WISE_ROOT="$(dirname "$CROSS_ROOT")/WISE-p5"
 ```
 
-Use the TPU Python environment from the CROSS root README. In a fresh Python
+Use the TPU Python environment from the repository root README. In a fresh Python
 3.13 virtual environment, its installation plus the planner/test dependencies is:
 
 ```bash
@@ -48,7 +50,7 @@ executes on one selected device and reports both available and executed devices.
 
 ## 2. Verify the checkout and collect matched measurements
 
-Run these commands from the CROSS root. Choose CPU cores within the host's
+Run these commands from the repository root. Choose CPU cores within the host's
 allowed affinity mask (`taskset -pc $$`) and keep the allocation recorded.
 Each output directory must be new; use a different name for each attempt.
 
