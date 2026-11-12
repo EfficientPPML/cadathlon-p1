@@ -1,5 +1,13 @@
 # CROSS CADathlon problem set
 
+> **This problem set has moved.** CADathlon now lives in
+> [EfficientPPML/cadathlon-p1](https://github.com/EfficientPPML/cadathlon-p1),
+> together with the CROSS runtime it runs on, so it no longer needs a CROSS
+> checkout; the migration landed on that repository's `migrate-cadathlon`
+> branch. Make further changes there. This directory remains the source of
+> that migration and keeps the per-run evidence under `validation/` that
+> cadathlon-p1's `VALIDATION.md` links to.
+
 Five problems in two sets, each following the supplied CADathlon template:
 introduction, problem statement, compile/run instructions, scoring, references,
 `doc/`, `src/`, `test/`, `oneliner`, and `EXCLUDE`.
