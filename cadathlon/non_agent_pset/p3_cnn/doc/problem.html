@@ -168,7 +168,8 @@ tbody tr:nth-child(even) { background: var(--bg-sidebar); }
       <div class="nav-section"><h2 class="nav-title">Problem set</h2><ul class="nav-links"><li><a href="../../../non_agent_pset/p1_benchmark/doc/problem.html">MNIST throughput</a></li>
 <li><a href="../../../agent_pset/p2_bert/doc/problem.html">BERT / MRPC</a></li>
 <li><a href="../../../non_agent_pset/p3_cnn/doc/problem.html" class="active" aria-current="page">Encrypted CNNs</a></li>
-<li><a href="../../../agent_pset/p4_qwen/doc/problem.html">Qwen3-0.6B</a></li></ul></div>
+<li><a href="../../../agent_pset/p4_qwen/doc/problem.html">Qwen3-0.6B</a></li>
+<li><a href="../../../agent_pset/p5_wise/doc/problem.html">WISE scheduling</a></li></ul></div>
       <div class="nav-section"><h2 class="nav-title">This problem</h2><ul class="nav-links"><li><a href="#1-introduction">Introduction</a></li>
 <li><a href="#2-problem-statement">Problem statement</a></li>
 <li><a href="#3-how-to-compile-and-run-the-legacy-full-model-challenge">How to compile and run the legacy full-model challenge</a></li>
@@ -524,8 +525,11 @@ its margin, and the commands that reproduce all of it.</p>
 weight hashes. Include both successful and failed configurations in the
 report. Four report pages are sufficient; logs and code are additional.
 Do not submit datasets, trained weights, secret keys, caches, generated
-reference outputs or unrelated files. <code>make submit</code> packages the listed
-submission files; it does not upload them.</p>
+reference outputs or unrelated files. <code>make submit</code> packages the <code>src/</code>
+sources, <code>cross.patch</code>, <code>REPORT.md</code> and every <code>results*.json</code> in this problem
+directory, so copy each raw result JSON here under that name first (for example
+<code>results-compact.json</code>; reports under <code>src/suite/run/</code> are not packaged). It
+does not upload anything.</p>
 </section>
 <section id="5-references"><h2>5. References</h2>
 <ol>
@@ -646,7 +650,7 @@ with others.
 
 The OFL allows the licensed fonts to be used, studied, modified and
 redistributed freely as long as they are not sold by themselves. The
-fonts, including any derivative works, can be bundled, embedded, 
+fonts, including any derivative works, can be bundled, embedded,
 redistributed and/or sold with any software provided that any reserved
 names are not used by derivative works. The fonts and derivatives,
 however, cannot be released under any other type of license. The
@@ -741,7 +745,7 @@ with others.
 
 The OFL allows the licensed fonts to be used, studied, modified and
 redistributed freely as long as they are not sold by themselves. The
-fonts, including any derivative works, can be bundled, embedded, 
+fonts, including any derivative works, can be bundled, embedded,
 redistributed and/or sold with any software provided that any reserved
 names are not used by derivative works. The fonts and derivatives,
 however, cannot be released under any other type of license. The

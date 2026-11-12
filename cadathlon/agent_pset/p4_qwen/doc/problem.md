@@ -283,7 +283,9 @@ cannot earn implementation points. Ties break by A4 score, then A5 score,
 then lower full-model end-to-end median, then lower peak device memory.
 
 Submit `src/`, `cross.patch` (empty if unchanged), `REPORT.md`, raw measurement
-JSON and environment/checkpoint hashes. Do not include secret keys, model
+JSON and environment/checkpoint hashes. `make submit` packages the `src/`
+sources, `cross.patch`, `REPORT.md` and every `results*.json` in this problem
+directory, so save raw measurement JSON here under that name. Do not include secret keys, model
 weights, datasets, reference outputs, caches or hidden tests. A six-page report
 is sufficient; logs and source code do not count toward this limit.
 

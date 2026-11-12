@@ -1,5 +1,9 @@
 # P5 implementation and experiment status
 
+> **Note.** The checkpoint below was taken on `main` (`294ed7d`) plus the P5
+> commit `3cec9fa`, where all five problems allowed coding agents. On this
+> branch, built on `3a49b20`, P1 and P3 remain in `non_agent_pset` without agents.
+
 ## Portable PR checkpoint — 2026-11-05
 
 This PR packages P5 and its required shared runtime against current `main`,
@@ -32,9 +36,9 @@ directory in `pr-preparation-20261105/`.
 ## Historical development evidence
 
 Updated 2026-11-04, 10:44 UTC. The WISE scheduling / TPU acceleration goal is
-**in progress**. No P5 TPU execution or speedup is claimed. Raw evidence lives
-under `../../validation/p5_wise_20261104/`; each collector report is authoritative
-for its current process state. P1–P4 measured artifacts are unchanged.
+**in progress**. No P5 TPU execution or speedup is claimed. Raw evidence lived
+under `../../validation/p5_wise_20261104/` in the author's local checkout; it was
+never committed. Each collector report was authoritative for its process state. P1–P4 measured artifacts are unchanged.
 
 ## Implemented
 

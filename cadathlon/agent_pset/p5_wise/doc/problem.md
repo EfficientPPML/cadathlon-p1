@@ -110,6 +110,8 @@ extension is not needed for CROSS execution.
 
 ```sh
 export WISE_ROOT=/path/to/WISE
+# From the extracted contestant release, which has no CROSS runtime, also:
+# export CROSS_ROOT=/path/to/CROSS
 make -C src all reference-test
 cd src
 python runner.py --case ../test/test1.in --backend cpu --output cpu-test1.json
@@ -187,7 +189,10 @@ Submit scheduler and backend changes, `cross.patch`, `REPORT.md`, exact WISE
 revision/patch, all six CPU/TPU result pairs and the complete tuning ledger.
 Report unfinished experiments explicitly as **not completed**, including the
 native Winograd path, pretrained-model integration or external CPU comparison
-if they remain unfinished. `make -C src submit` creates a local archive.
+if they remain unfinished. `make -C src submit` creates a local archive of the
+`src/` sources, `cross.patch`, `REPORT.md` and every `results*.json` in this
+problem directory; copy the result JSON from `src/` and `src/run/` here under
+that name first (for example `results-tpu-tiled-test1.json`).
 
 ## 7. References
 

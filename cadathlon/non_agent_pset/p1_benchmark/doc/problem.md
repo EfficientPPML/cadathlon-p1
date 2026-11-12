@@ -538,7 +538,10 @@ Submit `src/`, `cross.patch`, `REPORT.md`, raw result JSON and environment and
 weight hashes. Include both successful and failed configurations. Four report
 pages are sufficient; logs and code are additional. Do not submit datasets,
 trained weights, secret keys, caches, generated reference outputs or unrelated
-files. `make submit` packages the listed files; it does not upload them.
+files. `make submit` packages the `src/` sources, `cross.patch`, `REPORT.md` and
+every `results*.json` in this problem directory, so copy each raw result JSON
+here under that name first (reports under `src/suite/run/` and
+`src/suite/results/` are not packaged). It does not upload anything.
 
 ## 5. References
 

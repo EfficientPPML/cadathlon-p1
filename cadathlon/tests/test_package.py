@@ -94,13 +94,138 @@ def test_shared_runtime_manifest_contains_local_import_dependencies():
                     assert dependency in shipped, f"{filename} imports unshipped {dependency}"
 
 
+def test_partial_submission_runtimes_contain_their_import_closure():
+    """P5's declared runtime already holds every shared module it imports."""
+    cadathlon = Path(__file__).parents[1]
+    common = cadathlon / "common"
+    spec = importlib.util.spec_from_file_location("package_subset_test", common / "package.py")
+    package = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(package)
+    problems = {path.name: path for path in cadathlon.glob("*_pset/*") if path.is_dir()}
+    assert set(package.SUBMISSION_RUNTIME) <= set(problems)
+    for name, (runtime, _kind) in package.SUBMISSION_RUNTIME.items():
+        # The same files `package.py submit` scans: its sources and the declared modules.
+        scanned = package.submission_sources(problems[name] / "src")
+        scanned += [common / module for module in runtime if module.endswith(".py")]
+        missing = package.import_closure(scanned, common) - set(runtime)
+        assert not missing, f"{name} submission imports unshipped {sorted(missing)}"
+
+
+def test_release_runtime_contains_every_problems_shared_imports():
+    """The release ships COMMON_RUNTIME_FILES only, so it must cover every problem's imports."""
+    cadathlon = Path(__file__).parents[1]
+    common = cadathlon / "common"
+    spec = importlib.util.spec_from_file_location("package_release_test", common / "package.py")
+    package = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(package)
+    for problem in sorted(cadathlon.glob("*_pset/*/src")):
+        sources = package.submission_sources(problem)
+        missing = package.import_closure(sources, common) - set(package.COMMON_RUNTIME_FILES)
+        assert not missing, f"{problem.parent.name} imports {sorted(missing)}, absent from the release"
+
+
+def test_submit_ships_shared_modules_that_contestant_code_adds(tmp_path):
+    """A new shared import in P5's narrowed submission reaches its archive."""
+    root = tmp_path / "cadathlon"
+    problem = root / "agent_pset" / "p5_wise"
+    (problem / "src").mkdir(parents=True)
+    common = root / "common"
+    common.mkdir()
+    for name in ("REPORT.md", "cross.patch"):
+        (problem / name).write_text("")
+    (problem / "src" / "Makefile").write_text("")
+    # Saved with a UTF-8 byte-order mark, which Python accepts.
+    (problem / "src" / "cross_backend.py").write_text(
+        "\ufeffimport encrypted_polynomial\nfrom encrypted_transformer import X\n", encoding="utf-8")
+    for name in ("support.py", "Makefile.problem", "package.py", "transformer_runner.py",
+                 "encrypted_polynomial.py", "encrypted_compilation.py", "encrypted_primitives.py",
+                 "encrypted_rotation.py", "encrypted_ntt.py", "encrypted_refresh.py"):
+        (common / name).write_text("")
+    (common / "encrypted_transformer.py").write_text("import numpy\nfrom encrypted_reference import Y\n")
+    (common / "encrypted_reference.py").write_text("")
+    (common / "encrypted_rotation.py").write_text("def lazy():\n    import encrypted_scaled_newton\n")  # declared
+    (common / "encrypted_scaled_newton.py").write_text("")
+    script = Path(__file__).parents[1] / "common" / "package.py"
+    subprocess.run([sys.executable, str(script), "submit", str(problem)], check=True)
+    with tarfile.open(problem / "submission.tar.gz") as archive:
+        names = set(archive.getnames())
+    assert {"common/encrypted_transformer.py", "common/encrypted_reference.py",
+            "common/encrypted_rotation.py", "common/encrypted_scaled_newton.py"} <= names
+    assert "common/transformer_runner.py" not in names
+
+
+def test_submit_skips_editor_lock_links_and_rejects_linked_shared_modules(tmp_path):
+    """Broken links in src/ are not shipped or scanned; an imported shared link fails loudly."""
+    root = tmp_path / "cadathlon"
+    problem = root / "non_agent_pset/p1_benchmark"
+    (problem / "src").mkdir(parents=True)
+    common = root / "common"
+    common.mkdir()
+    for name in ("REPORT.md", "cross.patch"):
+        (problem / name).write_text("")
+    (problem / "src" / "Makefile").write_text("")
+    (problem / "src" / ".#runner.py").symlink_to("user@host.4242:1700000000")  # an Emacs lock file
+    original = Path(__file__).parents[1] / "common"
+    for path in original.iterdir():
+        if path.is_file():
+            shutil.copy2(path, common / path.name)
+    script = common / "package.py"
+    subprocess.run([sys.executable, str(script), "submit", str(problem)], check=True)
+    with tarfile.open(problem / "submission.tar.gz") as archive:
+        assert not any(name.endswith(".#runner.py") for name in archive.getnames())
+    (common / "linked_helper_impl.py").write_text("")
+    (common / "linked_helper.py").symlink_to(common / "linked_helper_impl.py")
+    (problem / "src" / "uses_link.py").write_text("import linked_helper\n")
+    result = subprocess.run([sys.executable, str(script), "submit", str(problem)],
+                            capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "Missing imported shared module" in result.stderr
+    (common / "linked_helper.py").unlink()
+    (common / "linked_helper.py").symlink_to(common / "no_such_module.py")  # a broken link
+    result = subprocess.run([sys.executable, str(script), "submit", str(problem)],
+                            capture_output=True, text=True)
+    assert result.returncode != 0
+    assert "Missing imported shared module" in result.stderr
+
+
+def test_submit_archives_unparsable_sources_without_following_them(tmp_path):
+    """A scratch file that does not parse is archived as before, with a warning."""
+    root = tmp_path / "cadathlon"
+    problem = root / "non_agent_pset/p1_benchmark"
+    (problem / "src").mkdir(parents=True)
+    common = root / "common"
+    common.mkdir()
+    for name in ("REPORT.md", "cross.patch"):
+        (problem / name).write_text("")
+    (problem / "src" / "Makefile").write_text("")
+    (problem / "src" / "notes.py").write_text("def unfinished(:\n")
+    (problem / "src" / "nul.py").write_bytes(b"x = 1\0\n")
+    (problem / "src" / "deep.py").write_text("x = " + "-" * 100000 + "1\n")  # parser limit
+    for path in (Path(__file__).parents[1] / "common").iterdir():
+        if path.is_file():
+            shutil.copy2(path, common / path.name)
+    (problem / "src" / "uses_broken.py").write_text("import broken_shared\n")
+    (common / "broken_shared.py").write_text("def unfinished(:\n")
+    result = subprocess.run([sys.executable, str(common / "package.py"), "submit", str(problem)],
+                            capture_output=True, text=True, check=True)
+    assert "notes.py does not parse" in result.stderr and "nul.py does not parse" in result.stderr
+    assert "deep.py does not parse" in result.stderr
+    assert result.stderr.count("broken_shared.py does not parse") == 1
+    with tarfile.open(problem / "submission.tar.gz") as archive:
+        names = set(archive.getnames())
+    assert {"non_agent_pset/p1_benchmark/src/notes.py", "non_agent_pset/p1_benchmark/src/nul.py",
+            "non_agent_pset/p1_benchmark/src/deep.py", "common/broken_shared.py"} <= names
+
+
 def test_extracted_release_runs_fixtures_and_experimental_preflight(tmp_path):
     """Test shipped paths, without relying on the source tree's import paths."""
     source = Path(__file__).parents[1]
     root = tmp_path / "cadathlon"
     problems = ("non_agent_pset/p1_benchmark", "agent_pset/p2_bert",
                 "non_agent_pset/p3_cnn", "agent_pset/p4_qwen")
-    for problem in problems:
+    # P5 is packaged too, but its plaintext reference needs the external WISE
+    # planner, so the runner checks below cover the four other problems.
+    for problem in problems + ("agent_pset/p5_wise",):
         shutil.copytree(source / problem, root / problem,
                         ignore=shutil.ignore_patterns("__pycache__", "run", "results"))
     shutil.copytree(source / "common", root / "common",

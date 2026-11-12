@@ -9,3 +9,4 @@ src/suite/stages/__pycache__/*
 # numbers from baseline_manifest.json; shipping per-image answers would let a
 # submission reproduce them by lookup instead of by evaluating the circuit.
 src/suite/results/*/evidence/*
+results*.json

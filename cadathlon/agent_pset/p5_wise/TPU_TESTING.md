@@ -9,7 +9,8 @@ measurements, not measurements of this new PR checkout.
 ## 1. Checkout and environment
 
 ```bash
-git clone --branch feat/p5-wise-tpu-20261105 https://github.com/EfficientPPML/CROSS.git CROSS-p5
+# Use the branch or commit under test (P5 was developed on feat/p5-wise-tpu-20261105).
+git clone --branch <branch-under-test> https://github.com/EfficientPPML/CROSS.git CROSS-p5
 cd CROSS-p5
 export CROSS_ROOT="$PWD"
 export P5="$CROSS_ROOT/cadathlon/agent_pset/p5_wise"

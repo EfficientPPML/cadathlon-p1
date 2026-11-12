@@ -6,12 +6,12 @@ the proposed time/error limits have been demonstrated on contest hardware.
 Students are asked to implement that capability. The CNN reference uses the
 existing real CROSS pipeline.
 
-The four problems are split into two sets. `non_agent_pset` is solved without
+The five problems are split into two sets. `non_agent_pset` is solved without
 coding agents and holds **P1 (essential, 100 points)** and **P3 (bonus, 20
 points)**, so a team there can reach 120; its total is essential + bonus.
-`agent_pset` holds **P2** and **P4**, both 100 points, with agents allowed.
-Keep the two sets on separate leaderboards, and the two `agent_pset` problems
-on separate leaderboards from each other.
+`agent_pset` holds **P2**, **P4** and **P5**, each 100 points, with agents
+allowed. Keep the two sets on separate leaderboards, and each `agent_pset`
+problem on its own leaderboard.
 
 ## Format and difficulty
 
@@ -274,8 +274,8 @@ awarding operator/block credit does not establish full-model completion.
 
 ## Packaging and review
 
-`make release` produces `contestant-release.tar.gz` with the three template-style
-problem directories and shared support. `EXCLUDE` removes `.golden` files and
+`make release` produces `contestant-release.tar.gz` with the five problem
+directories (P1–P5), the shared runtime and the public validation reports. `EXCLUDE` removes `.golden` files and
 hidden/full-reference paths. It is still necessary to inspect archive members
 before distribution. Author-only files (`ORGANIZER.md`, generation and audit
 tools) are not in the contestant archive. Public numeric `.out` files stay in.
