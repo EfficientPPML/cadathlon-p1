@@ -297,8 +297,10 @@ in this directory. No external publication is performed.
 `make submit` packages source, `cross.patch`, `REPORT.md`, `results*.json` and
 shared support; it does not package the datasets/checkpoints or test answers.
 Apply patches to a fresh checkout of this repository at the pinned commit (the
-CROSS runtime sits at its root), or to an external CROSS checkout selected with
-`CROSS_ROOT`, import from it, and run the organizer-owned cases. Public starter TODOs are intentional.
+CROSS runtime sits at its root), or to an external checkout of CROSS branch
+`fix/competition-readiness` selected with `CROSS_ROOT` (CROSS `main` lacks the
+bundled runtime's 21 `jaxite_word` changes), import from it, and run the
+organizer-owned cases. Public starter TODOs are intentional.
 
 The supplied template's `.golden` convention is followed for reference code:
 the CNN golden is a valid unoptimized encrypted solution; the Qwen golden is
