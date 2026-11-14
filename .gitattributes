@@ -4,6 +4,12 @@ jaxite_word/ntt_mm.py whitespace=-blank-at-eol
 jaxite_word/pedagagy/** whitespace=-blank-at-eol,-blank-at-eof
 profile_analysis/analyze_trace_json.py whitespace=-blank-at-eol
 cadathlon/common/fonts/*-OFL.txt whitespace=-blank-at-eol
-cadathlon/non_agent_pset/p1_benchmark/doc/problem.html whitespace=-blank-at-eol
 cadathlon/non_agent_pset/p1_benchmark/src/suite/results/_upstream_reference/small/results-1.json whitespace=-blank-at-eol
 validation/*.log -whitespace
+# Archived validation patches and raw logs keep their recorded bytes.
+cadathlon/validation/*.patch whitespace=-blank-at-eol
+cadathlon/validation/*.log -whitespace
+cadathlon/validation/*.xml -whitespace
+# Generated handouts: render_docs.py keeps code blocks byte-exact, including
+# any trailing spaces a code sample needs.
+cadathlon/*_pset/*/doc/problem.html whitespace=-blank-at-eol

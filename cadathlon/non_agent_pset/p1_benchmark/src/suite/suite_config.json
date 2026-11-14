@@ -72,14 +72,22 @@
         "C5",
         "C6"
       ],
-      "note": "Original six ranked workloads."
+      "budget_s": null,
+      "note": "Original six ranked workloads. No whole-run budget cap (budget_s null); pass EVALUATION_BUDGET_S, e.g. 7200."
     },
     "student": {
       "case_ids": [
         "C3",
         "C4"
       ],
-      "note": "100 images on one and four chips. Explicit shorter competition schedule; requires separate student-ring calibration."
+      "budget_s": 300,
+      "note": "100 images on one and four chips. Explicit shorter competition schedule; requires separate student-ring calibration.",
+      "hidden_case_ids": [
+        "C5",
+        "C6"
+      ],
+      "hidden_budget_s": 1800,
+      "hidden_note": "Organizer-run hidden schedule: 1000 images on one and four chips with the same student ring, frozen model and seed. Contestants do not run it before judging. evaluate.py --hidden measures it (baseline_manifest_student_hidden.json holds its calibration), score.py --hidden scores it, and overall.py folds it into the public C3/C4 result: 3 correctness points shared by all four cases, improvement points from the smallest ratio over all four, ranking metric over all four."
     }
   }
 }

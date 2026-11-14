@@ -8,8 +8,11 @@ one/four TPU chips, with a 300-second complete evaluation budget. Begin with
 `make -C src suite-evaluate`, and `make -C src suite-score` from this problem's
 directory after organizer asset preparation. The last command only scores
 existing protected reports; it does not run inference. Section 2.3.1 specifies
-this schedule. The original six-case workload remains an explicit `legacy`
-option and uses a separate calibration.
+this schedule. C5 and C6 (1000 images on one and four chips) are **hidden
+cases** of the same schedule: the organizer runs them after submission with
+the same ring, model and seed, and `make -C src suite-overall` folds them into
+the final 10-point score together with C3/C4. The original six-case
+workload remains an explicit `legacy` option and uses a separate calibration.
 
 ## 1. Introduction
 
@@ -155,11 +158,12 @@ helps only one regime is a partial result; say so in the report.
 ### 2.3.1 Short student schedule (default competition path)
 
 For an approximately 1.5-hour topic slot, the `student` evaluation profile
-selects **C3 and C4 only**: 100 images on one chip and on four chips. The
-remaining four legacy ranked cases remain available for extended regression
-and scaling experiments; the six local synthetic fixtures remain unchanged.
-This is a published workload change, not a faster result on the six-case
-legacy workload.
+selects **C3 and C4** as its public cases: 100 images on one chip and on four
+chips. C5 and C6 (1000 images) are its organizer-run hidden cases, described
+below. C1 and C2 remain available for extended regression and latency
+experiments; the six local synthetic fixtures remain unchanged. This is a
+published workload change, not a faster result on the six-case legacy
+workload.
 
 The student reference is `baseline_student.py`, with the same model and a
 128-bit-secure N=8192 ring (42-bit composite scale, four HYBRID digits,
@@ -213,16 +217,71 @@ improvement points, not eligible for the ranking bonus). The earlier eight-chip 
 `cadathlon/validation/p1_student_v6e8/report.json` and
 `cadathlon/validation/p1_student_pre_v2/historical_run.json`; the former was
 measured with C4 on eight chips and the latter predates device recording, so
-neither can replace a calibration of the four-chip schedule.
+neither can replace a calibration of the four-chip schedule. The shipped proof
+also predates the hidden cases below: it is bound to the earlier
+`suite_config.json`, so `suite-score` rejects it until `make -C src
+suite-evaluate-baseline` has been run again on the contest host.
 
 The 10-point event policy of section 4 is defined over the six ranked cases.
 If the short schedule is the one announced for an event, the same arithmetic
-applies over its two cases: 1.5 correctness points per passing case, the
-improvement ladder decided by the smaller of the two ratios, and the ranking
-bonus by their geometric mean. Use `score.py --evaluation-profile student`
-(or the Make target above). Select one schedule, calibrate it on the contest
-hardware, and announce it before the event; do not compare scores or baselines
-across schedules/ring profiles.
+applies over its cases. Scored alone, the two public cases carry 1.5
+correctness points each, the improvement ladder is decided by the smaller of
+the two ratios, and the ranking bonus by their geometric mean (`score.py
+--evaluation-profile student`, or the Make target above). With the hidden
+cases below, the same arithmetic runs over four cases. Select one schedule,
+calibrate it on the contest hardware, and announce it before the event; do not
+compare scores or baselines across schedules/ring profiles.
+
+#### Hidden cases C5 and C6 (organizer-run)
+
+The student schedule has two **hidden cases**: C5 and C6, the benchmark's
+"medium" instance of **1000 images on one and on four chips**. They use the
+same `baseline_student.py` ring profile, the same frozen weights and the same
+seed 3. That seed selects 1000 MNIST test images for the medium instance, and
+the 100 images of C3/C4 are the first 100 of them. A correct `build_service`
+needs no change to run them; what they test is whether your packing and
+scheduling still hold when the batch is ten times larger and whether the
+four-chip scaling you report survives it. You do not run them before judging
+and their baseline throughput is not published; design for a general batch
+size and state in `REPORT.md` how your implementation scales from 100 to 1000
+images.
+
+The organizer uses one judge checkout on the contest host. It calibrates both
+schedules there once, then evaluates the submissions one at a time on both
+schedules in that same checkout: the scorer finds calibration proofs only under
+the checkout's own `src/suite/calibration/`, and the hidden calibration is
+git-ignored, so a fresh clone does not have it. To install a submission, copy
+in its `bench_opt.py` and any helper modules it adds under `src/`, and apply
+its `cross.patch`; the organizer's `src/suite/` files stay as they are. The
+hidden evaluation follows the same complete-evaluation rules as the public one
+(setup, three repetitions, archiving, correctness checks and cleanup, bound to
+one evaluation ID, the frozen model, actual TPU hardware, unchanged sources
+and the software versions of the calibration) within its own budget,
+`hidden_budget_s` = 1800 seconds in `src/suite/suite_config.json`:
+
+```bash
+# once, in the judge checkout on the contest host
+make -C src suite-evaluate-baseline          # public C3/C4 calibration
+make -C src suite-evaluate-baseline-hidden   # hidden C5/C6 calibration
+# per submission, after installing it in the same checkout
+make -C src suite-evaluate                   # public C3/C4, rerun by the judge
+make -C src suite-evaluate-hidden            # hidden C5/C6
+make -C src suite-overall > /abs/teams/<team>/overall.json
+```
+
+`suite-overall` (`src/suite/overall.py`) scores both schedules itself (`make
+-C src suite-score-hidden` shows the hidden verdict alone) and re-applies the
+policy of section 4 over all four cases: the 3 correctness points are shared
+equally (0.75 per passing case), the improvement tier is decided by the
+**smallest** ratio over the four cases, and the ranking metric is the
+geometric mean of the four ratios. It refuses to combine a public and a hidden
+evaluation that were not produced by the same submission sources, frozen
+model and software versions. A missing, interrupted or failed hidden run fails
+C5 and C6 but does not void C3 and C4; because improvement points need every
+ranked case to pass, such a submission keeps only the 1.5 public correctness
+points and is not ranked. The next submission's evaluations replace these
+reports, so save each overall report before installing the next submission.
+`suite-rank` ranks the saved overall reports across teams unchanged.
 
 ### 2.4 Authored baseline observations
 
@@ -364,7 +423,8 @@ on the four-chip TPU v6e host (`v6e-4`, 2026-11-07; the complete six-case
 evaluation took 1685.9 s). `src/suite/baseline_manifest.json` holds
 these numbers; they are what `suite-score` divides by, and they are indicative
 until the judge measures its own. The earlier eight-chip legacy figures remain
-in this file's git history and in `cadathlon/validation/p1_legacy_suite.json`.
+in this file's git history; `cadathlon/validation/p1_legacy_suite.json` records
+the four-chip run above.
 
 | case | images | chips | stage 7 | img/s | ms/image | server execute | ms/image |
 |---|---|---|---|---|---|---|---|
@@ -517,7 +577,8 @@ passes all numerical, accuracy, privacy, parameter, memory and runtime gates,
 otherwise 0, and let `R_i = X_i / X_base_i` be its throughput ratio against the
 organizer's calibrated baseline on the same host and schedule, using
 organizer-rerun medians. The policy is defined over the six ranked cases
-C1–C6; section 2.3.1 says how it maps onto the short two-case schedule.
+C1–C6; section 2.3.1 says how it maps onto the short schedule, alone (C3/C4)
+or with its hidden cases (C3/C4 + C5/C6, combined by `suite-overall`).
 
 **Tier 1 — correctness, 3 points.** The 3 points are shared equally by the
 ranked cases: `3 * sum_i G_i / 6`, so each passing case earns 0.5 points. A
@@ -561,6 +622,10 @@ neither is an official score without the judge's rerun. The judge's recipe is:
 make -C src suite-score P1_BASELINE_PROFILE=legacy > /abs/teams/<team>/score.json
 # once, across teams; absolute paths, make's echo lines in the saved files are tolerated
 make -C src suite-rank RANK_REPORTS="<team>=/abs/teams/<team>/score.json ..."
+
+# student schedule with hidden cases: score public and hidden runs together, then rank
+make -C src suite-overall > /abs/teams/<team>/overall.json
+make -C src suite-rank RANK_REPORTS="<team>=/abs/teams/<team>/overall.json ..."
 ```
 
 Each report records the SHA-256 of the calibration manifest it was scored
@@ -595,7 +660,10 @@ Submit `src/`, `cross.patch`, `REPORT.md`, raw result JSON and environment and
 weight hashes. Include both successful and failed configurations. Four report
 pages are sufficient; logs and code are additional. Do not submit datasets,
 trained weights, secret keys, caches, generated reference outputs or unrelated
-files. `make submit` packages the listed files; it does not upload them.
+files. `make submit` packages the `src/` sources, `cross.patch`, `REPORT.md` and
+every `results*.json` in this problem directory, so copy each raw result JSON
+here under that name first (reports under `src/suite/run/` and
+`src/suite/results/` are not packaged). It does not upload anything.
 
 ## 5. References
 

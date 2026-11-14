@@ -1,4 +1,4 @@
-"""P1 extraction must retain dependencies and exclude runtime/private evidence."""
+"""P1 archives must retain their dependencies and exclude runtime/private evidence."""
 from pathlib import Path
 import json
 import os
@@ -56,6 +56,16 @@ def test_p1_release_retains_public_calibration_only(tmp_path):
         p = problem / name
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_bytes(b"excluded")
+    # The contestant release packages every problem and the complete shared
+    # runtime, so give the other problems their real EXCLUDE lists.
+    for other in ("agent_pset/p2_bert", "non_agent_pset/p3_cnn",
+                  "agent_pset/p4_qwen", "agent_pset/p5_wise"):
+        (root / other).mkdir(parents=True)
+        shutil.copy2(ROOT / "cadathlon" / other / "EXCLUDE", root / other / "EXCLUDE")
+    for path in COMMON.iterdir():
+        if path.is_file() and not (root / "common" / path.name).exists():
+            shutil.copy2(path, root / "common" / path.name)
+    (root / "validation/p3_compact_baseline.json").write_text("{}")
     subprocess.run([sys.executable, str(root / "common/package.py"),
                     "release", str(root)], check=True)
     with tarfile.open(root / "contestant-release.tar.gz") as archive:

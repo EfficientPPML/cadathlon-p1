@@ -233,13 +233,16 @@ def finalize_reports(result, report_paths, *, started, deadline,
 def run(args):
     started = time.monotonic()
     deadline = started + args.budget_s
-    label = ('student-' if args.profile == 'student' else '') + ('baseline' if args.baseline else 'candidate')
+    hidden = bool(getattr(args, 'hidden', False))
+    plan = score.schedule(args.profile, hidden)
+    label = plan['baseline_label'] if args.baseline else plan['candidate_label']
     folder = SUITE / 'run' / ('evaluation-' + label)
     folder.mkdir(parents=True, exist_ok=True)
     canonical_report = folder / 'report.json'
     report_path = args.report or canonical_report
     report_paths = [canonical_report] + ([report_path] if report_path != canonical_report else [])
-    manifest = SUITE / ('baseline_manifest_student.json' if args.profile == 'student' else 'baseline_manifest.json')
+    # Publish next to this evaluator's own run folder, like every other path here.
+    manifest = SUITE / plan['manifest'].name
     staged_manifest = folder / 'baseline-calibration.json'
     evaluation_id = uuid.uuid4().hex
     env = dict(os.environ, P3_SUITE_DIR=str(SUITE),
@@ -250,12 +253,13 @@ def run(args):
     env.pop('P3_BASELINE', None)
     if args.baseline:
         env['P3_BASELINE'] = '1'
-    result = {'passed': False, 'profile': args.profile, 'label': label,
+    result = {'passed': False, 'profile': args.profile, 'schedule': plan['name'], 'label': label,
               'mode': 'baseline' if args.baseline else 'candidate',
               'gate_version': score.STUDENT_GATE_VERSION if args.profile == 'student' else 'legacy',
               'evaluation_id': evaluation_id, 'cleanup_passed': False, 'require_tpu': True,
               'source_files_unchanged': False,
               'archive_sha256': {},
+              'case_ids': plan['case_ids'],
               'budget_s': args.budget_s, 'cases': {}, 'logs': str(folder),
               'versions': {}}
     # Invalidate the prior success before any new work, even with --report.
@@ -266,10 +270,8 @@ def run(args):
         path.write_text(json.dumps({**result, 'error': 'evaluation has not completed'}, indent=2) + '\n')
     folders = {}
     try:
-        ranked = score.CONFIG['evaluation_profiles'][args.profile]['case_ids']
-        cases = [c for c in score.CONFIG['cases'] if c['id'] in ranked]
-        if not ranked or len(ranked) != len(set(ranked)) or {c['id'] for c in cases} != set(ranked):
-            raise ValueError('evaluation profile must name a nonempty set of known cases')
+        # score.schedule() has already required a nonempty set of distinct known cases.
+        cases = [c for c in score.CONFIG['cases'] if c['id'] in plan['case_ids']]
         result.update(seed=score.CONFIG['determinism']['seed'],
             runs_per_case=score.CONFIG['determinism']['num_runs'], suite_commit=score.CONFIG['suite']['commit'])
         root = args.suite_root.resolve() if args.suite_root else install_suite.suite_root()
@@ -277,8 +279,9 @@ def run(args):
         result['versions'] = {name: importlib.metadata.version(name)
                              for name in ('jax', 'jaxlib', 'libtpu', 'numpy', 'torch')}
         result['versions']['python'] = sys.version.split()[0]
-        if args.profile == 'student' and not 0 < args.budget_s <= 300:
-            raise ValueError('student evaluation budget must be at most 300 seconds')
+        cap = plan['budget_cap_s']
+        if cap is not None and not 0 < args.budget_s <= cap:
+            raise ValueError(f"{args.profile} {plan['name']} evaluation budget must be at most {cap:g} seconds")
         result['model_identity'] = model_identity(SUITE.parent.parent)
         result['source_sha256'] = source_hashes(Path(env['CROSS_ROOT']))
         ok, detail = install_suite.harness_is_pristine(root)
@@ -335,14 +338,14 @@ def run(args):
             result['passed'] = result['passed'] and result['within_budget']
             if result['passed'] and args.profile == 'student':
                 try:
-                    score.validate_student_evaluation(result, label=label, folders=folders)
+                    score.validate_student_evaluation(result, label=label, folders=folders, hidden=hidden)
                 except Exception as error:
                     result['passed'] = False
                     result['error'] = f'evaluation evidence failed: {error}'
             snapshot = None
             if args.baseline and result['passed']:
                 try:
-                    payload = score.calibration_payload(result['cases'], args.profile, result)
+                    payload = score.calibration_payload(result['cases'], args.profile, result, hidden)
                     staged_manifest.write_text(json.dumps(payload, indent=2, allow_nan=False) + '\n')
                     if args.profile == 'student':
                         snapshot = score.calibration_report_path(label, evaluation_id)
@@ -354,7 +357,7 @@ def run(args):
                             for name in result['archive_sha256'][cid]:
                                 shutil.copy2(source / name, target / name)
                             archived[cid] = target
-                        score.validate_student_evaluation(result, label=label, folders=archived, mode='baseline')
+                        score.validate_student_evaluation(result, label=label, folders=archived, mode='baseline', hidden=hidden)
                 except Exception as error:
                     result['passed'] = False
                     result['error'] = f'calibration preparation failed: {error}'
@@ -369,15 +372,25 @@ def run(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profile', choices=('legacy', 'student'), default='student')
+    parser.add_argument('--hidden', action='store_true',
+                        help="run the profile's organizer-run hidden schedule (student: C5/C6) with its own calibration and budget")
     parser.add_argument('--baseline', action='store_true', help='run reference and emit a verified calibration')
-    parser.add_argument('--budget-s', type=float, default=300.)
+    parser.add_argument('--budget-s', type=float, default=None,
+                        help="wall-time budget; defaults to the schedule's cap (student public 300 s, hidden 1800 s) or 300 s")
     parser.add_argument('--suite-root', type=Path, default=None)
     parser.add_argument('--report', type=Path)
     args = parser.parse_args()
+    try:
+        plan = score.schedule(args.profile, args.hidden)
+    except ValueError as error:
+        parser.error(str(error))
+    cap = plan['budget_cap_s']
+    if args.budget_s is None:
+        args.budget_s = float(cap) if cap is not None else 300.
     if not math.isfinite(args.budget_s) or args.budget_s <= 0:
         parser.error('--budget-s must be positive and finite')
-    if args.profile == 'student' and args.budget_s > 300:
-        parser.error('student --budget-s must be at most 300')
+    if cap is not None and args.budget_s > cap:
+        parser.error(f"{args.profile} {plan['name']} --budget-s must be at most {cap:g}")
     try:
         with cancellation_handlers(), evaluation_lock():
             return run(args)

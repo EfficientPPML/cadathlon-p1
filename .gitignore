@@ -4,9 +4,47 @@ __pycache__/
 .pytest_cache/
 .coverage
 build/
-cadathlon/non_agent_pset/p1_benchmark/src/suite/run/
+# Suite daemons, locks, sockets and evaluation scratch of every problem.
+cadathlon/**/src/suite/run/
 cadathlon/non_agent_pset/p1_benchmark/submission.tar.gz
 cadathlon/contestant-release.tar.gz
+# Raw result JSON copied into a problem directory for `make submit`
+# (cadathlon/.gitignore already ignores submission.tar.gz).
+cadathlon/*_pset/*/results*.json
 
 # Organizer per-image evidence written by archive.py (labels, predictions, pixels); excluded from releases.
 cadathlon/non_agent_pset/p1_benchmark/src/suite/results/*/evidence/
+
+# Organizer-run hidden schedule (C5/C6): calibration, proof and per-case archives
+# carry the unpublished hidden baseline. Keep them out of the repository; use
+# `git add -f` only in a private organizer repository.
+cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest_student_hidden.json
+cadathlon/non_agent_pset/p1_benchmark/src/suite/calibration/student-hidden-baseline/
+cadathlon/non_agent_pset/p1_benchmark/src/suite/results/*_student-hidden-*/
+
+# P5 experiment snapshots, raw measurements and run scratch remain local.
+p5-results/
+cadathlon/agent_pset/p5_wise/src/run/
+cadathlon/agent_pset/p5_wise/src/*.json
+
+# P5's native OpenFHE/WISE comparison builds (agent_pset/p5_wise/README.md),
+# wherever they are run from.
+openfhe-wise/
+openfhe-build/
+openfhe-install/
+wise-bindings/
+
+# Organizer-only hidden cases and full-model reference answers. Each EXCLUDE
+# keeps them out of the release; keep them out of this public repository too.
+cadathlon/**/test/hidden*
+cadathlon/**/test/full_reference*
+
+# CSV, PNG and pickle output of the demo HE tests and the jaxite_word perf tests.
+/demos/log/
+/jaxite_word/**/log/
+
+# Datasets and weights written by demos/prepare_demo_assets.py.
+demos/cifar10_data/
+demos/maple_data/
+/mnist/
+/data/

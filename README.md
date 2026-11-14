@@ -1,16 +1,31 @@
-# CADathlon P1 — encrypted MNIST throughput
+# CADathlon — encrypted inference on TPUs with CROSS
 
-P1's starter implementation, real CROSS baseline, six public development
-fixtures, ranked evaluation tools, scoring and handout are collected here with
-their CROSS runtime dependencies. No separate CROSS checkout is required.
+This repository holds the complete CADathlon problem set and the CROSS runtime
+it runs on. No separate CROSS checkout is required.
 
-Start with the [problem handout](cadathlon/non_agent_pset/p1_benchmark/doc/problem.md)
-([HTML](cadathlon/non_agent_pset/p1_benchmark/doc/problem.html),
-[PDF](cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf)) and implement
-[bench_opt.py](cadathlon/non_agent_pset/p1_benchmark/src/bench_opt.py).
-The [P1 guide](cadathlon/non_agent_pset/p1_benchmark/README.md) describes the
-interfaces and evaluation rules. The original directory layout is retained so
-runner, common-library and suite-stage imports keep their established paths.
+| Set | Problem | Points | Handout |
+|---|---|---|---|
+| `non_agent_pset` (no AI assistance) | **P1 · MNIST throughput** — essential: raise encrypted MNIST throughput on one and four TPU chips inside the FHE benchmarking suite's harness | 10 | [MD](cadathlon/non_agent_pset/p1_benchmark/doc/problem.md) · [HTML](cadathlon/non_agent_pset/p1_benchmark/doc/problem.html) · [PDF](cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf) |
+| `non_agent_pset` | **P3 · Compact CNNs** — bonus: accelerate two fixed compact encrypted CNNs | 20 | [MD](cadathlon/non_agent_pset/p3_cnn/doc/problem.md) · [HTML](cadathlon/non_agent_pset/p3_cnn/doc/problem.html) · [PDF](cadathlon/non_agent_pset/p3_cnn/doc/problem.pdf) |
+| `agent_pset` (AI agents allowed) | **P2 · BERT / MRPC** — enable encrypted BERT on TPUs with CROSS, then optimize it | 100 | [MD](cadathlon/agent_pset/p2_bert/doc/problem.md) · [HTML](cadathlon/agent_pset/p2_bert/doc/problem.html) · [PDF](cadathlon/agent_pset/p2_bert/doc/problem.pdf) |
+| `agent_pset` | **P4 · Qwen3-0.6B** — full Qwen3-0.6B inference under CKKS, with staged credit for operators and decoder blocks | 100 | [MD](cadathlon/agent_pset/p4_qwen/doc/problem.md) · [HTML](cadathlon/agent_pset/p4_qwen/doc/problem.html) · [PDF](cadathlon/agent_pset/p4_qwen/doc/problem.pdf) |
+| `agent_pset` | **P5 · WISE scheduling** — schedule fixed MLP/CNN workloads with the pinned WISE planner, run them with CROSS CKKS and optimize measured TPU performance | 100 | [MD](cadathlon/agent_pset/p5_wise/doc/problem.md) · [HTML](cadathlon/agent_pset/p5_wise/doc/problem.html) · [PDF](cadathlon/agent_pset/p5_wise/doc/problem.pdf) |
+
+[cadathlon/README.md](cadathlon/README.md) gives the set rules and competition
+schedules, [ORGANIZER.md](cadathlon/ORGANIZER.md) the judging procedure, and
+[SOURCES.md](cadathlon/SOURCES.md) the provenance, including how this repository
+absorbed the problem set from CROSS. Each problem directory has its own README.
+
+## Layout
+
+- `cadathlon/`: the problem set. `non_agent_pset/` holds P1 and P3,
+  `agent_pset/` holds P2, P4 and P5, `common/` the shared runtime and handout
+  tooling, `tests/` the regression tests and `validation/` the recorded evidence.
+- `jaxite_word/`, `demos/`, `profile_analysis/`, `pytest.ini`: the CROSS
+  runtime (`EfficientPPML/CROSS` commit `3a49b20`), kept at the repository root
+  exactly as in CROSS, so every problem's imports and the `CROSS_ROOT` default
+  resolve to this checkout. A submission's `cross.patch` applies to these files.
+- `validation/`: P1's recorded package-test environment and results.
 
 ## Local checks
 
@@ -21,20 +36,36 @@ in a virtual environment:
 python3.13 -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
+# P5's pinned WISE planner, cloned once into $WISE_ROOT (default ../WISE, next
+# to this checkout); install-wise never replaces an existing checkout.
+test -d "${WISE_ROOT:-../WISE}" || make install-wise
 make check
 ```
 
-`make check` runs the six plaintext fixture checks and the focused P1 CPU
-regressions. It does not run a TPU benchmark. The recorded package-test
-environment and results are in [validation/](validation/).
+`make check` runs the public plaintext reference checks of all five problems
+and the CPU regression tests in `cadathlon/tests`. It does not run a TPU
+benchmark. P1's recorded package-test environment and results are in
+[validation/](validation/). `make release` builds the contestant archive of the
+whole set, applying each problem's `EXCLUDE`.
 
 For a CPU-only PyTorch installation, use the official CPU package index when
-installing `torch`: `python -m pip install torch --index-url https://download.pytorch.org/whl/cpu`.
+installing `torch` and `torchvision`: `python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu`.
 For TPU evaluation, install the TPU JAX dependencies (`python -m pip install
 'jax[tpu]'`) in the evaluation environment, then reproduce the baseline on the
 contest hardware. The benchmark rejects a CPU/GPU fallback.
 
-## Ranked evaluation
+## P1 — encrypted MNIST throughput
+
+Start with the [problem handout](cadathlon/non_agent_pset/p1_benchmark/doc/problem.md)
+([HTML](cadathlon/non_agent_pset/p1_benchmark/doc/problem.html),
+[PDF](cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf)) and implement
+[bench_opt.py](cadathlon/non_agent_pset/p1_benchmark/src/bench_opt.py).
+The [P1 guide](cadathlon/non_agent_pset/p1_benchmark/README.md) describes the
+interfaces and evaluation rules. The root `make` targets other than `all`,
+`reference-test`, `check`, `docs`, `release`, `clean` and `install-wise` (P5's
+WISE planner) forward to P1.
+
+### Ranked evaluation
 
 The default student schedule evaluates 100 images on one and four TPU chips
 (C3/C4), the shape of a four-chip TPU v6e host (`v6e-4`). The shipped student
@@ -44,14 +75,25 @@ and C4 at 130.21 images/s on four chips. This is evidence for that machine, not
 a timing guarantee for another one. Correctness, actual-ring 128-bit security,
 input/model identity, calibration provenance and cleanup checks remain enabled.
 
-## Scoring policy (10 points)
+C5 and C6 (1000 images on one and four chips) are **hidden cases** of the
+student schedule: same ring, frozen model and seed, run by the organizer after
+submission under a separate 1800-second budget and folded into the final score
+by `make suite-overall`. Their calibration (`baseline_manifest_student_hidden.json`)
+is produced by `make suite-evaluate-baseline-hidden` on the contest host; it and
+the hidden archives are excluded from the contestant release and ignored by
+git. No hidden calibration has been measured
+yet; the student C3/C4 calibration shipped here (2026-11-07) predates the
+hidden schedule and, because `suite_config.json` changed, must be regenerated
+with `make suite-evaluate-baseline` before `make suite-score` accepts it again.
+
+### Scoring policy (10 points)
 
 Problem 1 contributes at most **10 points** to the event, computed by policy
 `p1-10-point-v1` (handout section 4) in three tiers over the six ranked cases:
 
 | Tier | Points | Rule |
 |---|---:|---|
-| Correctness | 3 | shared equally by the ranked cases: 0.5 per passing case on the six-case schedule (1.5 per case when the two-case student schedule is scored) |
+| Correctness | 3 | shared equally by the ranked cases: 0.5 per passing case on the six-case schedule, 1.5 per case when the two public student cases are scored alone, 0.75 per case when `make suite-overall` folds in the hidden C5/C6 |
 | Improvement | 0–4 | all cases pass and the *smallest* throughput ratio against the calibrated baseline is ≥ 1.05 / 1.10 / 1.20 / 1.40 for 1 / 2 / 3 / 4 points |
 | Ranking bonus | 0–3 | the three best teams with at least one improvement point, by geometric mean of their ratios: 3, 2, 1 points; equal rounded metrics share the bonus |
 
@@ -78,26 +120,43 @@ make suite-evaluate-baseline
 # Implement bench_opt.py, then:
 make suite-evaluate
 make suite-score
+# Organizer, in ONE judge checkout that holds both calibrations (the scorer
+# finds proofs only under this checkout): calibrate the hidden C5/C6 once, then
+# install one submission at a time, rerun its public cases and run the hidden ones
+make suite-evaluate-baseline-hidden    # once
+make suite-evaluate                    # public C3/C4 rerun
+make suite-evaluate-hidden
+make suite-overall > /abs/teams/<team>/overall.json
 ```
 
 Use `make baseline-plan` to inspect the packing plan without a full evaluation.
 For local encrypted smoke checks, use the commands in the P1 guide. An external
 `CROSS_ROOT` is optional; by default the bundled runtime is used.
 
-## Verified on the four-chip host (2026-11-07)
+### Verified on the four-chip host (2026-11-07)
 
 Host: GCE `ct6e-standard-4t-tpu` (TPU `v6e-4`, four "TPU v6 lite" chips),
 Python 3.13.18, jax/jaxlib 0.12.0.1, libtpu 0.0.50.1, numpy 2.5.4,
 torch 2.15.0+cpu; see [validation/environment.json](validation/environment.json)
-and [validation/report.json](validation/report.json). The following tasks work
-end to end on this host:
+and [validation/report.json](validation/report.json). The following tasks worked
+end to end on this host. They predate the 2026-11-10 migration, when `make check`,
+`make docs` and the contestant release covered P1 only:
 
 - `make check` (CPU): 6/6 plaintext fixtures exact, 23/23 scorer gate
   behaviors, 183/183 pytest tests ([validation/check.log](validation/check.log)).
+  The hidden-schedule change of 2026-11-08 postdates this log: on a CPU-only
+  host `make check` then passed 213 of 214 tests, including 31 in
+  `test_hidden_schedule.py`. The remaining one is an expected failure (a
+  tripwire) until the student calibration is regenerated for the new
+  `suite_config.json`.
 - `make baseline-plan` and `inspect_plan.py --student-baseline` (CPU): legacy
   plan N=16384, 8192 slots, 9.57% occupancy, log2(QP)=365.0; student plan
   N=8192, 4096 slots, 19.14% occupancy, log2(QP)=212.46; both at 128-bit.
 - `make docs`: the HTML and 12-page PDF handouts re-render from `problem.md`.
+  The 13-page handout with the hidden-cases section was re-rendered on
+  2026-11-08 on a CPU host with Pango 1.52; it uses the same fonts, but that
+  Pango sets a few emphasized words upright and table headers semi-bold.
+  Re-run `make docs` on this host to restore the original typography.
 - Local encrypted smoke checks on the TPU (`runner.py`): all six fixtures with
   `--student-baseline` on 1, 2 and 4 chips, and test1/test4/test6 with the
   legacy `--baseline`; every logit, argmax and actual-ring security gate passed
@@ -181,14 +240,14 @@ removed the immediate hazard, and the 10-point policy change closed the gap:
 `score.py` now fails a case whose calibration entry records a different device
 count, and `suite-rank` refuses reports scored against different manifests.
 
-## Submission and documentation
+### Submission and documentation
 
 Complete the problem's `REPORT.md` and `cross.patch`, then run `make submit`.
 The submission archive contains P1 and its shared runner utilities; the judge
 applies `cross.patch` to the declared CROSS runtime. It excludes ephemeral runs,
 keys, organizer per-image evidence and golden files.
 
-To rebuild the offline HTML/PDF handout:
+To rebuild the offline HTML/PDF handouts of all five problems:
 
 ```bash
 python -m pip install -r cadathlon/requirements-docs.txt
@@ -197,10 +256,15 @@ make docs
 
 ## Provenance
 
-Extracted from `EfficientPPML/CROSS` commit
-`3a49b207acc851a8d599b9b3f3053b8af1d199aa`. The initial copied-file hashes are in
+P1 was extracted from `EfficientPPML/CROSS` commit
+`3a49b207acc851a8d599b9b3f3053b8af1d199aa` on 2026-11-06; the copied-file hashes
+of that extraction are in
 [upstream-source-manifest.json](validation/upstream-source-manifest.json).
-Only P1 packaging, navigation and standalone entry documentation are adapted,
+Only P1 packaging, navigation and standalone entry documentation were adapted,
 and the scorer carries the 10-point event policy (`score.py`, `rank.py`); the
-HE arithmetic, baseline and runner gates retain their source bytes. The repository retains the upstream [MIT license](LICENSE) and the
-embedded fonts' license notices.
+HE arithmetic, baseline and runner gates retain their source bytes. The rest of
+the problem set (P2 to P5, the shared runtime, tests and validation records)
+moved here from CROSS on 2026-11-10;
+[SOURCES.md](cadathlon/SOURCES.md#repository-migration-2026-11-10) lists the
+source commit of each part and what stayed in CROSS. The repository retains the
+upstream [MIT license](LICENSE) and the embedded fonts' license notices.

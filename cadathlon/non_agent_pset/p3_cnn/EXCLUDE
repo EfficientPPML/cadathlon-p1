@@ -1,0 +1,5 @@
+src/*.golden
+test/hidden*
+test/full_reference*
+src/suite/run/*
+results*.json

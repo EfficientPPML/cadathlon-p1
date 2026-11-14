@@ -128,6 +128,8 @@ def test_new_failed_attempt_invalidates_default_and_custom_reports(monkeypatch, 
     monkeypatch.setattr(evaluate, 'SUITE', suite)
     monkeypatch.setattr(evaluate, 'model_identity', lambda *args: {})
     monkeypatch.setattr(evaluate, 'cleanup', lambda: None)
+    # Package versions are recorded before the harness check; a CPU host has no libtpu.
+    monkeypatch.setattr(evaluate.importlib.metadata, 'version', lambda name: 'test')
     monkeypatch.setattr(install_suite, 'harness_is_pristine', lambda root: (False, 'changed harness'))
     default = suite/'run/evaluation-student-candidate/report.json'
     custom = tmp_path/'custom.json'
@@ -193,8 +195,10 @@ def test_calibration_published_only_after_cleanup_and_budget(monkeypatch, tmp_pa
     monkeypatch.setattr(score, 'SUITE_DIR', suite)
     monkeypatch.setattr(evaluate, 'time', SimpleNamespace(monotonic=lambda: clock.now))
     config = dict(score.CONFIG, cases=[{'id': 'C3', 'instance': 1, 'batch': 100, 'devices': 1}])
-    config['evaluation_profiles'] = {'student': {'case_ids': ['C3']}}
+    config['evaluation_profiles'] = {'student': {'case_ids': ['C3'], 'budget_s': 300}}
     monkeypatch.setattr(score, 'CONFIG', config)
+    # Package versions are recorded before any case runs; a CPU host has no libtpu.
+    monkeypatch.setattr(evaluate.importlib.metadata, 'version', lambda name: 'test')
     monkeypatch.setattr(install_suite, 'harness_is_pristine', lambda root: (True, ''))
     monkeypatch.setattr(install_suite, 'install', lambda root: None)
     monkeypatch.setattr(score, 'read_case', lambda *args: ([], {}, tmp_path))
