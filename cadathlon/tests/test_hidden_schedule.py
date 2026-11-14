@@ -11,7 +11,7 @@ from types import SimpleNamespace
 
 import pytest
 
-SUITE = Path(__file__).resolve().parents[1] / 'non_agent_pset/p1_benchmark/src/suite'
+SUITE = Path(__file__).resolve().parents[1] / 'pset/p1_benchmark/src/suite'
 sys.path.insert(0, str(SUITE))
 spec = importlib.util.spec_from_file_location('hidden_score_test', SUITE / 'score.py')
 score = importlib.util.module_from_spec(spec)
@@ -302,7 +302,7 @@ def test_overall_reports_rank_together_but_not_with_schedule_reports(measured, m
 
 
 def test_evaluate_hidden_uses_its_own_label_cases_and_manifest(monkeypatch, tmp_path):
-    suite = tmp_path / 'checkout/cadathlon/non_agent_pset/p1/src/suite'
+    suite = tmp_path / 'checkout/cadathlon/pset/p1/src/suite'
     suite.mkdir(parents=True)
     monkeypatch.setattr(evaluate, 'SUITE', suite)
     monkeypatch.setattr(evaluate.score, 'SUITE_DIR', suite)       # the canonical score module evaluate uses
@@ -323,7 +323,7 @@ def test_evaluate_hidden_uses_its_own_label_cases_and_manifest(monkeypatch, tmp_
 
 def test_hidden_calibration_is_published_next_to_the_evaluator(monkeypatch, tmp_path):
     """A passing hidden baseline run publishes baseline_manifest_student_hidden.json under evaluate.SUITE."""
-    suite = tmp_path / 'checkout/cadathlon/non_agent_pset/p1/src/suite'
+    suite = tmp_path / 'checkout/cadathlon/pset/p1/src/suite'
     scorer_root = tmp_path / 'scorer/src/suite'                       # deliberately a different root
     for folder in (suite, scorer_root):
         folder.mkdir(parents=True)
@@ -454,7 +454,7 @@ def test_release_excludes_every_hidden_artifact_but_ships_the_overall_script(tmp
     """package.py release drops the hidden manifest, proof tree and archives, and keeps overall.py."""
     import tarfile
     root = tmp_path / 'cadathlon'
-    problem = root / 'non_agent_pset/p1_benchmark'
+    problem = root / 'pset/p1_benchmark'
     common = SUITE.parents[3] / 'common'
     (problem / 'src/suite').mkdir(parents=True)
     (root / 'common').mkdir()
@@ -471,7 +471,7 @@ def test_release_excludes_every_hidden_artifact_but_ships_the_overall_script(tmp
                  'p3_compact_baseline.json'):
         (root / 'validation' / name).write_text('{}')
     # The release packages every problem and the complete shared runtime.
-    for other in ('agent_pset/p2_bert', 'non_agent_pset/p3_cnn', 'agent_pset/p4_qwen', 'agent_pset/p5_wise'):
+    for other in ('pset/p2_bert', 'pset/p3_cnn', 'pset/p4_qwen', 'pset/p5_wise'):
         (root / other).mkdir(parents=True)
         shutil.copy2(common.parent / other / 'EXCLUDE', root / other / 'EXCLUDE')
     for path in common.iterdir():
@@ -480,7 +480,7 @@ def test_release_excludes_every_hidden_artifact_but_ships_the_overall_script(tmp
     subprocess.run([sys.executable, str(root / 'common/package.py'), 'release', str(root)], check=True)
     with tarfile.open(root / 'contestant-release.tar.gz') as archive:
         names = set(archive.getnames())
-    prefix = 'non_agent_pset/p1_benchmark/src/suite/'
+    prefix = 'pset/p1_benchmark/src/suite/'
     assert prefix + 'overall.py' in names
     assert {prefix + rel for rel in PUBLIC_ARTIFACTS} <= names
     assert not any('hidden' in name for name in names), sorted(n for n in names if 'hidden' in n)
@@ -489,10 +489,10 @@ def test_release_excludes_every_hidden_artifact_but_ships_the_overall_script(tmp
 def test_git_ignores_every_hidden_artifact(tmp_path):
     """The hidden baseline must not be committed by accident either."""
     repo = SUITE.parents[4]
-    paths = ['cadathlon/non_agent_pset/p1_benchmark/src/suite/' + rel for rel in HIDDEN_ARTIFACTS]
+    paths = ['cadathlon/pset/p1_benchmark/src/suite/' + rel for rel in HIDDEN_ARTIFACTS]
     ignored = subprocess.run(['git', '-C', str(repo), 'check-ignore', '--no-index', *paths],
                              capture_output=True, text=True).stdout.split()
     assert sorted(ignored) == sorted(paths)
-    public = ['cadathlon/non_agent_pset/p1_benchmark/src/suite/' + rel for rel in PUBLIC_ARTIFACTS]
+    public = ['cadathlon/pset/p1_benchmark/src/suite/' + rel for rel in PUBLIC_ARTIFACTS]
     assert subprocess.run(['git', '-C', str(repo), 'check-ignore', '--no-index', *public],
                           capture_output=True, text=True).stdout.split() == []

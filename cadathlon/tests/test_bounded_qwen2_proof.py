@@ -21,7 +21,7 @@ def tree(tmp_path):
         shutil.copy2(LAB/name,validation/name)
     for name in ('jaxite_word','demos','cadathlon/common'):
         path=root/name;path.mkdir(parents=True);(path/'fixture.py').write_text('# dummy fixture source\n')
-    problem=root/'cadathlon/agent_pset/p4_qwen';src=problem/'src';src.mkdir(parents=True)
+    problem=root/'cadathlon/pset/p4_qwen';src=problem/'src';src.mkdir(parents=True)
     (src/'qwen_bounded_reference.py').write_text("IMPLEMENTATION_STATUS='experimental-unvalidated'\n")
     tests=problem/'test';tests.mkdir()
     for i in range(1,7):
@@ -35,7 +35,7 @@ def runner_source(root,mode):
 from pathlib import Path
 ROOT=Path({str(root)!r})
 mode={mode!r}
-implementation=ROOT/'cadathlon/agent_pset/p4_qwen/src/qwen_bounded_reference.py'
+implementation=ROOT/'cadathlon/pset/p4_qwen/src/qwen_bounded_reference.py'
 keydir=Path(os.environ['CROSS_PUBLIC_KEY_DIRECTORY'])
 (keydir/'public-dummy-key').write_text('dummy public bytes')
 (ROOT/'childpid').write_text(str(os.getpid()))

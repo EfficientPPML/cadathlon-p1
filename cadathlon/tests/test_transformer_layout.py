@@ -162,7 +162,7 @@ def test_softmax_planner_observes_actual_masked_and_padded_polynomial_inputs(cas
     spec = importlib.util.spec_from_file_location('masked_domain_planner', root / 'validation/plan_transformer_polynomials.py')
     planner = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(planner)
-    case = json.loads((root / f'agent_pset/p2_bert/test/test{case_number}.in').read_text())
+    case = json.loads((root / f'pset/p2_bert/test/test{case_number}.in').read_text())
     weights, embeddings, public_mask, _ = planner.BERT.make_case(case)
     batch, sequence, hidden = embeddings.shape
     heads = case['config']['num_attention_heads']
@@ -217,7 +217,7 @@ def test_complete_ciphertext_operator_graph_public_planning(problem, case_number
     import importlib.util
     import json
     from encrypted_transformer import bert_ciphertext_forward, qwen_ciphertext_forward
-    folder = Path(__file__).resolve().parents[1] / 'agent_pset' / ('p2_bert' if problem == 'bert' else 'p4_qwen')
+    folder = Path(__file__).resolve().parents[1] / 'pset' / ('p2_bert' if problem == 'bert' else 'p4_qwen')
     spec = importlib.util.spec_from_file_location(f'oracle_{problem}', folder / 'src/reference.py')
     oracle = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(oracle)

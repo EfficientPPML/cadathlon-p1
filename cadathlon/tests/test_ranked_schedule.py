@@ -2,7 +2,7 @@
 from pathlib import Path
 import json
 
-PROBLEM = Path(__file__).resolve().parents[1] / 'non_agent_pset/p1_benchmark'
+PROBLEM = Path(__file__).resolve().parents[1] / 'pset/p1_benchmark'
 CONFIG = json.loads((PROBLEM / 'src/suite/suite_config.json').read_text())
 CASES = {case['id']: case for case in CONFIG['cases']}
 

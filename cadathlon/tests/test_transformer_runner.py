@@ -186,7 +186,7 @@ def test_cleanup_does_not_hide_primary_failure(runner, cleanup_error):
 
 @pytest.mark.parametrize("problem,filename", [("p2_bert", "bert_he.py"), ("p4_qwen", "qwen_he.py")])
 def test_starter_and_oracle_preflight_are_explicit(problem, filename):
-    src = ROOT / "agent_pset" / problem / "src"
+    src = ROOT / "pset" / problem / "src"
     for suffix, status in [("", "unimplemented"), (".golden", "plaintext-oracle")]:
         result = subprocess.run([sys.executable, str(src / "runner.py"), "--preflight", "--implementation", str(src / (filename + suffix))],
                                 text=True, capture_output=True)
@@ -199,7 +199,7 @@ def test_starter_and_oracle_preflight_are_explicit(problem, filename):
 
 @pytest.mark.parametrize("problem,filename", [("p2_bert", "bert_he.py"), ("p4_qwen", "qwen_he.py")])
 def test_goldens_fail_with_oracle_diagnostic_before_jax(problem, filename):
-    src = ROOT / "agent_pset" / problem / "src"
+    src = ROOT / "pset" / problem / "src"
     result = subprocess.run([sys.executable, str(src / "runner.py"), "--case", str(src.parent / "test" / "test1.in"),
                              "--implementation", str(src / (filename + ".golden"))],
                             text=True, capture_output=True)

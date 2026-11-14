@@ -3,13 +3,13 @@
 This repository holds the complete CADathlon problem set and the CROSS runtime
 it runs on. No separate CROSS checkout is required.
 
-| Set | Problem | Points | Handout |
+| AI use | Problem | Points | Handout |
 |---|---|---|---|
-| `non_agent_pset` (no AI assistance) | **P1 · MNIST throughput** — essential: raise encrypted MNIST throughput on one and four TPU chips inside the FHE benchmarking suite's harness | 10 | [MD](cadathlon/non_agent_pset/p1_benchmark/doc/problem.md) · [HTML](cadathlon/non_agent_pset/p1_benchmark/doc/problem.html) · [PDF](cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf) |
-| `non_agent_pset` | **P3 · Compact CNNs** — bonus: accelerate two fixed compact encrypted CNNs | 20 | [MD](cadathlon/non_agent_pset/p3_cnn/doc/problem.md) · [HTML](cadathlon/non_agent_pset/p3_cnn/doc/problem.html) · [PDF](cadathlon/non_agent_pset/p3_cnn/doc/problem.pdf) |
-| `agent_pset` (AI agents allowed) | **P2 · BERT / MRPC** — enable encrypted BERT on TPUs with CROSS, then optimize it | 100 | [MD](cadathlon/agent_pset/p2_bert/doc/problem.md) · [HTML](cadathlon/agent_pset/p2_bert/doc/problem.html) · [PDF](cadathlon/agent_pset/p2_bert/doc/problem.pdf) |
-| `agent_pset` | **P4 · Qwen3-0.6B** — full Qwen3-0.6B inference under CKKS, with staged credit for operators and decoder blocks | 100 | [MD](cadathlon/agent_pset/p4_qwen/doc/problem.md) · [HTML](cadathlon/agent_pset/p4_qwen/doc/problem.html) · [PDF](cadathlon/agent_pset/p4_qwen/doc/problem.pdf) |
-| `agent_pset` | **P5 · WISE scheduling** — schedule fixed MLP/CNN workloads with the pinned WISE planner, run them with CROSS CKKS and optimize measured TPU performance | 100 | [MD](cadathlon/agent_pset/p5_wise/doc/problem.md) · [HTML](cadathlon/agent_pset/p5_wise/doc/problem.html) · [PDF](cadathlon/agent_pset/p5_wise/doc/problem.pdf) |
+| No AI assistance | **P1 · MNIST throughput** — essential: raise encrypted MNIST throughput on one and four TPU chips inside the FHE benchmarking suite's harness | 10 | [MD](cadathlon/pset/p1_benchmark/doc/problem.md) · [HTML](cadathlon/pset/p1_benchmark/doc/problem.html) · [PDF](cadathlon/pset/p1_benchmark/doc/problem.pdf) |
+| No AI assistance | **P3 · Compact CNNs** — bonus: accelerate two fixed compact encrypted CNNs | 20 | [MD](cadathlon/pset/p3_cnn/doc/problem.md) · [HTML](cadathlon/pset/p3_cnn/doc/problem.html) · [PDF](cadathlon/pset/p3_cnn/doc/problem.pdf) |
+| AI agents allowed | **P2 · BERT / MRPC** — enable encrypted BERT on TPUs with CROSS, then optimize it | 100 | [MD](cadathlon/pset/p2_bert/doc/problem.md) · [HTML](cadathlon/pset/p2_bert/doc/problem.html) · [PDF](cadathlon/pset/p2_bert/doc/problem.pdf) |
+| AI agents allowed | **P4 · Qwen3-0.6B** — full Qwen3-0.6B inference under CKKS, with staged credit for operators and decoder blocks | 100 | [MD](cadathlon/pset/p4_qwen/doc/problem.md) · [HTML](cadathlon/pset/p4_qwen/doc/problem.html) · [PDF](cadathlon/pset/p4_qwen/doc/problem.pdf) |
+| AI agents allowed | **P5 · WISE scheduling** — schedule fixed MLP/CNN workloads with the pinned WISE planner, run them with CROSS CKKS and optimize measured TPU performance | 100 | [MD](cadathlon/pset/p5_wise/doc/problem.md) · [HTML](cadathlon/pset/p5_wise/doc/problem.html) · [PDF](cadathlon/pset/p5_wise/doc/problem.pdf) |
 
 [cadathlon/README.md](cadathlon/README.md) gives the set rules and competition
 schedules, [ORGANIZER.md](cadathlon/ORGANIZER.md) the judging procedure, and
@@ -18,9 +18,11 @@ absorbed the problem set from CROSS. Each problem directory has its own README.
 
 ## Layout
 
-- `cadathlon/`: the problem set. `non_agent_pset/` holds P1 and P3,
-  `agent_pset/` holds P2, P4 and P5, `common/` the shared runtime and handout
-  tooling, `tests/` the regression tests and `validation/` the recorded evidence.
+- `cadathlon/`: the problem set. `pset/` holds all five problems, `common/` the
+  shared runtime and handout tooling, `tests/` the regression tests and
+  `validation/` the recorded evidence. Before 2026-11-14 the problems were split
+  between `non_agent_pset/` and `agent_pset/`; to update an existing checkout,
+  see "Existing checkouts" in [SOURCES.md](cadathlon/SOURCES.md).
 - `jaxite_word/`, `demos/`, `profile_analysis/`, `pytest.ini`: the CROSS
   runtime (`EfficientPPML/CROSS` commit `3a49b20`, whose `jaxite_word` changes
   remain on CROSS branch `fix/competition-readiness`), kept at the repository root
@@ -61,11 +63,11 @@ contest hardware. The benchmark rejects a CPU/GPU fallback.
 
 ## P1 — encrypted MNIST throughput
 
-Start with the [problem handout](cadathlon/non_agent_pset/p1_benchmark/doc/problem.md)
-([HTML](cadathlon/non_agent_pset/p1_benchmark/doc/problem.html),
-[PDF](cadathlon/non_agent_pset/p1_benchmark/doc/problem.pdf)) and implement
-[bench_opt.py](cadathlon/non_agent_pset/p1_benchmark/src/bench_opt.py).
-The [P1 guide](cadathlon/non_agent_pset/p1_benchmark/README.md) describes the
+Start with the [problem handout](cadathlon/pset/p1_benchmark/doc/problem.md)
+([HTML](cadathlon/pset/p1_benchmark/doc/problem.html),
+[PDF](cadathlon/pset/p1_benchmark/doc/problem.pdf)) and implement
+[bench_opt.py](cadathlon/pset/p1_benchmark/src/bench_opt.py).
+The [P1 guide](cadathlon/pset/p1_benchmark/README.md) describes the
 interfaces and evaluation rules. The root `make` targets other than `all`,
 `reference-test`, `check`, `docs`, `release`, `clean` and `install-wise` (P5's
 WISE planner) forward to P1.
@@ -111,9 +113,9 @@ privacy, parameter and memory audit.
 
 The ranked evaluation uses the separately maintained upstream harness and MNIST
 data. Its pinned revision is in
-[suite_config.json](cadathlon/non_agent_pset/p1_benchmark/src/suite/suite_config.json).
+[suite_config.json](cadathlon/pset/p1_benchmark/src/suite/suite_config.json).
 The ranked model checkpoint and its hash manifest are included under
-[weights/](cadathlon/non_agent_pset/p1_benchmark/weights/).
+[weights/](cadathlon/pset/p1_benchmark/weights/).
 
 ```bash
 git clone https://github.com/fhe-benchmarking/ml-inference "$HOME/ml-inference"
@@ -183,7 +185,7 @@ end to end on this host. They predate the 2026-11-10 migration, when `make check
 - `make suite-evaluate-baseline P1_BASELINE_PROFILE=legacy EVALUATION_BUDGET_S=7200`
   (legacy, C1–C6): all six cases pass in 1685.94 s, every case verified with
   100% cleartext agreement; the republished
-  [baseline_manifest.json](cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest.json)
+  [baseline_manifest.json](cadathlon/pset/p1_benchmark/src/suite/baseline_manifest.json)
   now holds four-chip numbers and the legacy self-score is 3.0 of 10 points
   (0.5 per passing case, no improvement points;
   [cadathlon/validation/p1_legacy_suite.json](cadathlon/validation/p1_legacy_suite.json)).
@@ -237,7 +239,7 @@ on one chip and about 72 s on two or four chips for the student ring, and about
 from the medians.
 
 Resolved follow-up from the review of this migration: the legacy scoring path in
-[score.py](cadathlon/non_agent_pset/p1_benchmark/src/suite/score.py) never binds
+[score.py](cadathlon/pset/p1_benchmark/src/suite/score.py) never binds
 a calibration entry's device count to the case it scores, so a legacy manifest
 measured with a different chip count would be divided silently; the student path
 checks `device_kinds`. The republished four-chip `baseline_manifest.json`

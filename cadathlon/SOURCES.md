@@ -15,7 +15,7 @@ Initially inspected on 2026-09-19; BERT sources added on 2026-09-21.
 | [Pinned BERT checkpoint](https://huggingface.co/google-bert/bert-base-cased-finetuned-mrpc/tree/f150c1d609d1e50dd5e2e5408661cfac8339277c) | Cased tokenizer and BERT-Base dimensions, LayerNorm epsilon and model identity; upstream explicitly loads BertForSequenceClassification |
 | [Transformers 4.51.3 BERT implementation](https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/bert/modeling_bert.py) | Independent synthetic validation of embeddings, bidirectional attention, post-LayerNorm blocks, pooler and classifier |
 
-The Qwen repository revision is pinned in `agent_pset/p4_qwen/test/model_source.json`.
+The Qwen repository revision is pinned in `pset/p4_qwen/test/model_source.json`.
 The bundled config is unmodified; model weights/tokenizer files must be staged
 from that same revision by organizers. Do not resolve `main` again on contest day.
 
@@ -33,7 +33,7 @@ It requires encrypted attention and encrypted depth refresh as necessary.
 
 BERT's upstream DESILO implementation informs the allowed client embedding
 boundary and public attention-mask leakage, but is not copied as the CROSS
-backend. `agent_pset/p2_bert/src/benchmark.py` pins all eleven harness Python files by
+backend. `pset/p2_bert/src/benchmark.py` pins all eleven harness Python files by
 SHA-256. Staging retains their Apache license and leaves their contents
 unchanged. The upstream `run_submission.py` sets no model revision itself;
 organizers must provision a pinned offline cache for its cleartext reference.
@@ -53,9 +53,9 @@ already held the standalone P1. Where each part comes from:
 
 | Part | Source |
 |---|---|
-| P1 (`non_agent_pset/p1_benchmark`), its tests that differ from CROSS or are new here (`test_evaluation_schedule.py`, `test_scoring.py`, `test_student_evidence.py`, `test_hidden_schedule.py`, `test_ranked_schedule.py`, `test_scoring_policy.py`, `test_standalone_package.py`) and its validation records (`p1_student_suite.json`, `p1_legacy_suite.json`, `p1_student_v6e8/`, `p1_student_pre_v2/`) | This repository's own P1: extracted from CROSS `3a49b20` on 2026-11-06 and developed here since (four-chip schedule, 10-point policy, hidden C5/C6 cases) |
+| P1 (`pset/p1_benchmark`), its tests that differ from CROSS or are new here (`test_evaluation_schedule.py`, `test_scoring.py`, `test_student_evidence.py`, `test_hidden_schedule.py`, `test_ranked_schedule.py`, `test_scoring_policy.py`, `test_standalone_package.py`) and its validation records (`p1_student_suite.json`, `p1_legacy_suite.json`, `p1_student_v6e8/`, `p1_student_pre_v2/`) | This repository's own P1: extracted from CROSS `3a49b20` on 2026-11-06 and developed here since (four-chip schedule, 10-point policy, hidden C5/C6 cases) |
 | P2, P3, P4, `common/`, the other tests, `README.md`, `ORGANIZER.md`, `VALIDATION.md` and the other top-level `validation/` records | CROSS branch `fix/competition-readiness`, commit `3a49b207acc851a8d599b9b3f3053b8af1d199aa` |
-| P5 (`agent_pset/p5_wise`) and its `test_wise_*` tests | CROSS branch `feat/p5-wise-tpu-20261105`, commit `3cec9fa`, replayed onto `3a49b20` as CROSS commit `152fb80b1d56d0bf7fec0f61f5c5bfd853f59c49` (branch `migrate-cadathlon`); archived here as `6613bad` and `461bb8e` (see below) |
+| P5 (`pset/p5_wise`) and its `test_wise_*` tests | CROSS branch `feat/p5-wise-tpu-20261105`, commit `3cec9fa`, replayed onto `3a49b20` as CROSS commit `152fb80b1d56d0bf7fec0f61f5c5bfd853f59c49` (branch `migrate-cadathlon`); archived here as `6613bad` and `461bb8e` (see below) |
 | CROSS runtime: `jaxite_word/`, `demos/`, `profile_analysis/`, `pytest.ini` (repository root) | CROSS `3a49b20`; `jaxite_word/` is identical in `3a49b20` and `3cec9fa` |
 
 Replaying P5 onto `3a49b20` conflicted in `common/package.py` (its
@@ -116,7 +116,7 @@ here; see below).
 
 Not migrated: CROSS `main` commit `294ed7d` ("Allow coding agents for all
 CADathlon problems"), which moved P1 and P3 into `agent_pset` and is not on
-`fix/competition-readiness`, so P1 and P3 stay in `non_agent_pset` (it is archived
+`fix/competition-readiness`, so P1 and P3 stay without AI assistance (it is archived
 here on `archive/cross/main`); the per-run
 evidence directories under `validation/` (311 directories, 12,487 files, about
 1.8 GB, of which the P1 extraction had already kept
@@ -201,3 +201,28 @@ those evidence files; their bytes are unchanged.
 
 A plain `git clone` of this repository also downloads the archive branches
 (about 0.8 GB); `git clone --single-branch` fetches only the default branch.
+
+### One problem set (2026-11-14)
+
+`non_agent_pset/` (P1, P3) and `agent_pset/` (P2, P4, P5) were merged into a
+single `pset/` directory. Each problem keeps its rules: P1 and P3 without AI
+assistance on one leaderboard, P2, P4 and P5 with coding agents allowed on one
+leaderboard each. Code, tests, Makefiles and documents use the new paths, as do
+the validation files that tests run or collect (`check_transformer_suite.py`,
+`plan_transformer_polynomials.py`, `check_p3_compact_followup.py`,
+`run_bounded_qwen2_proof.py` and `test_pretrained_qwen_arithmetic.py`). The
+historical records keep the paths they were written with: `VALIDATION.md`'s
+entries, the other records and scripts under `validation/` here and at the
+repository root, and the `archive/cross/*` branches.
+
+**Existing checkouts.** Git moves only tracked files, so updating a checkout made
+before this change leaves its untracked files (P1's hidden C5/C6 calibration and
+per-case archives, per-image evidence, run output, P5 results) in
+`non_agent_pset/` or `agent_pset/`; `.gitignore` keeps those folders out of the
+repository. On a judging host, run `make suite-stop` and let every evaluation
+finish before updating, and do not update between one team's public and hidden
+evaluations, whose overall score binds both to the same sources. After
+updating, move each file that
+`git status --short --ignored cadathlon/non_agent_pset cadathlon/agent_pset`
+lists to the same place under `cadathlon/pset/`, delete the old folders, and run
+`make suite-install` so the installed harness shims point at `pset/`.

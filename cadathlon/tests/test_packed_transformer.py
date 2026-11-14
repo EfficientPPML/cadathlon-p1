@@ -154,7 +154,7 @@ def test_packed_linear_input_mask_uses_source_feature_coordinates(rows, columns)
 def test_all_public_packed_graphs_match_feature_oracle_and_domain_contracts(model, number):
     PackedPairLayout, _, feature_width = _runtime()
     problem = 'p2_bert' if model == 'bert' else 'p4_qwen'
-    folder = ROOT/'cadathlon/agent_pset'/problem
+    folder = ROOT/'cadathlon/pset'/problem
     oracle = load_module(folder/'src/reference.py')
     case = json.loads((folder/f'test/test{number}.in').read_text())
     created = oracle.make_case(case)
@@ -219,7 +219,7 @@ def test_unvalidated_refresh_graphs_fail_before_key_generation(monkeypatch, mode
     from encrypted_reference import create_toy_session
     from jaxite_word import key_gen
     problem = 'p2_bert' if model == 'bert' else 'p4_qwen'
-    folder = ROOT/'cadathlon/agent_pset'/problem
+    folder = ROOT/'cadathlon/pset'/problem
     case = json.loads((folder/f'test/test{number}.in').read_text())
     created = load_module(folder/'src/reference.py').make_case(case)
     weights, embeddings = created[:2]

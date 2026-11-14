@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 
-SUITE = Path(__file__).resolve().parents[1] / 'non_agent_pset/p1_benchmark/src/suite'
+SUITE = Path(__file__).resolve().parents[1] / 'pset/p1_benchmark/src/suite'
 sys.path.insert(0, str(SUITE))
 import evaluate
 import install_suite
@@ -123,7 +123,7 @@ finally:
 
 
 def test_new_failed_attempt_invalidates_default_and_custom_reports(monkeypatch, tmp_path):
-    suite = tmp_path/'checkout/cadathlon/non_agent_pset/p1/src/suite'
+    suite = tmp_path/'checkout/cadathlon/pset/p1/src/suite'
     suite.mkdir(parents=True)
     monkeypatch.setattr(evaluate, 'SUITE', suite)
     monkeypatch.setattr(evaluate, 'model_identity', lambda *args: {})
@@ -146,7 +146,7 @@ def test_new_failed_attempt_invalidates_default_and_custom_reports(monkeypatch, 
 
 @pytest.mark.parametrize('failure', ['metadata', 'suite_resolution'])
 def test_early_environment_failure_invalidates_previous_success(monkeypatch, tmp_path, failure):
-    suite = tmp_path/'checkout/cadathlon/non_agent_pset/p1/src/suite'
+    suite = tmp_path/'checkout/cadathlon/pset/p1/src/suite'
     suite.mkdir(parents=True)
     monkeypatch.setattr(evaluate, 'SUITE', suite)
     monkeypatch.setattr(evaluate, 'cleanup', lambda: None)
@@ -189,7 +189,7 @@ def test_evaluations_cannot_share_daemon_ownership(monkeypatch, tmp_path):
 @pytest.mark.parametrize('final_cleanup', ['success', 'failure', 'budget'])
 def test_calibration_published_only_after_cleanup_and_budget(monkeypatch, tmp_path, final_cleanup):
     clock = SimpleNamespace(now=0., cleanups=0)
-    suite = tmp_path / 'checkout/cadathlon/non_agent_pset/p1/src/suite'
+    suite = tmp_path / 'checkout/cadathlon/pset/p1/src/suite'
     suite.mkdir(parents=True)
     monkeypatch.setattr(evaluate, 'SUITE', suite)
     monkeypatch.setattr(score, 'SUITE_DIR', suite)
