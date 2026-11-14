@@ -6,7 +6,7 @@ from pathlib import Path
 import sys
 import pytest
 
-path = Path(__file__).resolve().parents[1] / "agent_pset/p5_wise/src/score.py"
+path = Path(__file__).resolve().parents[1] / "pset/p5_wise/src/score.py"
 spec = importlib.util.spec_from_file_location("wise_scoring", path)
 scoring = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(scoring)

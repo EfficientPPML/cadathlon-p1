@@ -21,4 +21,4 @@ einops
 matplotlib
 tqdm
 # P5 also needs the pinned WISE planner, which is not a PyPI package:
-#   make -C cadathlon/agent_pset/p5_wise/src install-wise
+#   make -C cadathlon/pset/p5_wise/src install-wise

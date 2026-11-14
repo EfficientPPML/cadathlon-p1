@@ -230,7 +230,7 @@ def runner_command(runner, arguments):
 
 def child_runner(runner, arguments):
     runner = Path(runner).resolve(strict=True)
-    allowed = {(ROOT/'cadathlon/agent_pset'/problem/'src/runner.py').resolve()
+    allowed = {(ROOT/'cadathlon/pset'/problem/'src/runner.py').resolve()
                for problem in PROBLEMS.values()}
     if runner not in allowed:
         raise ValueError("child shim requires one of this checkout's public runners")
@@ -347,7 +347,7 @@ def summarize(records, selected, *, warmups, repeats):
 
 
 def evaluate(args):
-    problem = ROOT / "cadathlon/agent_pset" / PROBLEMS[args.model]
+    problem = ROOT / "cadathlon/pset" / PROBLEMS[args.model]
     # Atomic creation prevents stale artifacts and concurrent writers.
     args.output.mkdir(parents=True, exist_ok=False)
     selected = tuple(f"test{i}.in" for i in args.cases)

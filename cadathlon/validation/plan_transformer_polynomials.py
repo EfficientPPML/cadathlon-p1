@@ -23,8 +23,8 @@ from support import load_module, metrics
 from encrypted_polynomial import nonlinear_approximation
 from encrypted_transformer import public_toy_approximations
 
-BERT = load_module(ROOT / 'agent_pset/p2_bert/src/reference.py')
-QWEN = load_module(ROOT / 'agent_pset/p4_qwen/src/reference.py')
+BERT = load_module(ROOT / 'pset/p2_bert/src/reference.py')
+QWEN = load_module(ROOT / 'pset/p4_qwen/src/reference.py')
 FUNCTIONS = {
     'inverse_sqrt': lambda x: 1 / np.sqrt(x),
     'gelu': BERT.gelu, 'silu': lambda x: x * np.exp(-np.logaddexp(0, -x)),
@@ -196,7 +196,7 @@ def run(problem, degrees, exact=False):
     reference, path = (BERT,'p2_bert') if problem == 'bert' else (QWEN,'p4_qwen')
     plan = Plan(problem, degrees, exact)
     cases = []
-    for source in sorted((ROOT/'agent_pset'/path/'test').glob('test*.in')):
+    for source in sorted((ROOT/'pset'/path/'test').glob('test*.in')):
         case = json.loads(source.read_text())
         args = reference.make_case(case)
         w, x, expected = args[0], args[1], args[-1]

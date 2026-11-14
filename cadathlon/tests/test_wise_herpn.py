@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "agent_pset/p5_wise/src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "pset/p5_wise/src"))
 
 
 @pytest.mark.parametrize("depth", [3, 4, 9])

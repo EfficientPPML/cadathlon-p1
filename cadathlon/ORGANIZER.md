@@ -6,18 +6,20 @@ the proposed time/error limits have been demonstrated on contest hardware.
 Students are asked to implement that capability. The CNN reference uses the
 existing real CROSS pipeline.
 
-The five problems are split into two sets. `non_agent_pset` is solved without
-coding agents and holds **P1 (essential, 10 points under policy
-`p1-10-point-v1`, P1 handout section 4)** and **P3 (bonus, 20 points)**; a
-team's total there is essential + bonus. `agent_pset` holds **P2**, **P4** and
-**P5**, each 100 points, with agents allowed. Keep the two sets on separate
-leaderboards, and each `agent_pset` problem on its own leaderboard.
+All five problems live in `pset/`. **P1 (essential, 10 points under policy
+`p1-10-point-v1`, P1 handout section 4)** and **P3 (bonus, 20 points)** are
+solved without AI assistance (no generative AI or coding agents), and a team's
+total for them is essential + bonus.
+**P2**, **P4** and **P5**, each 100 points, allow coding agents. Keep P1 and P3
+on one leaderboard, and give P2, P4 and P5 one leaderboard each. A host set up
+before the problems moved into `pset/` (2026-11-14) must migrate its untracked
+files first; see "Existing checkouts" in `SOURCES.md`.
 
 ## Format and difficulty
 
 Use an eight-hour event: roughly 45 minutes for onboarding, 75 minutes for
 baseline/operator checks, four hours for implementation, and two hours for
-verification and reporting. For `agent_pset`, a full encrypted transformer is
+verification and reporting. For P2 and P4, a full encrypted transformer is
 an ambitious final milestone. The staged rubric is intentional. If requiring
 most teams to finish full Qwen in one day, provide an organizer-tested full
 baseline before release; building that baseline is additional research work,
@@ -45,7 +47,7 @@ that is the intended behavior, not an edge case. Because the award is binary,
 write the verdict down with the evidence that produced it, and apply the same
 standard to every team.
 
-P3, the `non_agent_pset` bonus problem, optimizes execution of two fixed
+P3, the bonus problem (no AI assistance), optimizes execution of two fixed
 networks. Unlike the 2019
 pruning template, it does not reward removing parameters or retraining. This
 keeps its score attributable to CROSS/accelerator optimization and makes an
@@ -63,7 +65,7 @@ pinned suite commit, which is the suite's own rule. It does replace
 both and a pure-Python submission has nothing to compile; `suite-check` reports
 this. Confirm it before judging, and confirm no other path outside
 `submissions/mnist/` differs from the pinned commit. P1 is the essential
-problem of `non_agent_pset` and is solved without coding agents.
+problem and, like P3, is solved without AI assistance.
 
 Two properties of the pinned harness mean `results-N.json` is not by itself a
 correctness verdict, and a judge must not treat it as one. The single instance
@@ -81,7 +83,7 @@ from the harness's own stdout, and preserve every run's `io/` directory.
 Archiving is also what keeps C1 and C2 apart: the suite keys its output by
 instance alone, so the two cases that share the single instance and differ only
 in chip count would otherwise overwrite each other.
-`make -C non_agent_pset/p1_benchmark/src suite-gates` self-tests the gate arithmetic and needs
+`make -C pset/p1_benchmark/src suite-gates` self-tests the gate arithmetic and needs
 no accelerator or suite checkout.
 
 Two further properties of the pinned harness affect how its numbers may be
@@ -152,7 +154,7 @@ source stability and cleanup. The 276.63-second four-chip run satisfied this evi
 contract; the earlier eight-chip proof and the separately preserved historical
 262.14-second run predate it. The shipped proof predates the hidden-case
 configuration, so `suite-score` rejects it until
-`make -C non_agent_pset/p1_benchmark/src suite-evaluate-baseline` is rerun on
+`make -C pset/p1_benchmark/src suite-evaluate-baseline` is rerun on
 the contest host.
 Successful baseline proofs and aggregate case snapshots live under
 `src/suite/calibration/student-baseline/` and survive `make clean`. Keep those
@@ -166,7 +168,7 @@ plaintext fixture oracles or experimental operator tests.
 
 ## Assets to freeze before distribution
 
-For P5, follow [the separate TPU-host runbook](agent_pset/p5_wise/TPU_TESTING.md).
+For P5, follow [the separate TPU-host runbook](pset/p5_wise/TPU_TESTING.md).
 Freeze WISE commit `485655782dc331e6ebb48b159acac8ba924a9933`, its original
 pretrained assets, all six synthetic fixtures, the exact CROSS checkout and
 the native OpenFHE build. Collect fresh CPU and TPU evidence on the judging
@@ -178,7 +180,7 @@ speedup remain incomplete; historical CPU results do not supply a TPU baseline.
    and relevant environment variables. Save `pip freeze`, `jax.devices()`,
    and a clean `git diff`/commit manifest. Verify isolated chip allocation;
    slicing `jax.devices()[:1]` in a harness is not a resource scheduler.
-2. **Qwen:** acquire the exact model revision in `agent_pset/p4_qwen/test/model_source.json`
+2. **Qwen:** acquire the exact model revision in `pset/p4_qwen/test/model_source.json`
    plus tokenizer/config files. Hash every artifact. Provision them before the
    event; do not make download speed part of the competition. Check license
    notices when redistributing. `src/export_weights.py SNAPSHOT OUTPUT` exports
@@ -214,16 +216,16 @@ speedup remain incomplete; historical CPU results do not supply a TPU baseline.
    compare the NumPy reference on matching small cases as an independent
    implementation check. Tiny random cases are never full-model goldens.
 6. **Benchmark suite (P1):** clone `fhe-benchmarking/ml-inference` at the
-   commit pinned in `non_agent_pset/p1_benchmark/src/suite/suite_config.json`, verify
-   `harness/` is untouched with `make -C non_agent_pset/p1_benchmark/src suite-check`, and
+   commit pinned in `pset/p1_benchmark/src/suite/suite_config.json`, verify
+   `harness/` is untouched with `make -C pset/p1_benchmark/src suite-check`, and
    provision the MNIST data before the event so download speed is not part of
-   the competition. Freeze `non_agent_pset/p1_benchmark/weights/mlp_784_50_10.pth` and its
+   the competition. Freeze `pset/p1_benchmark/weights/mlp_784_50_10.pth` and its
    hash manifest, or replace it with your own trained weights for the same
    `Linear(784,50) -> x^2 -> Linear(50,10)` architecture and re-hash. Publish
    the image selection: the suite derives it from `--seed`, so record the seed
    and the repeat schedule for ranked batches above 256 images. Measure the
    judge's own calibration on the exact hardware: `make -C
-   non_agent_pset/p1_benchmark/src suite-evaluate-baseline` publishes the student C3/C4
+   pset/p1_benchmark/src suite-evaluate-baseline` publishes the student C3/C4
    calibration (`baseline_manifest_student.json` and `calibration/student-baseline/`),
    and `suite-evaluate-baseline-hidden` the hidden C5/C6 calibration
    (`baseline_manifest_student_hidden.json`), which stays out of git and out of the
@@ -316,7 +318,7 @@ debugging, testing, profiling and optimization. Keep that permission in both
 rendered handouts and require disclosure and verification in the report.
 
 Use the pinned `fhe-benchmarking/BERT` commit and harness hashes in
-`agent_pset/p2_bert/src/benchmark.py`. `stage_benchmark.py` copies its untouched harness
+`pset/p2_bert/src/benchmark.py`. `stage_benchmark.py` copies its untouched harness
 and the CROSS stage adapters into a fresh directory, without copying DESILO
 code. Freeze the model/tokenizer revision, full checkpoint hashes, GLUE MRPC
 dataset revision, environment and all selected record identities. Upstream

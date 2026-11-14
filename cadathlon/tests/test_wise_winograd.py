@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "agent_pset/p5_wise/src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "pset/p5_wise/src"))
 from schedule import NumpyArithmetic
 from wise_source import load_wise
 from winograd import execute_winograd, rotations
@@ -18,7 +18,7 @@ def test_complete_native_winograd_cnn_preserves_fixed_network(number, slots, con
     import json
     from schedule import build_schedule, execute, pack_inputs
     from workloads import input_values, reference
-    folder = Path(__file__).resolve().parents[1] / "agent_pset/p5_wise"
+    folder = Path(__file__).resolve().parents[1] / "pset/p5_wise"
     case = json.loads((folder / f"test/test{number}.in").read_text())
     plan = build_schedule(case, slots, convolution=convolution)
     digest = plan.identity()

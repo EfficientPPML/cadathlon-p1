@@ -9,7 +9,7 @@ import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "agent_pset/p2_bert" / "src"))
+sys.path.insert(0, str(ROOT / "pset/p2_bert" / "src"))
 from benchmark import BATCH_SIZES, HARNESS_SHA256, STAGES
 from check_result import check
 from stage_benchmark import stage

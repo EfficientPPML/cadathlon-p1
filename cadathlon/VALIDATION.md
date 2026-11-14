@@ -7,6 +7,8 @@
 > [`f818ce6`](https://github.com/EfficientPPML/cadathlon-p1/tree/f818ce689647f1e3248c72426927dbe1a3f67976/cadathlon/validation)
 > is CROSS commit `3a49b20` filtered to `cadathlon/` (see `SOURCES.md`), and the links below
 > point there. Paths and commands below are relative to `cadathlon/` as they were in CROSS.
+> Since 2026-11-14 the problems sit under `pset/` instead of `non_agent_pset/` (P1, P3)
+> and `agent_pset/` (P2, P4, P5).
 > The P1 entries below describe CROSS's eight-chip,
 > 100-point P1 and predate this repository's four-chip, 10-point P1, whose own records
 > replaced the files they cite: here `validation/p1_student_suite.json`,

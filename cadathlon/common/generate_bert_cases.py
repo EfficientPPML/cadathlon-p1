@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
-    folder = ROOT / "agent_pset/p2_bert"
+    folder = ROOT / "pset/p2_bert"
     spec = importlib.util.spec_from_file_location("bert_reference", folder / "src" / "reference.py")
     reference = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(reference)

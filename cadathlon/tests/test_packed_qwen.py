@@ -25,7 +25,7 @@ from support import load_module, metrics
 def test_unsupported_packed_session_fails_before_client_key_generation(monkeypatch, changes, batch, sequence):
     from encrypted_reference import create_toy_session
     from jaxite_word import key_gen
-    config = json.loads((ROOT/'cadathlon/agent_pset/p4_qwen/test/test1.in').read_text())['config']
+    config = json.loads((ROOT/'cadathlon/pset/p4_qwen/test/test1.in').read_text())['config']
     config.update(changes)
     def forbidden_keygen(*args, **kwargs):
         raise AssertionError('unsupported packed workloads must fail before key generation')
@@ -130,7 +130,7 @@ class _PlanningPackedQwen(PackedQwen1):
 
 
 def test_complete_packed_graph_matches_feature_graph_and_original_fixture_at_depth38():
-    folder = ROOT / 'cadathlon/agent_pset/p4_qwen'
+    folder = ROOT / 'cadathlon/pset/p4_qwen'
     oracle = load_module(folder/'src/reference.py')
     case = json.loads((folder/'test/test1.in').read_text())
     weights, embeddings, exact = oracle.make_case(case)

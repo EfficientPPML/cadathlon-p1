@@ -12,7 +12,7 @@ import sys
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / 'cadathlon/agent_pset/p2_bert/src'
+SOURCE = ROOT / 'cadathlon/pset/p2_bert/src'
 
 
 @pytest.fixture

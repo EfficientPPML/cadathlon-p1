@@ -11,8 +11,8 @@ def test_wise_submission_has_runtime_and_excludes_execution_scratch(tmp_path):
     root = tmp_path / "cadathlon"
     shutil.copytree(original / "common", root / "common",
                     ignore=shutil.ignore_patterns("__pycache__"))
-    problem = root / "agent_pset/p5_wise"
-    shutil.copytree(original / "agent_pset/p5_wise", problem,
+    problem = root / "pset/p5_wise"
+    shutil.copytree(original / "pset/p5_wise", problem,
                     ignore=shutil.ignore_patterns("__pycache__", "run", "*.tar.gz"))
     scratch = problem / "src/run"
     scratch.mkdir()
@@ -26,8 +26,8 @@ def test_wise_submission_has_runtime_and_excludes_execution_scratch(tmp_path):
                  "encrypted_primitives", "encrypted_rotation", "encrypted_ntt",
                  "encrypted_refresh"):
         assert f"common/{name}.py" in names
-    assert "agent_pset/p5_wise/src/evaluate.py" in names
-    assert "agent_pset/p5_wise/src/native_runner.py" in names
+    assert "pset/p5_wise/src/evaluate.py" in names
+    assert "pset/p5_wise/src/native_runner.py" in names
     assert not any("/run/" in name for name in names)
     (root / "common/encrypted_rotation.py").unlink()
     result = subprocess.run(command, capture_output=True, text=True)

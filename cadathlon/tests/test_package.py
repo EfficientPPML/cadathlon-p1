@@ -26,8 +26,8 @@ TRANSFORMER_RUNTIME = (
 # P1 imports only the security gate, so its archive carries just the shared
 # tooling; transformer problems such as P2 carry the complete shared runtime.
 @pytest.mark.parametrize("problem_path, full_runtime", [
-    ("non_agent_pset/p1_benchmark", False),
-    ("agent_pset/p2_bert", True),
+    ("pset/p1_benchmark", False),
+    ("pset/p2_bert", True),
 ])
 def test_submit_includes_shared_security_gate_and_suite_configuration(tmp_path, problem_path, full_runtime):
     root = tmp_path / "cadathlon"
@@ -66,7 +66,7 @@ def test_submit_includes_shared_security_gate_and_suite_configuration(tmp_path, 
 
 def test_missing_shared_runtime_fails_before_creating_an_archive(tmp_path):
     root = tmp_path / "cadathlon"
-    problem = root / "agent_pset" / "p4_qwen"
+    problem = root / "pset" / "p4_qwen"
     (problem / "src").mkdir(parents=True)
     for name in ("REPORT.md", "cross.patch"):
         (problem / name).write_text("")
@@ -104,7 +104,7 @@ def test_partial_submission_runtimes_contain_their_import_closure():
     spec = importlib.util.spec_from_file_location("package_subset_test", common / "package.py")
     package = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(package)
-    problems = {path.name: path for path in cadathlon.glob("*_pset/*") if path.is_dir()}
+    problems = {path.name: path for path in cadathlon.glob("pset/*") if path.is_dir()}
     assert set(package.SUBMISSION_RUNTIME) <= set(problems)
     for name, (runtime, _kind) in package.SUBMISSION_RUNTIME.items():
         # The same files `package.py submit` scans: its sources and the declared modules.
@@ -121,7 +121,7 @@ def test_release_runtime_contains_every_problems_shared_imports():
     spec = importlib.util.spec_from_file_location("package_release_test", common / "package.py")
     package = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(package)
-    for problem in sorted(cadathlon.glob("*_pset/*/src")):
+    for problem in sorted(cadathlon.glob("pset/*/src")):
         sources = package.submission_sources(problem)
         missing = package.import_closure(sources, common) - set(package.COMMON_RUNTIME_FILES)
         assert not missing, f"{problem.parent.name} imports {sorted(missing)}, absent from the release"
@@ -130,7 +130,7 @@ def test_release_runtime_contains_every_problems_shared_imports():
 def test_submit_ships_shared_modules_that_contestant_code_adds(tmp_path):
     """A new shared import in a narrowed submission reaches its archive."""
     root = tmp_path / "cadathlon"
-    problem = root / "non_agent_pset" / "p1_benchmark"
+    problem = root / "pset" / "p1_benchmark"
     (problem / "src" / "suite").mkdir(parents=True)
     common = root / "common"
     common.mkdir()
@@ -159,7 +159,7 @@ def test_submit_ships_shared_modules_that_contestant_code_adds(tmp_path):
 def test_submit_skips_editor_lock_links_and_rejects_linked_shared_modules(tmp_path):
     """Broken links in src/ are not shipped or scanned; an imported shared link fails loudly."""
     root = tmp_path / "cadathlon"
-    problem = root / "non_agent_pset/p1_benchmark"
+    problem = root / "pset/p1_benchmark"
     (problem / "src").mkdir(parents=True)
     common = root / "common"
     common.mkdir()
@@ -193,7 +193,7 @@ def test_submit_skips_editor_lock_links_and_rejects_linked_shared_modules(tmp_pa
 def test_submit_archives_unparsable_sources_without_following_them(tmp_path):
     """A scratch file that does not parse is archived as before, with a warning."""
     root = tmp_path / "cadathlon"
-    problem = root / "non_agent_pset/p1_benchmark"
+    problem = root / "pset/p1_benchmark"
     (problem / "src").mkdir(parents=True)
     common = root / "common"
     common.mkdir()
@@ -215,19 +215,19 @@ def test_submit_archives_unparsable_sources_without_following_them(tmp_path):
     assert result.stderr.count("broken_shared.py does not parse") == 1
     with tarfile.open(problem / "submission.tar.gz") as archive:
         names = set(archive.getnames())
-    assert {"non_agent_pset/p1_benchmark/src/notes.py", "non_agent_pset/p1_benchmark/src/nul.py",
-            "non_agent_pset/p1_benchmark/src/deep.py", "common/broken_shared.py"} <= names
+    assert {"pset/p1_benchmark/src/notes.py", "pset/p1_benchmark/src/nul.py",
+            "pset/p1_benchmark/src/deep.py", "common/broken_shared.py"} <= names
 
 
 def test_extracted_release_runs_fixtures_and_experimental_preflight(tmp_path):
     """Test shipped paths, without relying on the source tree's import paths."""
     source = Path(__file__).parents[1]
     root = tmp_path / "cadathlon"
-    problems = ("non_agent_pset/p1_benchmark", "agent_pset/p2_bert",
-                "non_agent_pset/p3_cnn", "agent_pset/p4_qwen")
+    problems = ("pset/p1_benchmark", "pset/p2_bert",
+                "pset/p3_cnn", "pset/p4_qwen")
     # P5 is packaged too, but its plaintext reference needs the external WISE
     # planner, so the runner checks below cover the four other problems.
-    for problem in problems + ("agent_pset/p5_wise",):
+    for problem in problems + ("pset/p5_wise",):
         shutil.copytree(source / problem, root / problem,
                         ignore=shutil.ignore_patterns("__pycache__", "run", "results"))
     shutil.copytree(source / "common", root / "common",
@@ -268,7 +268,7 @@ def test_extracted_release_runs_fixtures_and_experimental_preflight(tmp_path):
         assert "validation/p3_compact_baseline.json" in names
         assert str((public_calibration/'report.json').relative_to(root)) in names
         assert str((public_calibration/'archives/C3/case.json').relative_to(root)) in names
-        assert 'non_agent_pset/p1_benchmark/src/suite/p1_evidence.py' in names
+        assert 'pset/p1_benchmark/src/suite/p1_evidence.py' in names
         assert not any(name.endswith(".golden") or "/run/" in name or "/evidence/" in name
                        for name in names)
         archive.extractall(extracted, filter="data")

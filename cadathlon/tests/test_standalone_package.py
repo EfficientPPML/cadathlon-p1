@@ -10,12 +10,12 @@ import tarfile
 
 ROOT = Path(__file__).resolve().parents[2]
 COMMON = ROOT / "cadathlon/common"
-PROBLEM = ROOT / "cadathlon/non_agent_pset/p1_benchmark"
+PROBLEM = ROOT / "cadathlon/pset/p1_benchmark"
 
 
 def fixture(tmp_path):
     root = tmp_path / "cadathlon"
-    problem = root / "non_agent_pset/p1_benchmark"
+    problem = root / "pset/p1_benchmark"
     (problem / "src/suite").mkdir(parents=True)
     (root / "common").mkdir()
     for name in ("package.py", "support.py", "Makefile.problem"):
@@ -41,7 +41,7 @@ def test_p1_submission_has_complete_common_dependencies(tmp_path):
     with tarfile.open(problem / "submission.tar.gz") as archive:
         names = set(archive.getnames())
     assert {"common/support.py", "common/Makefile.problem", "common/package.py",
-            "non_agent_pset/p1_benchmark/src/suite/suite_config.json"} <= names
+            "pset/p1_benchmark/src/suite/suite_config.json"} <= names
     assert not any("secret" in name or "/run/" in name for name in names)
     assert not any("transformer" in name or "qwen" in name for name in names)
 
@@ -58,8 +58,8 @@ def test_p1_release_retains_public_calibration_only(tmp_path):
         p.write_bytes(b"excluded")
     # The contestant release packages every problem and the complete shared
     # runtime, so give the other problems their real EXCLUDE lists.
-    for other in ("agent_pset/p2_bert", "non_agent_pset/p3_cnn",
-                  "agent_pset/p4_qwen", "agent_pset/p5_wise"):
+    for other in ("pset/p2_bert", "pset/p3_cnn",
+                  "pset/p4_qwen", "pset/p5_wise"):
         (root / other).mkdir(parents=True)
         shutil.copy2(ROOT / "cadathlon" / other / "EXCLUDE", root / other / "EXCLUDE")
     for path in COMMON.iterdir():

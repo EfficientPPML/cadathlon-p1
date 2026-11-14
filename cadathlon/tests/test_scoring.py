@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-SUITE = Path(__file__).resolve().parents[1] / 'non_agent_pset/p1_benchmark/src/suite'
+SUITE = Path(__file__).resolve().parents[1] / 'pset/p1_benchmark/src/suite'
 sys.path.insert(0, str(SUITE))
 spec = importlib.util.spec_from_file_location('p1_score_test', SUITE / 'score.py')
 score = importlib.util.module_from_spec(spec)

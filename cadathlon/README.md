@@ -1,18 +1,18 @@
 # CROSS CADathlon problem set
 
-Five problems in two sets, each following the supplied CADathlon template:
+Five problems in one set, `pset/`, each following the supplied CADathlon template:
 introduction, problem statement, compile/run instructions, scoring, references,
 `doc/`, `src/`, `test/`, `oneliner`, and `EXCLUDE`.
 
-## `non_agent_pset` — no AI assistance
+## P1 and P3 — no AI assistance
 
-Both problems here are solved without coding agents. A team's total is
+Both problems are solved without AI assistance: no generative AI or coding agents. A team's total is
 **essential + bonus**: P1's 10 points plus P3's 20-point bonus.
 
 | | Problem | Points | Judged by | Handout |
 |---|---|---|---|---|
-| **Essential** | [P1 · MNIST throughput](non_agent_pset/p1_benchmark/doc/problem.md) — raise encrypted MNIST throughput on one and four TPU chips on the FHE benchmarking suite workload | **10** | policy `p1-10-point-v1` | [HTML](non_agent_pset/p1_benchmark/doc/problem.html) · [PDF](non_agent_pset/p1_benchmark/doc/problem.pdf) |
-| **Bonus** | [P3 · Compact CNNs](non_agent_pset/p3_cnn/doc/problem.md) — accelerate two fixed compact encrypted CNNs | **20** | correctness and measured speed | [HTML](non_agent_pset/p3_cnn/doc/problem.html) · [PDF](non_agent_pset/p3_cnn/doc/problem.pdf) |
+| **Essential** | [P1 · MNIST throughput](pset/p1_benchmark/doc/problem.md) — raise encrypted MNIST throughput on one and four TPU chips on the FHE benchmarking suite workload | **10** | policy `p1-10-point-v1` | [HTML](pset/p1_benchmark/doc/problem.html) · [PDF](pset/p1_benchmark/doc/problem.pdf) |
+| **Bonus** | [P3 · Compact CNNs](pset/p3_cnn/doc/problem.md) — accelerate two fixed compact encrypted CNNs | **20** | correctness and measured speed | [HTML](pset/p3_cnn/doc/problem.html) · [PDF](pset/p3_cnn/doc/problem.pdf) |
 
 **P1 is the essential problem.** It is scored by policy `p1-10-point-v1` (its
 handout's section 4): 3 correctness points shared by the ranked cases, 0–4
@@ -36,7 +36,7 @@ the judging hardware before the event:
   It is scored out of 10 under policy `p1-10-point-v1` (3 correctness points,
   0–4 improvement points and a 3/2/1 ranking bonus). After submission the
   organizer also runs the hidden C5/C6 cases (1000 images) and combines both
-  schedules with `make -C non_agent_pset/p1_benchmark/src suite-overall`.
+  schedules with `make -C pset/p1_benchmark/src suite-overall`.
 - **P3 compact-v1:** two named compact convolutional models and a
   300-second whole-evaluation budget. This is a different model workload,
   with 10 correctness +10 performance points against a measured encrypted
@@ -47,13 +47,13 @@ See the P1/P3 handouts and `VALIDATION.md` for exact scope and evidence.
 From this directory, the full encrypted evaluation paths are:
 
 ```sh
-make -C non_agent_pset/p1_benchmark/src suite-evaluate-baseline
-make -C non_agent_pset/p1_benchmark/src suite-evaluate
-make -C non_agent_pset/p1_benchmark/src suite-score
+make -C pset/p1_benchmark/src suite-evaluate-baseline
+make -C pset/p1_benchmark/src suite-evaluate
+make -C pset/p1_benchmark/src suite-score
 
-make -C non_agent_pset/p3_cnn/src competition-baseline
-make -C non_agent_pset/p3_cnn/src competition-evaluate
-make -C non_agent_pset/p3_cnn/src competition-score
+make -C pset/p3_cnn/src competition-baseline
+make -C pset/p3_cnn/src competition-evaluate
+make -C pset/p3_cnn/src competition-score
 ```
 
 Stage the pinned upstream P1 suite and assets first, and implement the candidate
@@ -73,28 +73,28 @@ open-source reference. That SOTA rubric does not apply to compact-v1.
 P2/P4 encrypted references are still under implementation; plaintext goldens
 and passing fixture checks do not establish competition readiness.
 
-## `agent_pset` — AI agents allowed
+## P2, P4 and P5 — AI agents allowed
 
 | Problem | Points | Handout |
 |---|---|---|
-| [P2 · BERT / MRPC](agent_pset/p2_bert/doc/problem.md) — use or improve CROSS to enable encrypted BERT on TPUs, then optimize performance and score using the [FHE BERT benchmark](https://github.com/fhe-benchmarking/BERT) | 100 | [HTML](agent_pset/p2_bert/doc/problem.html) · [PDF](agent_pset/p2_bert/doc/problem.pdf) |
-| [P4 · Qwen3-0.6B](agent_pset/p4_qwen/doc/problem.md) — enable full Qwen3-0.6B inference under CKKS, with staged credit for operators and decoder blocks | 100 | [HTML](agent_pset/p4_qwen/doc/problem.html) · [PDF](agent_pset/p4_qwen/doc/problem.pdf) |
-| [P5 · WISE scheduling](agent_pset/p5_wise/doc/problem.md) — schedule fixed MLP/CNN workloads with the pinned WISE planner, execute them with CROSS CKKS and optimize measured TPU performance | 100 | [HTML](agent_pset/p5_wise/doc/problem.html) · [PDF](agent_pset/p5_wise/doc/problem.pdf) |
+| [P2 · BERT / MRPC](pset/p2_bert/doc/problem.md) — use or improve CROSS to enable encrypted BERT on TPUs, then optimize performance and score using the [FHE BERT benchmark](https://github.com/fhe-benchmarking/BERT) | 100 | [HTML](pset/p2_bert/doc/problem.html) · [PDF](pset/p2_bert/doc/problem.pdf) |
+| [P4 · Qwen3-0.6B](pset/p4_qwen/doc/problem.md) — enable full Qwen3-0.6B inference under CKKS, with staged credit for operators and decoder blocks | 100 | [HTML](pset/p4_qwen/doc/problem.html) · [PDF](pset/p4_qwen/doc/problem.pdf) |
+| [P5 · WISE scheduling](pset/p5_wise/doc/problem.md) — schedule fixed MLP/CNN workloads with the pinned WISE planner, execute them with CROSS CKKS and optimize measured TPU performance | 100 | [HTML](pset/p5_wise/doc/problem.html) · [PDF](pset/p5_wise/doc/problem.pdf) |
 
-[P5 · WISE scheduling](agent_pset/p5_wise/doc/problem.md) adds six fixed MLP/CNN
+[P5 · WISE scheduling](pset/p5_wise/doc/problem.md) adds six fixed MLP/CNN
 workloads, native Winograd layouts and the complete pretrained WISE MNIST CNN.
 Generate schedules with the pinned upstream WISE planner, execute them with
 CROSS CKKS, and optimize measured TPU performance against matched CROSS CPU
 and tuned native OpenFHE controls. See the
-[README](agent_pset/p5_wise/README.md) and the
-[instructions for another TPU host](agent_pset/p5_wise/TPU_TESTING.md).
+[README](pset/p5_wise/README.md) and the
+[instructions for another TPU host](pset/p5_wise/TPU_TESTING.md).
 Install the external WISE planner before running the combined reference checks.
 TPU calibration and proof of speedup remain incomplete.
 
 The proposed format is an eight-hour contest. “AI agents allowed” means
 students may use coding agents to solve the task; it does not mean that several
-agents share an HE secret key. The two sets have separate leaderboards, and so
-do the problems within `agent_pset`. Duration, hardware, and resource limits
+agents share an HE secret key. P1 and P3 share one leaderboard; P2, P4 and P5
+have one each. Duration, hardware, and resource limits
 below are proposed contest rules, not historical results.
 
 The package contains editable Markdown, rendered handouts, TODO entrypoints,
@@ -113,7 +113,7 @@ and speed. Trained image accuracy belongs to the separate legacy track and
 requires its frozen checkpoints and data.
 Problem 1's ranked cases run inside the FHE benchmarking suite's own harness at
 a pinned commit, so correctness is decided against the suite's ground-truth
-labels and timing comes from its `Timing` block; `make -C non_agent_pset/p1_benchmark/src
+labels and timing comes from its `Timing` block; `make -C pset/p1_benchmark/src
 suite-check` refuses to proceed if `harness/` differs from that commit.
 BERT includes a pinned upstream harness contract, seven stage adapters and a
 strict output checker. Its six small numerical fixtures and plaintext golden
@@ -129,7 +129,7 @@ make docs                # rebuild HTML/PDF (requirements-docs.txt)
 make release             # create contestant archive, applying EXCLUDE
 ```
 
-For P1–P4, `make -C <set>/pN_name/src test` runs the contestant entrypoint and
+For P1–P4, `make -C pset/pN_name/src test` runs the contestant entrypoint and
 intentionally fails until the TODOs are implemented; P5 ships a working starting
 implementation, so its `make test` runs actual encrypted inference on every case. The CNN
 `make baseline-plan` target checks the actual CROSS packing path without key

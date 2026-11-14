@@ -10,7 +10,7 @@ from types import SimpleNamespace
 import pytest
 
 
-SRC = Path(__file__).resolve().parents[1] / 'non_agent_pset/p3_cnn/src'
+SRC = Path(__file__).resolve().parents[1] / 'pset/p3_cnn/src'
 spec = importlib.util.spec_from_file_location('cnn_evaluate', SRC / 'evaluate.py')
 evaluate = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(evaluate)

@@ -7,7 +7,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import plan_pretrained_qwen_arithmetic as candidate
 
-REFERENCE = candidate.load_module(candidate.ROOT/'cadathlon/agent_pset/p4_qwen/src/reference.py')
+REFERENCE = candidate.load_module(candidate.ROOT/'cadathlon/pset/p4_qwen/src/reference.py')
 
 
 class QwenArithmeticTests(unittest.TestCase):

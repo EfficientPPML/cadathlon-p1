@@ -68,7 +68,7 @@ def test_session_wires_ops_refresh_and_cleans_owned_provider(monkeypatch,model,n
  from jaxite_word import key_gen,ckks_ctx
  import jaxite_word
  import encrypted_ntt, encrypted_refresh
- folder=ROOT/'cadathlon/agent_pset'/('p2_bert' if model=='bert' else 'p4_qwen')
+ folder=ROOT/'cadathlon/pset'/('p2_bert' if model=='bert' else 'p4_qwen')
  case=json.loads((folder/f'test/test{number}.in').read_text())
  weights,embeddings,*_=load_module(folder/'src/reference.py').make_case(case)
  if packed_pairs:
@@ -120,7 +120,7 @@ def test_optimized_adapter_explicitly_opts_in_and_default_adapter_does_not(monke
  captured=[]
  def create(*args,**kwargs):captured.append((args,kwargs));return object()
  monkeypatch.setattr(reference,'create_toy_session',create)
- folder=ROOT/'cadathlon/agent_pset'/problem/'src'
+ folder=ROOT/'cadathlon/pset'/problem/'src'
  for name in (f'{model}_bounded_reference.py',f'{model}_optimized_reference.py'):
   module=load_module(folder/name)
   assert module.IMPLEMENTATION_STATUS=='experimental-unvalidated'

@@ -16,7 +16,7 @@ import tarfile
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / 'cadathlon/non_agent_pset/p3_cnn/src'
+SRC = ROOT / 'cadathlon/pset/p3_cnn/src'
 
 
 def manifest():
