@@ -22,12 +22,17 @@ absorbed the problem set from CROSS. Each problem directory has its own README.
   `agent_pset/` holds P2, P4 and P5, `common/` the shared runtime and handout
   tooling, `tests/` the regression tests and `validation/` the recorded evidence.
 - `jaxite_word/`, `demos/`, `profile_analysis/`, `pytest.ini`: the CROSS
-  runtime (`EfficientPPML/CROSS` commit `3a49b20`), kept at the repository root
+  runtime (`EfficientPPML/CROSS` commit `3a49b20`, whose `jaxite_word` changes
+  remain on CROSS branch `fix/competition-readiness`), kept at the repository root
   exactly as in CROSS, so every problem's imports and the `CROSS_ROOT` default
   resolve to this checkout. A submission's `cross.patch` applies to these files.
 - `validation/`: P1's recorded package-test environment and results.
 
 ## Local checks
+
+Clone with `git clone --single-branch https://github.com/EfficientPPML/cadathlon-p1.git`:
+the repository also keeps about 0.8 GB of archived CROSS history on its
+`archive/cross/*` branches, which a plain clone downloads too.
 
 Python 3.13 is the tested interpreter. Install the runtime and test dependencies
 in a virtual environment:
@@ -264,7 +269,9 @@ Only P1 packaging, navigation and standalone entry documentation were adapted,
 and the scorer carries the 10-point event policy (`score.py`, `rank.py`); the
 HE arithmetic, baseline and runner gates retain their source bytes. The rest of
 the problem set (P2 to P5, the shared runtime, tests and validation records)
-moved here from CROSS on 2026-11-10;
+moved here from CROSS on 2026-11-10, and on 2026-11-14 CADathlon was removed
+from CROSS: the `cadathlon/` history of every CROSS branch, including the
+validation evidence, is archived here on the `archive/cross/*` branches.
 [SOURCES.md](cadathlon/SOURCES.md#repository-migration-2026-11-10) lists the
-source commit of each part and what stayed in CROSS. The repository retains the
+source commit of each part and the archive. The repository retains the
 upstream [MIT license](LICENSE) and the embedded fonts' license notices.

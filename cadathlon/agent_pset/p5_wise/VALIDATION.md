@@ -1,9 +1,12 @@
 # P5 implementation and experiment status
 
-> **Note (2026-11-10).** This record moved here from CROSS with P5. Its checkpoint
-> below was taken on CROSS `main` (`294ed7d`) plus the P5 commit `3cec9fa`, where all
-> five problems allowed coding agents. In this repository P1 and P3 remain in
-> `non_agent_pset` without agents; see `cadathlon/SOURCES.md`.
+> **Note (2026-11-10, updated 2026-11-14).** This record moved here from CROSS with
+> P5. Its checkpoint below was taken on CROSS `main` (`294ed7d`) plus the P5 commit
+> `3cec9fa`, where all five problems allowed coding agents; the PR it describes is
+> CROSS pull request #8, closed unmerged on 2026-11-14. Both commits are archived
+> here, on `archive/cross/main` and `archive/cross/feat/p5-wise-tpu-20261105` (where
+> `3cec9fa` is `6613bad`). In this repository P1 and P3 remain in `non_agent_pset`
+> without agents; see `cadathlon/SOURCES.md`.
 
 ## Portable PR checkpoint — 2026-11-05
 

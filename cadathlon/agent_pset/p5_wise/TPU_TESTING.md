@@ -9,9 +9,10 @@ measurements, not measurements of the checkout under test.
 ## 1. Checkout and environment
 
 ```bash
-# Use the branch or commit under test; P5 moved here from CROSS
-# branch feat/p5-wise-tpu-20261105 (see cadathlon/SOURCES.md).
-git clone --branch <branch-under-test> https://github.com/EfficientPPML/cadathlon-p1.git cadathlon-p5
+# Use the branch or commit under test, not an archive/cross/* branch (those hold
+# only CROSS's cadathlon/ history); --single-branch skips that ~0.8 GB archive.
+# P5 came from CROSS branch feat/p5-wise-tpu-20261105 (see cadathlon/SOURCES.md).
+git clone --single-branch --branch <branch-under-test> https://github.com/EfficientPPML/cadathlon-p1.git cadathlon-p5
 cd cadathlon-p5
 export CROSS_ROOT="$PWD"
 export P5="$CROSS_ROOT/cadathlon/agent_pset/p5_wise"

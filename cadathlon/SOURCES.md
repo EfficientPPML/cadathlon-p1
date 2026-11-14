@@ -55,7 +55,7 @@ already held the standalone P1. Where each part comes from:
 |---|---|
 | P1 (`non_agent_pset/p1_benchmark`), its tests that differ from CROSS or are new here (`test_evaluation_schedule.py`, `test_scoring.py`, `test_student_evidence.py`, `test_hidden_schedule.py`, `test_ranked_schedule.py`, `test_scoring_policy.py`, `test_standalone_package.py`) and its validation records (`p1_student_suite.json`, `p1_legacy_suite.json`, `p1_student_v6e8/`, `p1_student_pre_v2/`) | This repository's own P1: extracted from CROSS `3a49b20` on 2026-11-06 and developed here since (four-chip schedule, 10-point policy, hidden C5/C6 cases) |
 | P2, P3, P4, `common/`, the other tests, `README.md`, `ORGANIZER.md`, `VALIDATION.md` and the other top-level `validation/` records | CROSS branch `fix/competition-readiness`, commit `3a49b207acc851a8d599b9b3f3053b8af1d199aa` |
-| P5 (`agent_pset/p5_wise`) and its `test_wise_*` tests | CROSS branch `feat/p5-wise-tpu-20261105`, commit `3cec9fa`, replayed onto `3a49b20` as CROSS commit `152fb80b1d56d0bf7fec0f61f5c5bfd853f59c49` (branch `migrate-cadathlon`) |
+| P5 (`agent_pset/p5_wise`) and its `test_wise_*` tests | CROSS branch `feat/p5-wise-tpu-20261105`, commit `3cec9fa`, replayed onto `3a49b20` as CROSS commit `152fb80b1d56d0bf7fec0f61f5c5bfd853f59c49` (branch `migrate-cadathlon`); archived here as `6613bad` and `461bb8e` (see below) |
 | CROSS runtime: `jaxite_word/`, `demos/`, `profile_analysis/`, `pytest.ini` (repository root) | CROSS `3a49b20`; `jaxite_word/` is identical in `3a49b20` and `3cec9fa` |
 
 Replaying P5 onto `3a49b20` conflicted in `common/package.py` (its
@@ -111,13 +111,93 @@ Changes made here on top of those sources:
   copied for `make submit` and organizer-only hidden cases.
 
 The fixes that also apply to CROSS's own copy of the problem set were made there
-too, on CROSS branch `migrate-cadathlon`, after the commit above.
+too, on CROSS branch `migrate-cadathlon` after the commit above (now archived
+here; see below).
 
 Not migrated: CROSS `main` commit `294ed7d` ("Allow coding agents for all
 CADathlon problems"), which moved P1 and P3 into `agent_pset` and is not on
-`fix/competition-readiness`, so P1 and P3 stay in `non_agent_pset`; the per-run
+`fix/competition-readiness`, so P1 and P3 stay in `non_agent_pset` (it is archived
+here on `archive/cross/main`); the per-run
 evidence directories under `validation/` (311 directories, 12,487 files, about
 1.8 GB, of which the P1 extraction had already kept
-`p1_student_pre_v2/historical_run.json`), linked from `VALIDATION.md` at
-CROSS commit `3a49b20`; the built `contestant-release.tar.gz`; CROSS's root
-`README.md`; and CROSS's paper-figure scripts (`figure_drawer/`).
+`p1_student_pre_v2/historical_run.json`), which are on the archive branch
+`archive/cross/fix/competition-readiness` and linked from `VALIDATION.md` there;
+the built `contestant-release.tar.gz` (kept on the archive branches only); CROSS's
+root `README.md`; and CROSS's
+paper-figure scripts (`figure_drawer/`).
+
+### CROSS history archive (2026-11-14)
+
+CADathlon was then removed from CROSS. Before that, the `cadathlon/` history of
+every CROSS branch was copied into this repository, filtered to that directory
+with `git filter-repo` (commit messages, authors and dates unchanged). Each
+`archive/cross/<branch>` branch reproduces the `cadathlon/` tree of the CROSS
+branch it came from byte for byte, including the per-run validation evidence.
+
+| CROSS branch (tip when archived) | Archive branch here (tip) |
+|---|---|
+| `main` (`294ed7d`) | `archive/cross/main` (`6e75391`) |
+| `cadathlon` (`726adf3`) | `archive/cross/cadathlon` (`ed49658`) |
+| `fix/cadathlon-validation` (`c835807`) | `archive/cross/fix/cadathlon-validation` (`778077f`) |
+| `review/competition-readiness-20261103-090018` (`3e5c01b`) | `archive/cross/review/competition-readiness-20261103-090018` (`7e5ed21`) |
+| `feat/p5-wise-tpu-20261105` (`3cec9fa`) | `archive/cross/feat/p5-wise-tpu-20261105` (`6613bad`) |
+| `fix/competition-readiness` (`3a49b20`) | `archive/cross/fix/competition-readiness` (`f818ce6`) |
+| `migrate-cadathlon` (`d84270c`) | `archive/cross/migrate-cadathlon` (`f9f4ac7`) |
+
+<details><summary>Every archived commit (CROSS commit → archive commit)</summary>
+
+| CROSS | Archive | Committed | Subject |
+|---|---|---|---|
+| `726adf3` | `ed49658` | 2026-09-24 | Add CADathlon problem sets and benchmark materials |
+| `12d72c3` | `5ae2aae` | 2026-10-31 | Share baseline keys and enforce actual-ring security in contest runners |
+| `e7a9aa1` | `a26e6fe` | 2026-10-31 | Reduce redundant baseline warmup and model encoding setup |
+| `b1c9972` | `8e11c2f` | 2026-10-31 | Evict the baseline client codec on service release |
+| `c835807` | `778077f` | 2026-11-01 | Record verified repairs, runtime contracts, and outstanding requirements |
+| `c7ec41f` | `b310f53` | 2026-11-03 | Add encrypted transformer references and guarded execution helpers |
+| `cde5312` | `bc1fc44` | 2026-11-03 | Add P1 student evaluation and strict calibration scoring |
+| `dd9fd70` | `7796adc` | 2026-11-03 | Add P3 compact evaluation and lifecycle cleanup |
+| `806f0c9` | `098e909` | 2026-11-03 | Archive runtime regression and secure component evidence |
+| `bddedb1` | `a8221a3` | 2026-11-03 | Archive P1 and P3 evaluations and calibration evidence |
+| `6d32561` | `6511bf3` | 2026-11-03 | Archive transformer calibration and encrypted component evidence |
+| `3e5c01b` | `7e5ed21` | 2026-11-03 | Update release packaging and document remaining readiness gaps |
+| `294ed7d` | `6e75391` | 2026-11-04 | Allow coding agents for all CADathlon problems |
+| `3cec9fa` | `6613bad` | 2026-11-04 | Add WISE scheduling problem and portable CPU/TPU evaluation |
+| `3a49b20` | `f818ce6` | 2026-11-06 | Improve competition runners, compact benchmarks, and validation evidence |
+| `152fb80` | `461bb8e` | 2026-11-12 | Add the WISE scheduling problem (P5) to the competition-readiness tree |
+| `e52c073` | `33084ab` | 2026-11-12 | Repair P5 packaging, tests and documents found during the migration |
+| `d84270c` | `f9f4ac7` | 2026-11-12 | Point the CADathlon README at its new home in cadathlon-p1 |
+
+CROSS commits that changed nothing under `cadathlon/` have no archive commit.
+Neither has merge commit `98ca683` (pull request #6), which brought `cadathlon/`
+into `main`: after filtering it is identical to `c835807` (`778077f`).
+`bce58a7`, the review branch's `jaxite_word` commit, stays reachable in CROSS
+only through closed pull request #7.
+
+</details>
+
+In CROSS, `main` removed `cadathlon/` in commit `10ee58b` and its README now
+points here. `fix/competition-readiness` removed it in commit `79584c3` and
+keeps only the CROSS library changes made during this work: the 21 `jaxite_word`
+files of the runtime bundled at this repository's root, for review against
+`main` (CROSS `main` itself lacks them, for example
+`jaxite_word.mapping.defer_cache_clearing`, which P3 uses). The other CADathlon
+branches (`cadathlon`, `fix/cadathlon-validation`,
+`review/competition-readiness-20261103-090018`, `feat/p5-wise-tpu-20261105` and
+`migrate-cadathlon`) were deleted from CROSS, and its pull requests
+[#7](https://github.com/EfficientPPML/CROSS/pull/7) and
+[#8](https://github.com/EfficientPPML/CROSS/pull/8) were closed unmerged.
+CROSS's history was not rewritten, so older CADathlon commits stay reachable
+there: `726adf3` to `294ed7d` in the history of `main` (including the
+[#6](https://github.com/EfficientPPML/CROSS/pull/6) merge), `3a49b20` with the
+1.8 GB of evidence as the parent of `fix/competition-readiness`, and the review
+branch and `3cec9fa` as the heads of the closed pull requests #7 and #8. The
+commits of CROSS `migrate-cadathlon` (`152fb80`, `e52c073`, `d84270c`) exist
+only in this archive.
+
+CROSS's root `.gitattributes` at `3a49b20` exempted many evidence files from
+git's whitespace checks. That file is not part of the `cadathlon/`-only
+archive, so `git diff --check` over the archive branches reports whitespace in
+those evidence files; their bytes are unchanged.
+
+A plain `git clone` of this repository also downloads the archive branches
+(about 0.8 GB); `git clone --single-branch` fetches only the default branch.
