@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-SRC = Path(__file__).resolve().parents[1] / 'non_agent_pset/p3_cnn/src'
+SRC = Path(__file__).resolve().parents[1] / 'pset/p3_cnn/src'
 spec = importlib.util.spec_from_file_location('compact_score_test', SRC / 'score_compact.py')
 score = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(score)

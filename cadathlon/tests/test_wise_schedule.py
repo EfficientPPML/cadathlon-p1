@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import pytest
 
-P5 = Path(__file__).resolve().parents[1] / "agent_pset/p5_wise"
+P5 = Path(__file__).resolve().parents[1] / "pset/p5_wise"
 sys.path.insert(0, str(P5 / "src"))
 from schedule import build_schedule, execute, NumpyArithmetic, pack_inputs
 from workloads import input_values, reference

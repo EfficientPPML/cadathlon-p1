@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 
-SRC = Path(__file__).resolve().parents[1] / 'non_agent_pset/p3_cnn/src'
+SRC = Path(__file__).resolve().parents[1] / 'pset/p3_cnn/src'
 
 
 @pytest.mark.parametrize('name', ['student1', 'student2'])

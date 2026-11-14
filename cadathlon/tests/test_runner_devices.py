@@ -28,7 +28,7 @@ def test_p1_rejects_missing_or_invalid_devices_before_build(monkeypatch, request
     monkeypatch.setitem(sys.modules, "jax", SimpleNamespace(
         config=SimpleNamespace(update=lambda *args: None), devices=lambda: ("cpu",)))
     monkeypatch.setattr(sys, "path", list(sys.path))
-    path = (Path(__file__).parents[1] / "non_agent_pset/p1_benchmark/src/runner.py")
+    path = (Path(__file__).parents[1] / "pset/p1_benchmark/src/runner.py")
     spec = importlib.util.spec_from_file_location("device_test_runner", path)
     runner = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(runner)

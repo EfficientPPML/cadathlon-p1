@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def paths():
-    problem = ROOT/'cadathlon/agent_pset/p4_qwen'
+    problem = ROOT/'cadathlon/pset/p4_qwen'
     return problem, problem/'src/qwen_bounded_reference.py', problem/'src/runner.py'
 
 

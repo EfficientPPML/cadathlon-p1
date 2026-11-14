@@ -1,5 +1,5 @@
 PYTHON ?= python3
-P1_SRC := cadathlon/non_agent_pset/p1_benchmark/src
+P1_SRC := cadathlon/pset/p1_benchmark/src
 # P5's pinned WISE planner: `make install-wise` clones it to $(WISE_ROOT), by
 # default ../WISE next to this checkout. `make check` needs it for P5's reference
 # check and exports it (as an absolute path) for the WISE planner tests, which
@@ -40,7 +40,7 @@ release:
 	$(MAKE) -C cadathlon release PYTHON="$(PYTHON)"
 
 install-wise:
-	$(MAKE) -C cadathlon/agent_pset/p5_wise/src install-wise WISE_ROOT="$(or $(WISE_ROOT),$(WISE_DEFAULT))" PYTHON="$(PYTHON)"
+	$(MAKE) -C cadathlon/pset/p5_wise/src install-wise WISE_ROOT="$(or $(WISE_ROOT),$(WISE_DEFAULT))" PYTHON="$(PYTHON)"
 
 clean:
 	$(MAKE) -C cadathlon clean PYTHON="$(PYTHON)"

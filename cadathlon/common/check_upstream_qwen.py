@@ -8,11 +8,11 @@ import torch
 from transformers import Qwen3Config, Qwen3ForCausalLM
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "agent_pset/p4_qwen" / "src"))
+sys.path.insert(0, str(ROOT / "pset/p4_qwen" / "src"))
 from reference import make_case, decoder_block, operator_forward
 
 torch.set_num_threads(1)
-for path in sorted((ROOT / "agent_pset/p4_qwen" / "test").glob("test*.in")):
+for path in sorted((ROOT / "pset/p4_qwen" / "test").glob("test*.in")):
     case = json.loads(path.read_text())
     weights, embeddings, expected = make_case(case)
     config = Qwen3Config(**case["config"], attn_implementation="eager",

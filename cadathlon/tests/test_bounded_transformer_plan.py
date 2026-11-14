@@ -63,7 +63,7 @@ import pytest
 @pytest.mark.parametrize('model,number',[(model,n) for model in ('bert','qwen') for n in range(1,7)])
 def test_complete_bounded_graph_preserves_ideal_contracts_and_fixture_gate(model,number):
     problem='p2_bert' if model=='bert' else 'p4_qwen'
-    folder=ROOT/'cadathlon/agent_pset'/problem
+    folder=ROOT/'cadathlon/pset'/problem
     oracle=load_module(folder/'src/reference.py')
     case=json.loads((folder/f'test/test{number}.in').read_text());args=oracle.make_case(case)
     weights,embeddings=args[:2];mask=args[2] if model=='bert' else None

@@ -11,11 +11,11 @@ from weasyprint.text.fonts import FontConfiguration
 
 ROOT = Path(__file__).resolve().parents[1]
 COMMON = ROOT / "common"
-PROBLEMS = {"non_agent_pset/p1_benchmark": "MNIST throughput",
-            "agent_pset/p2_bert": "BERT / MRPC",
-            "non_agent_pset/p3_cnn": "Encrypted CNNs",
-            "agent_pset/p4_qwen": "Qwen3-0.6B",
-            "agent_pset/p5_wise": "WISE scheduling"}
+PROBLEMS = {"pset/p1_benchmark": "MNIST throughput",
+            "pset/p2_bert": "BERT / MRPC",
+            "pset/p3_cnn": "Encrypted CNNs",
+            "pset/p4_qwen": "Qwen3-0.6B",
+            "pset/p5_wise": "WISE scheduling"}
 
 
 def font_styles():
@@ -55,7 +55,7 @@ def render(problem, fonts):
     title = "".join(heading.itertext())
     metadata.set("class", "subtitle")
     hero = ET.Element("section", {"class": "hero-section", "id": "overview"})
-    # `problem` is now "<pset>/<pN_name>", so take the leaf before the number.
+    # `problem` is "pset/<pN_name>", so take the leaf before the number.
     number = int(Path(problem).name.split("_", 1)[0][1:])
     ET.SubElement(hero, "p", {"class": "eyebrow"}).text = f"CROSS / PROBLEM {number:02d}"
     hero.extend((heading, metadata))

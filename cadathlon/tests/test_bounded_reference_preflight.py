@@ -16,7 +16,7 @@ class ReachedKeyBoundary(Exception):pass
 @pytest.mark.parametrize('model,number', [('bert',n) for n in range(3,7)]+[('qwen',n) for n in range(2,7)])
 def test_deep_opt_in_is_explicit_and_packed_only(monkeypatch,model,number):
     problem='p2_bert' if model=='bert' else 'p4_qwen'
-    folder=ROOT/'cadathlon/agent_pset'/problem
+    folder=ROOT/'cadathlon/pset'/problem
     case=json.loads((folder/f'test/test{number}.in').read_text())
     weights,embeddings,*_=load_module(folder/'src/reference.py').make_case(case)
     calls=[]

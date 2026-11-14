@@ -14,13 +14,13 @@ import transformers
 from transformers import BertConfig, BertForSequenceClassification
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "agent_pset/p2_bert" / "src"))
+sys.path.insert(0, str(ROOT / "pset/p2_bert" / "src"))
 from reference import encoder_block, forward, make_case
 
 
 def main():
     torch.set_num_threads(1)
-    for path in sorted((ROOT / "agent_pset/p2_bert" / "test").glob("test*.in")):
+    for path in sorted((ROOT / "pset/p2_bert" / "test").glob("test*.in")):
         case = json.loads(path.read_text())
         c = case["config"]
         weights, embeddings, mask, logits = make_case(case)

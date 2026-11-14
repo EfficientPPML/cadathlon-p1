@@ -6,28 +6,28 @@ __pycache__/
 build/
 # Suite daemons, locks, sockets and evaluation scratch of every problem.
 cadathlon/**/src/suite/run/
-cadathlon/non_agent_pset/p1_benchmark/submission.tar.gz
+cadathlon/pset/p1_benchmark/submission.tar.gz
 cadathlon/contestant-release.tar.gz
 # Raw result JSON copied into a problem directory for `make submit`
 # (cadathlon/.gitignore already ignores submission.tar.gz).
-cadathlon/*_pset/*/results*.json
+cadathlon/pset/*/results*.json
 
 # Organizer per-image evidence written by archive.py (labels, predictions, pixels); excluded from releases.
-cadathlon/non_agent_pset/p1_benchmark/src/suite/results/*/evidence/
+cadathlon/pset/p1_benchmark/src/suite/results/*/evidence/
 
 # Organizer-run hidden schedule (C5/C6): calibration, proof and per-case archives
 # carry the unpublished hidden baseline. Keep them out of the repository; use
 # `git add -f` only in a private organizer repository.
-cadathlon/non_agent_pset/p1_benchmark/src/suite/baseline_manifest_student_hidden.json
-cadathlon/non_agent_pset/p1_benchmark/src/suite/calibration/student-hidden-baseline/
-cadathlon/non_agent_pset/p1_benchmark/src/suite/results/*_student-hidden-*/
+cadathlon/pset/p1_benchmark/src/suite/baseline_manifest_student_hidden.json
+cadathlon/pset/p1_benchmark/src/suite/calibration/student-hidden-baseline/
+cadathlon/pset/p1_benchmark/src/suite/results/*_student-hidden-*/
 
 # P5 experiment snapshots, raw measurements and run scratch remain local.
 p5-results/
-cadathlon/agent_pset/p5_wise/src/run/
-cadathlon/agent_pset/p5_wise/src/*.json
+cadathlon/pset/p5_wise/src/run/
+cadathlon/pset/p5_wise/src/*.json
 
-# P5's native OpenFHE/WISE comparison builds (agent_pset/p5_wise/README.md),
+# P5's native OpenFHE/WISE comparison builds (pset/p5_wise/README.md),
 # wherever they are run from.
 openfhe-wise/
 openfhe-build/
@@ -48,3 +48,9 @@ demos/cifar10_data/
 demos/maple_data/
 /mnist/
 /data/
+
+# Retired layout (before 2026-11-14). Nothing tracked lives here; updating an
+# existing checkout leaves its untracked organizer files (hidden calibration,
+# evidence, run output) behind. Move them into cadathlon/pset/ (cadathlon/SOURCES.md).
+/cadathlon/non_agent_pset/
+/cadathlon/agent_pset/

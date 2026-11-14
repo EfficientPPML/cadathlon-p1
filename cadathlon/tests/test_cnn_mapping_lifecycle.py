@@ -25,7 +25,7 @@ def load_runner(monkeypatch, service, *, prepared):
     monkeypatch.setitem(sys.modules, 'jax', SimpleNamespace(
         config=SimpleNamespace(update=lambda *a: None), devices=lambda: ('device',)))
     monkeypatch.setattr(sys, 'path', list(sys.path))
-    path = Path(__file__).resolve().parents[1] / 'non_agent_pset/p3_cnn/src/runner.py'
+    path = Path(__file__).resolve().parents[1] / 'pset/p3_cnn/src/runner.py'
     spec = importlib.util.spec_from_file_location('cnn_lifecycle_runner', path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

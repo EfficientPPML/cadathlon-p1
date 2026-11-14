@@ -6,7 +6,7 @@ import sys
 
 import pytest
 
-SUITE = Path(__file__).resolve().parents[1] / 'non_agent_pset/p1_benchmark/src/suite'
+SUITE = Path(__file__).resolve().parents[1] / 'pset/p1_benchmark/src/suite'
 sys.path.insert(0, str(SUITE))
 import rank
 import score
